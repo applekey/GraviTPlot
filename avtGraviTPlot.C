@@ -52,15 +52,18 @@
 //  Creation:   Thu Apr 14 09:20:02 PDT 2016
 //
 // ****************************************************************************
-
+class avtGraviTRenderer : public avtCustomRenderer
+{
+ virtual void Render(vtkDataSet * ds){std::cerr<<"Render"<<std::endl;}; 
+};
 avtGraviTPlot::avtGraviTPlot()
 {
     GraviTFilter = new avtGraviTFilter();
-    renderer = avtGraviTRenderer::New();
+    ref_ptr<avtGraviTRenderer> renderer =  new avtGraviTRenderer;
 
     avtCustomRenderer_p cr;
     CopyTo(cr, renderer);
-    myMapper = new avtUserDefinedMapper(cr);
+    mapper = new avtUserDefinedMapper(cr);
 }
 
 
@@ -74,10 +77,10 @@ avtGraviTPlot::avtGraviTPlot()
 
 avtGraviTPlot::~avtGraviTPlot()
 {
-    if (myMapper != NULL)
+    if (mapper != NULL)
     {
-        delete myMapper;
-        myMapper = NULL;
+        delete mapper;
+        mapper = NULL;
     }
     if (GraviTFilter != NULL)
     {
@@ -121,7 +124,7 @@ avtGraviTPlot::Create()
 avtMapper *
 avtGraviTPlot::GetMapper(void)
 {
-    return myMapper;
+    return mapper;
 }
 
 
@@ -169,8 +172,10 @@ avtGraviTPlot::ApplyOperators(avtDataObject_p input)
 avtDataObject_p
 avtGraviTPlot::ApplyRenderingTransformation(avtDataObject_p input)
 {
-    GraviTFilter->SetInput(input);
-    return GraviTFilter->GetOutput();
+//input is the data to render
+    //GraviTFilter->SetInput(input);
+    //return GraviTFilter->GetOutput();
+    return input;
 }
 
 
@@ -221,6 +226,23 @@ avtGraviTPlot::CustomizeMapper(avtDataObjectInformation &doi)
     }
  */
 }
+avtImage_p
+avtGraviTPlot::ImageExecute(avtImage_p input,
+const WindowAttributes &window_atts)
+{
+//window attr has data about cam
+    std::cerr<<"In Image Execute"<<std::endl;
+    int size[2];
+    input->GetSize(size,size+1);
+    unsigned char * data =input->GetImage().GetRGBBuffer();
+    for(int i = 0;i< 30000;i++)
+    {
+      data[3*i] = (unsigned char) 255;
+    }
+    std::cerr<<size[0]<<" "<<size[1]<<std::endl;
+    avtImage_p rv = input;
+    return rv;
+}
 
 
 // ****************************************************************************
@@ -240,7 +262,5 @@ avtGraviTPlot::CustomizeMapper(avtDataObjectInformation &doi)
 void
 avtGraviTPlot::SetAtts(const AttributeGroup *a)
 {
-    const GraviTAttributes *newAtts = (const GraviTAttributes *)a;
-
-    BASED ON ATTRIBUTE VALUES, CHANGE PARAMETERS IN MAPPER AND FILTER.
+    //const GraviTAttributes *newAtts = (const GraviTAttributes *)a;
 }
