@@ -55,8 +55,12 @@
 
 avtGraviTPlot::avtGraviTPlot()
 {
-    GraviTFilter = new avtGraviTFilter(ARGS FOR FILTER);
-    myMapper   = ....;
+    GraviTFilter = new avtGraviTFilter();
+    renderer = avtGraviTRenderer::New();
+
+    avtCustomRenderer_p cr;
+    CopyTo(cr, renderer);
+    myMapper = new avtUserDefinedMapper(cr);
 }
 
 

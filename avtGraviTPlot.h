@@ -46,6 +46,7 @@
 
 #include <avtLegend.h>
 #include <avtPlot.h>
+#include <avtUserDefinedMapper.h>
 
 #include <GraviTAttributes.h>
 
@@ -63,14 +64,7 @@ class     avtGraviTFilter;
 //
 // ****************************************************************************
 
-YOU SHOULD INHERIT FROM ONE OF THE FOLLOWING PLOT TYPES:
-avtImageDataPlot
-avtPointDataPlot
-avtLineDataPlot
-avtSurfaceDataPlot
-avtVolumeDataPlot
-
-class avtGraviTPlot : public avtPointDataPlot
+class avtGraviTPlot : public avtSurfaceDataPlot
 {
   public:
                                 avtGraviTPlot();
@@ -81,12 +75,12 @@ class avtGraviTPlot : public avtPointDataPlot
     static avtPlot             *Create();
 
     virtual void                SetAtts(const AttributeGroup*);
+    virtual bool                PlotIsImageBased(void){return true;};
+    virtual avtImage_p          ImageExecute(avtImage_p, const WindowAttributes &);
 
   protected:
     GraviTAttributes              atts;
-
-    YOU MUST HAVE SOME SORT OF MAPPER FOR THE PLOT.
-    avt...Mapper               *myMapper;
+    avtUserDefinedMapper           *mapper;
     avtGraviTFilter              *GraviTFilter;
 
     virtual avtMapper          *GetMapper(void);

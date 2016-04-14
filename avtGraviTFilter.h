@@ -61,17 +61,15 @@
 class avtGraviTFilter : public avtDataTreeIterator
 {
   public:
-                              avtGraviTFilter(YOUR INITIALIZATION ARGS);
+                              avtGraviTFilter();
     virtual                  ~avtGraviTFilter();
 
     virtual const char       *GetType(void)   { return "avtGraviTFilter"; };
     virtual const char       *GetDescription(void)
                                   { return "Performing GraviT"; };
 
-    ADD THE SET METHODS YOU NEED HERE
 
   protected:
-    ADD YOUR DATA MEMBERS HERE
 
     virtual avtDataRepresentation *ExecuteData(avtDataRepresentation *);
     virtual void              UpdateDataObjectInfo(void);

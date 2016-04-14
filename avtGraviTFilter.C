@@ -53,7 +53,7 @@
 //
 // ****************************************************************************
 
-avtGraviTFilter::avtGraviTFilter(YOUR INITIALIZERS)
+avtGraviTFilter::avtGraviTFilter()
 {
 }
 
@@ -71,7 +71,6 @@ avtGraviTFilter::~avtGraviTFilter()
 }
 
 
-YOUR ROUTINES TO SET THE PARAMETERS OF THE FILTERS
 
 
 // ****************************************************************************
@@ -96,11 +95,11 @@ avtGraviTFilter::ExecuteData(avtDataRepresentation *in_dr)
     //
     // Get the VTK data set, the domain number, and the label.
     //
-    vtkDataSet *in_ds = in_dr->GetDataVTK();
-    int domain = in_dr->GetDomain();
-    std::string label = in_dr->GetLabel();
-
-    THIS IS THE REAL VTK CODE
+   // vtkDataSet *in_ds = in_dr->GetDataVTK();
+    //int domain = in_dr->GetDomain();
+    //std::string label = in_dr->GetLabel();
+    return in_dr;
+    
 }
 
 
@@ -119,5 +118,4 @@ avtGraviTFilter::ExecuteData(avtDataRepresentation *in_dr)
 void
 avtGraviTFilter::UpdateDataObjectInfo(void)
 {
-    IF YOU SEE FUNNY THINGS WITH EXTENTS, ETC, YOU CAN CHANGE THAT HERE.
 }
