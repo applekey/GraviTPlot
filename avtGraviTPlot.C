@@ -54,6 +54,8 @@
 #include <avtDatabaseMetaData.h>
 #include <vtkCellData.h>
 #include <vtkDataSet.h>
+#include <vtkPointSet.h>
+#include <vtkImageData.h>
 struct GravitProgramConfig
 {
     // Camera Params
@@ -283,7 +285,6 @@ const WindowAttributes &window_atts)
     std::cerr<<zoom<<std::endl;
     std::cerr<<focus[0]<<" "<<focus[1]<<std::endl;
 
-    return input;
 
     // check out the data
     const avtDataAttributes &datts = input->GetInfo().GetAttributes();
@@ -293,17 +294,23 @@ const WindowAttributes &window_atts)
     //debug5<<"datts->GetTimeIndex(): "<<datts.GetTimeIndex()<<endl;
     //debug5<<"datts->GetCycle(): "<<datts.GetCycle()<<endl;
 
-    ref_ptr<avtDatabase> dbp = avtCallback::GetDatabase(db, datts.GetTimeIndex(), NULL);
-    avtDatabaseMetaData *md = dbp->GetMetaData(datts.GetTimeIndex(), 1);
-    std::string mesh = md->MeshForVar(datts.GetVariableName());
-    const avtMeshMetaData *mmd = md->GetMesh(mesh);
+    //ref_ptr<avtDatabase> dbp = avtCallback::GetDatabase(db, datts.GetTimeIndex(), NULL);
+    //avtDatabaseMetaData *md = dbp->GetMetaData(datts.GetTimeIndex(), 1);
+    //std::string mesh = md->MeshForVar(datts.GetVariableName());
+    //const avtMeshMetaData *mmd = md->GetMesh(mesh);
 
 
-    avtDataset *ds = (avtDataset *) *input;
+    avtDataset *ds = (avtDataset *) *hackyInput;
     vtkDataSet *ds2 = ds->dataTree->GetSingleLeaf();
 
     vtkCellData * cellData = ds2->GetCellData();
+    int isA = ds2->IsA("vtkImageData");
+    int isB = ds2->IsA("vtkPointSet");
+    std::cerr<<isA<<" "<<isB<<std::endl;
+    vtkPointSet * kk = (vtkPointSet *) ds2;
+    int numPoints = kk->GetNumberOfPoints();
 
+__builtin_trap();
     unsigned char * data =input->GetImage().GetRGBBuffer();
     for(int i = 0;i< 30000;i++)
     {
@@ -311,6 +318,7 @@ const WindowAttributes &window_atts)
     }
     std::cerr<<size[0]<<" "<<size[1]<<std::endl;
     avtImage_p rv = input;
+
     return rv;
 }
 

@@ -54,7 +54,7 @@ CMAKE_BINARY_DIR = /home/users/applekey/visit2.10.0/src
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
-	/home/users/applekey/visit2.10.0/visit/cmake/3.0.2/linux-x86_64_icc/bin/ccmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+	/opt/apps/cmake-3.3.2/bin/ccmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
