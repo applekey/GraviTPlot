@@ -12,7 +12,7 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/home/users/applekey/visit2.10.0/src/plots/GraviT/avtGraviTFilter.C" "/home/users/applekey/visit2.10.0/src/plots/GraviT/CMakeFiles/EGraviTPlot_ser.dir/avtGraviTFilter.C.o"
   "/home/users/applekey/visit2.10.0/src/plots/GraviT/avtGraviTPlot.C" "/home/users/applekey/visit2.10.0/src/plots/GraviT/CMakeFiles/EGraviTPlot_ser.dir/avtGraviTPlot.C.o"
   )
-set(CMAKE_CXX_COMPILER_ID "GNU")
+set(CMAKE_CXX_COMPILER_ID "Intel")
 
 # Preprocessor definitions for this target.
 set(CMAKE_TARGET_DEFINITIONS
@@ -41,6 +41,7 @@ set(CMAKE_TARGET_LINKED_INFO_FILES
 
 # The include file search paths:
 set(CMAKE_C_TARGET_INCLUDE_PATH
+  "/home/users/applekey/build/include"
   "plots/GraviT"
   "include"
   "common/Exceptions/Database"
@@ -84,12 +85,15 @@ set(CMAKE_C_TARGET_INCLUDE_PATH
   "winutil"
   "visit_vtk/full"
   "visit_vtk/lightweight"
-  "/home/users/applekey/visit2.10.0/visit/qt/4.8.3/linux-x86_64_gcc-4.8/include"
-  "/home/users/applekey/visit2.10.0/visit/qt/4.8.3/linux-x86_64_gcc-4.8/include/QtCore"
-  "/home/users/applekey/visit2.10.0/visit/qt/4.8.3/linux-x86_64_gcc-4.8/include/QtGui"
-  "/home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_gcc-4.8/include/vtk-6.1"
-  "/home/users/applekey/visit2.10.0/visit/python/2.7.6/linux-x86_64_gcc-4.8/include/python2.7"
+  "/home/users/applekey/visit2.10.0/visit/qt/4.8.3/linux-x86_64_icc/include"
+  "/home/users/applekey/visit2.10.0/visit/qt/4.8.3/linux-x86_64_icc/include/QtCore"
+  "/home/users/applekey/visit2.10.0/visit/qt/4.8.3/linux-x86_64_icc/include/QtGui"
+  "/home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1"
+  "/home/users/applekey/visit2.10.0/visit/python/2.7.6/linux-x86_64_icc/include/python2.7"
   "visitpy/visitpy"
+  "/usr/lib/openmpi/include"
+  "/usr/lib/openmpi/include/openmpi"
+  "/home/users/applekey/documents/gravit/src"
   )
 set(CMAKE_CXX_TARGET_INCLUDE_PATH ${CMAKE_C_TARGET_INCLUDE_PATH})
 set(CMAKE_Fortran_TARGET_INCLUDE_PATH ${CMAKE_C_TARGET_INCLUDE_PATH})

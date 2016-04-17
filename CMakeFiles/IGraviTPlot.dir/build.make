@@ -26,10 +26,10 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /home/users/applekey/visit2.10.0/visit/cmake/3.0.2/linux-x86_64_gcc-4.8/bin/cmake
+CMAKE_COMMAND = /home/users/applekey/visit2.10.0/visit/cmake/3.0.2/linux-x86_64_icc/bin/cmake
 
 # The command to remove a file.
-RM = /home/users/applekey/visit2.10.0/visit/cmake/3.0.2/linux-x86_64_gcc-4.8/bin/cmake -E remove -f
+RM = /home/users/applekey/visit2.10.0/visit/cmake/3.0.2/linux-x86_64_icc/bin/cmake -E remove -f
 
 # Escaping for special characters.
 EQUALS = =
@@ -52,15 +52,15 @@ include plots/GraviT/CMakeFiles/IGraviTPlot.dir/flags.make
 plots/GraviT/CMakeFiles/IGraviTPlot.dir/GraviTPluginInfo.C.o: plots/GraviT/GraviTPluginInfo.C
 	$(CMAKE_COMMAND) -E cmake_progress_report /home/users/applekey/visit2.10.0/src/CMakeFiles $(CMAKE_PROGRESS_1)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object plots/GraviT/CMakeFiles/IGraviTPlot.dir/GraviTPluginInfo.C.o"
-	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /usr/bin/g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/IGraviTPlot.dir/GraviTPluginInfo.C.o -c /home/users/applekey/visit2.10.0/src/plots/GraviT/GraviTPluginInfo.C
+	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /home/users/applekey/intel/compilers_and_libraries/linux/bin/intel64/icpc   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/IGraviTPlot.dir/GraviTPluginInfo.C.o -c /home/users/applekey/visit2.10.0/src/plots/GraviT/GraviTPluginInfo.C
 
 plots/GraviT/CMakeFiles/IGraviTPlot.dir/GraviTPluginInfo.C.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/IGraviTPlot.dir/GraviTPluginInfo.C.i"
-	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /usr/bin/g++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/users/applekey/visit2.10.0/src/plots/GraviT/GraviTPluginInfo.C > CMakeFiles/IGraviTPlot.dir/GraviTPluginInfo.C.i
+	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /home/users/applekey/intel/compilers_and_libraries/linux/bin/intel64/icpc  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/users/applekey/visit2.10.0/src/plots/GraviT/GraviTPluginInfo.C > CMakeFiles/IGraviTPlot.dir/GraviTPluginInfo.C.i
 
 plots/GraviT/CMakeFiles/IGraviTPlot.dir/GraviTPluginInfo.C.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/IGraviTPlot.dir/GraviTPluginInfo.C.s"
-	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /usr/bin/g++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/users/applekey/visit2.10.0/src/plots/GraviT/GraviTPluginInfo.C -o CMakeFiles/IGraviTPlot.dir/GraviTPluginInfo.C.s
+	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /home/users/applekey/intel/compilers_and_libraries/linux/bin/intel64/icpc  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/users/applekey/visit2.10.0/src/plots/GraviT/GraviTPluginInfo.C -o CMakeFiles/IGraviTPlot.dir/GraviTPluginInfo.C.s
 
 plots/GraviT/CMakeFiles/IGraviTPlot.dir/GraviTPluginInfo.C.o.requires:
 .PHONY : plots/GraviT/CMakeFiles/IGraviTPlot.dir/GraviTPluginInfo.C.o.requires

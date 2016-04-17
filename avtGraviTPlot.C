@@ -44,6 +44,36 @@
 
 #include <avtGraviTFilter.h>
 
+// GRAVIT includes
+
+#include <apps/render/RenderAPI.h>
+#include <View3DAttributes.h>
+#include <WindowAttributes.h>
+#include <avtDatabase.h>
+#include <avtCallback.h>
+#include <avtDatabaseMetaData.h>
+#include <vtkCellData.h>
+#include <vtkDataSet.h>
+struct GravitProgramConfig
+{
+    // Camera Params
+    double eyePoint[3];
+    double focalPoint[3];
+    double upVector[3];
+    double view_direction[3];
+    int filmSize[2];
+
+    //Tracing Parms
+    int maxDepth;
+    int samples;
+    unsigned char backgroundColor[3];
+};
+
+
+GravitProgramConfig hackyConfig;
+avtDataObject_p hackyInput;
+
+
 
 // ****************************************************************************
 //  Method: avtGraviTPlot constructor
@@ -58,6 +88,10 @@ class avtGraviTRenderer : public avtCustomRenderer
 };
 avtGraviTPlot::avtGraviTPlot()
 {
+    char * abc;
+    //Draw(abc);
+
+
     GraviTFilter = new avtGraviTFilter();
     ref_ptr<avtGraviTRenderer> renderer =  new avtGraviTRenderer;
 
@@ -175,6 +209,7 @@ avtGraviTPlot::ApplyRenderingTransformation(avtDataObject_p input)
 //input is the data to render
     //GraviTFilter->SetInput(input);
     //return GraviTFilter->GetOutput();
+    hackyInput = input;
     return input;
 }
 
@@ -231,9 +266,44 @@ avtGraviTPlot::ImageExecute(avtImage_p input,
 const WindowAttributes &window_atts)
 {
 //window attr has data about cam
+
     std::cerr<<"In Image Execute"<<std::endl;
+
+    // Get Visit view attributes
     int size[2];
     input->GetSize(size,size+1);
+
+    hackyConfig.filmSize[0] = size[0];
+    hackyConfig.filmSize[1] = size[1];
+
+    View3DAttributes viewAttr= window_atts.GetView3D();
+    double * focus = viewAttr.GetFocus();
+    double zoom = viewAttr.GetImageZoom();
+
+    std::cerr<<zoom<<std::endl;
+    std::cerr<<focus[0]<<" "<<focus[1]<<std::endl;
+
+    return input;
+
+    // check out the data
+    const avtDataAttributes &datts = input->GetInfo().GetAttributes();
+    std::string db = input->GetInfo().GetAttributes().GetFullDBName();
+
+    //debug5<<"datts->GetTime(): "<<datts.GetTime()<<endl;
+    //debug5<<"datts->GetTimeIndex(): "<<datts.GetTimeIndex()<<endl;
+    //debug5<<"datts->GetCycle(): "<<datts.GetCycle()<<endl;
+
+    ref_ptr<avtDatabase> dbp = avtCallback::GetDatabase(db, datts.GetTimeIndex(), NULL);
+    avtDatabaseMetaData *md = dbp->GetMetaData(datts.GetTimeIndex(), 1);
+    std::string mesh = md->MeshForVar(datts.GetVariableName());
+    const avtMeshMetaData *mmd = md->GetMesh(mesh);
+
+
+    avtDataset *ds = (avtDataset *) *input;
+    vtkDataSet *ds2 = ds->dataTree->GetSingleLeaf();
+
+    vtkCellData * cellData = ds2->GetCellData();
+
     unsigned char * data =input->GetImage().GetRGBBuffer();
     for(int i = 0;i< 30000;i++)
     {

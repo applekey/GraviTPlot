@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'QvisGraviTPlotWindow.h'
 **
-** Created: Thu Apr 14 11:46:25 2016
+** Created: Sat Apr 16 14:06:56 2016
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.3)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -31,19 +31,19 @@ static const uint qt_meta_data_QvisGraviTPlotWindow[] = {
        0,       // signalCount
 
  // slots: signature, parameters, type, tag, flags
-      22,   21,   21,   21, 0x0a,
-      30,   21,   21,   21, 0x0a,
-      44,   21,   21,   21, 0x0a,
-      58,   52,   21,   21, 0x08,
-      79,   21,   21,   21, 0x08,
+      21,   29,   29,   29, 0x0a,
+      30,   29,   29,   29, 0x0a,
+      44,   29,   29,   29, 0x0a,
+      52,   73,   29,   29, 0x08,
+      79,   29,   29,   29, 0x08,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_QvisGraviTPlotWindow[] = {
-    "QvisGraviTPlotWindow\0\0apply()\0"
-    "makeDefault()\0reset()\0color\0"
-    "ColorChanged(QColor)\0MaxReflectionsProcessText()\0"
+    "QvisGraviTPlotWindow\0apply()\0\0"
+    "makeDefault()\0reset()\0ColorChanged(QColor)\0"
+    "color\0MaxReflectionsProcessText()\0"
 };
 
 void QvisGraviTPlotWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)

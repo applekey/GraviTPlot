@@ -26,10 +26,10 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /home/users/applekey/visit2.10.0/visit/cmake/3.0.2/linux-x86_64_gcc-4.8/bin/cmake
+CMAKE_COMMAND = /home/users/applekey/visit2.10.0/visit/cmake/3.0.2/linux-x86_64_icc/bin/cmake
 
 # The command to remove a file.
-RM = /home/users/applekey/visit2.10.0/visit/cmake/3.0.2/linux-x86_64_gcc-4.8/bin/cmake -E remove -f
+RM = /home/users/applekey/visit2.10.0/visit/cmake/3.0.2/linux-x86_64_icc/bin/cmake -E remove -f
 
 # Escaping for special characters.
 EQUALS = =
@@ -49,24 +49,24 @@ include plots/GraviT/CMakeFiles/GGraviTPlot.dir/progress.make
 # Include the compile flags for this target's objects.
 include plots/GraviT/CMakeFiles/GGraviTPlot.dir/flags.make
 
-plots/GraviT/moc_QvisGraviTPlotWindow.cxx: /home/users/applekey/visit2.10.0/visit/qt/4.8.3/linux-x86_64_gcc-4.8/bin/moc
+plots/GraviT/moc_QvisGraviTPlotWindow.cxx: /home/users/applekey/visit2.10.0/visit/qt/4.8.3/linux-x86_64_icc/bin/moc
 plots/GraviT/moc_QvisGraviTPlotWindow.cxx: plots/GraviT/QvisGraviTPlotWindow.h
 	$(CMAKE_COMMAND) -E cmake_progress_report /home/users/applekey/visit2.10.0/src/CMakeFiles $(CMAKE_PROGRESS_1)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold "Qt Wrapped File"
-	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /home/users/applekey/visit2.10.0/visit/qt/4.8.3/linux-x86_64_gcc-4.8/bin/moc -o /home/users/applekey/visit2.10.0/src/plots/GraviT/moc_QvisGraviTPlotWindow.cxx /home/users/applekey/visit2.10.0/src/plots/GraviT/QvisGraviTPlotWindow.h
+	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /home/users/applekey/visit2.10.0/visit/qt/4.8.3/linux-x86_64_icc/bin/moc -o /home/users/applekey/visit2.10.0/src/plots/GraviT/moc_QvisGraviTPlotWindow.cxx /home/users/applekey/visit2.10.0/src/plots/GraviT/QvisGraviTPlotWindow.h
 
 plots/GraviT/CMakeFiles/GGraviTPlot.dir/GraviTGUIPluginInfo.C.o: plots/GraviT/GraviTGUIPluginInfo.C
 	$(CMAKE_COMMAND) -E cmake_progress_report /home/users/applekey/visit2.10.0/src/CMakeFiles $(CMAKE_PROGRESS_2)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object plots/GraviT/CMakeFiles/GGraviTPlot.dir/GraviTGUIPluginInfo.C.o"
-	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /usr/bin/g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/GGraviTPlot.dir/GraviTGUIPluginInfo.C.o -c /home/users/applekey/visit2.10.0/src/plots/GraviT/GraviTGUIPluginInfo.C
+	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /home/users/applekey/intel/compilers_and_libraries/linux/bin/intel64/icpc   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/GGraviTPlot.dir/GraviTGUIPluginInfo.C.o -c /home/users/applekey/visit2.10.0/src/plots/GraviT/GraviTGUIPluginInfo.C
 
 plots/GraviT/CMakeFiles/GGraviTPlot.dir/GraviTGUIPluginInfo.C.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/GGraviTPlot.dir/GraviTGUIPluginInfo.C.i"
-	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /usr/bin/g++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/users/applekey/visit2.10.0/src/plots/GraviT/GraviTGUIPluginInfo.C > CMakeFiles/GGraviTPlot.dir/GraviTGUIPluginInfo.C.i
+	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /home/users/applekey/intel/compilers_and_libraries/linux/bin/intel64/icpc  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/users/applekey/visit2.10.0/src/plots/GraviT/GraviTGUIPluginInfo.C > CMakeFiles/GGraviTPlot.dir/GraviTGUIPluginInfo.C.i
 
 plots/GraviT/CMakeFiles/GGraviTPlot.dir/GraviTGUIPluginInfo.C.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/GGraviTPlot.dir/GraviTGUIPluginInfo.C.s"
-	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /usr/bin/g++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/users/applekey/visit2.10.0/src/plots/GraviT/GraviTGUIPluginInfo.C -o CMakeFiles/GGraviTPlot.dir/GraviTGUIPluginInfo.C.s
+	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /home/users/applekey/intel/compilers_and_libraries/linux/bin/intel64/icpc  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/users/applekey/visit2.10.0/src/plots/GraviT/GraviTGUIPluginInfo.C -o CMakeFiles/GGraviTPlot.dir/GraviTGUIPluginInfo.C.s
 
 plots/GraviT/CMakeFiles/GGraviTPlot.dir/GraviTGUIPluginInfo.C.o.requires:
 .PHONY : plots/GraviT/CMakeFiles/GGraviTPlot.dir/GraviTGUIPluginInfo.C.o.requires
@@ -80,15 +80,15 @@ plots/GraviT/CMakeFiles/GGraviTPlot.dir/GraviTGUIPluginInfo.C.o.provides.build: 
 plots/GraviT/CMakeFiles/GGraviTPlot.dir/QvisGraviTPlotWindow.C.o: plots/GraviT/QvisGraviTPlotWindow.C
 	$(CMAKE_COMMAND) -E cmake_progress_report /home/users/applekey/visit2.10.0/src/CMakeFiles $(CMAKE_PROGRESS_3)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object plots/GraviT/CMakeFiles/GGraviTPlot.dir/QvisGraviTPlotWindow.C.o"
-	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /usr/bin/g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/GGraviTPlot.dir/QvisGraviTPlotWindow.C.o -c /home/users/applekey/visit2.10.0/src/plots/GraviT/QvisGraviTPlotWindow.C
+	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /home/users/applekey/intel/compilers_and_libraries/linux/bin/intel64/icpc   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/GGraviTPlot.dir/QvisGraviTPlotWindow.C.o -c /home/users/applekey/visit2.10.0/src/plots/GraviT/QvisGraviTPlotWindow.C
 
 plots/GraviT/CMakeFiles/GGraviTPlot.dir/QvisGraviTPlotWindow.C.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/GGraviTPlot.dir/QvisGraviTPlotWindow.C.i"
-	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /usr/bin/g++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/users/applekey/visit2.10.0/src/plots/GraviT/QvisGraviTPlotWindow.C > CMakeFiles/GGraviTPlot.dir/QvisGraviTPlotWindow.C.i
+	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /home/users/applekey/intel/compilers_and_libraries/linux/bin/intel64/icpc  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/users/applekey/visit2.10.0/src/plots/GraviT/QvisGraviTPlotWindow.C > CMakeFiles/GGraviTPlot.dir/QvisGraviTPlotWindow.C.i
 
 plots/GraviT/CMakeFiles/GGraviTPlot.dir/QvisGraviTPlotWindow.C.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/GGraviTPlot.dir/QvisGraviTPlotWindow.C.s"
-	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /usr/bin/g++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/users/applekey/visit2.10.0/src/plots/GraviT/QvisGraviTPlotWindow.C -o CMakeFiles/GGraviTPlot.dir/QvisGraviTPlotWindow.C.s
+	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /home/users/applekey/intel/compilers_and_libraries/linux/bin/intel64/icpc  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/users/applekey/visit2.10.0/src/plots/GraviT/QvisGraviTPlotWindow.C -o CMakeFiles/GGraviTPlot.dir/QvisGraviTPlotWindow.C.s
 
 plots/GraviT/CMakeFiles/GGraviTPlot.dir/QvisGraviTPlotWindow.C.o.requires:
 .PHONY : plots/GraviT/CMakeFiles/GGraviTPlot.dir/QvisGraviTPlotWindow.C.o.requires
@@ -102,15 +102,15 @@ plots/GraviT/CMakeFiles/GGraviTPlot.dir/QvisGraviTPlotWindow.C.o.provides.build:
 plots/GraviT/CMakeFiles/GGraviTPlot.dir/GraviTPluginInfo.C.o: plots/GraviT/GraviTPluginInfo.C
 	$(CMAKE_COMMAND) -E cmake_progress_report /home/users/applekey/visit2.10.0/src/CMakeFiles $(CMAKE_PROGRESS_4)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object plots/GraviT/CMakeFiles/GGraviTPlot.dir/GraviTPluginInfo.C.o"
-	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /usr/bin/g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/GGraviTPlot.dir/GraviTPluginInfo.C.o -c /home/users/applekey/visit2.10.0/src/plots/GraviT/GraviTPluginInfo.C
+	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /home/users/applekey/intel/compilers_and_libraries/linux/bin/intel64/icpc   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/GGraviTPlot.dir/GraviTPluginInfo.C.o -c /home/users/applekey/visit2.10.0/src/plots/GraviT/GraviTPluginInfo.C
 
 plots/GraviT/CMakeFiles/GGraviTPlot.dir/GraviTPluginInfo.C.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/GGraviTPlot.dir/GraviTPluginInfo.C.i"
-	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /usr/bin/g++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/users/applekey/visit2.10.0/src/plots/GraviT/GraviTPluginInfo.C > CMakeFiles/GGraviTPlot.dir/GraviTPluginInfo.C.i
+	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /home/users/applekey/intel/compilers_and_libraries/linux/bin/intel64/icpc  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/users/applekey/visit2.10.0/src/plots/GraviT/GraviTPluginInfo.C > CMakeFiles/GGraviTPlot.dir/GraviTPluginInfo.C.i
 
 plots/GraviT/CMakeFiles/GGraviTPlot.dir/GraviTPluginInfo.C.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/GGraviTPlot.dir/GraviTPluginInfo.C.s"
-	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /usr/bin/g++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/users/applekey/visit2.10.0/src/plots/GraviT/GraviTPluginInfo.C -o CMakeFiles/GGraviTPlot.dir/GraviTPluginInfo.C.s
+	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /home/users/applekey/intel/compilers_and_libraries/linux/bin/intel64/icpc  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/users/applekey/visit2.10.0/src/plots/GraviT/GraviTPluginInfo.C -o CMakeFiles/GGraviTPlot.dir/GraviTPluginInfo.C.s
 
 plots/GraviT/CMakeFiles/GGraviTPlot.dir/GraviTPluginInfo.C.o.requires:
 .PHONY : plots/GraviT/CMakeFiles/GGraviTPlot.dir/GraviTPluginInfo.C.o.requires
@@ -124,15 +124,15 @@ plots/GraviT/CMakeFiles/GGraviTPlot.dir/GraviTPluginInfo.C.o.provides.build: plo
 plots/GraviT/CMakeFiles/GGraviTPlot.dir/GraviTCommonPluginInfo.C.o: plots/GraviT/GraviTCommonPluginInfo.C
 	$(CMAKE_COMMAND) -E cmake_progress_report /home/users/applekey/visit2.10.0/src/CMakeFiles $(CMAKE_PROGRESS_5)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object plots/GraviT/CMakeFiles/GGraviTPlot.dir/GraviTCommonPluginInfo.C.o"
-	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /usr/bin/g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/GGraviTPlot.dir/GraviTCommonPluginInfo.C.o -c /home/users/applekey/visit2.10.0/src/plots/GraviT/GraviTCommonPluginInfo.C
+	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /home/users/applekey/intel/compilers_and_libraries/linux/bin/intel64/icpc   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/GGraviTPlot.dir/GraviTCommonPluginInfo.C.o -c /home/users/applekey/visit2.10.0/src/plots/GraviT/GraviTCommonPluginInfo.C
 
 plots/GraviT/CMakeFiles/GGraviTPlot.dir/GraviTCommonPluginInfo.C.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/GGraviTPlot.dir/GraviTCommonPluginInfo.C.i"
-	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /usr/bin/g++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/users/applekey/visit2.10.0/src/plots/GraviT/GraviTCommonPluginInfo.C > CMakeFiles/GGraviTPlot.dir/GraviTCommonPluginInfo.C.i
+	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /home/users/applekey/intel/compilers_and_libraries/linux/bin/intel64/icpc  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/users/applekey/visit2.10.0/src/plots/GraviT/GraviTCommonPluginInfo.C > CMakeFiles/GGraviTPlot.dir/GraviTCommonPluginInfo.C.i
 
 plots/GraviT/CMakeFiles/GGraviTPlot.dir/GraviTCommonPluginInfo.C.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/GGraviTPlot.dir/GraviTCommonPluginInfo.C.s"
-	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /usr/bin/g++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/users/applekey/visit2.10.0/src/plots/GraviT/GraviTCommonPluginInfo.C -o CMakeFiles/GGraviTPlot.dir/GraviTCommonPluginInfo.C.s
+	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /home/users/applekey/intel/compilers_and_libraries/linux/bin/intel64/icpc  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/users/applekey/visit2.10.0/src/plots/GraviT/GraviTCommonPluginInfo.C -o CMakeFiles/GGraviTPlot.dir/GraviTCommonPluginInfo.C.s
 
 plots/GraviT/CMakeFiles/GGraviTPlot.dir/GraviTCommonPluginInfo.C.o.requires:
 .PHONY : plots/GraviT/CMakeFiles/GGraviTPlot.dir/GraviTCommonPluginInfo.C.o.requires
@@ -146,15 +146,15 @@ plots/GraviT/CMakeFiles/GGraviTPlot.dir/GraviTCommonPluginInfo.C.o.provides.buil
 plots/GraviT/CMakeFiles/GGraviTPlot.dir/GraviTAttributes.C.o: plots/GraviT/GraviTAttributes.C
 	$(CMAKE_COMMAND) -E cmake_progress_report /home/users/applekey/visit2.10.0/src/CMakeFiles $(CMAKE_PROGRESS_6)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object plots/GraviT/CMakeFiles/GGraviTPlot.dir/GraviTAttributes.C.o"
-	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /usr/bin/g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/GGraviTPlot.dir/GraviTAttributes.C.o -c /home/users/applekey/visit2.10.0/src/plots/GraviT/GraviTAttributes.C
+	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /home/users/applekey/intel/compilers_and_libraries/linux/bin/intel64/icpc   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/GGraviTPlot.dir/GraviTAttributes.C.o -c /home/users/applekey/visit2.10.0/src/plots/GraviT/GraviTAttributes.C
 
 plots/GraviT/CMakeFiles/GGraviTPlot.dir/GraviTAttributes.C.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/GGraviTPlot.dir/GraviTAttributes.C.i"
-	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /usr/bin/g++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/users/applekey/visit2.10.0/src/plots/GraviT/GraviTAttributes.C > CMakeFiles/GGraviTPlot.dir/GraviTAttributes.C.i
+	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /home/users/applekey/intel/compilers_and_libraries/linux/bin/intel64/icpc  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/users/applekey/visit2.10.0/src/plots/GraviT/GraviTAttributes.C > CMakeFiles/GGraviTPlot.dir/GraviTAttributes.C.i
 
 plots/GraviT/CMakeFiles/GGraviTPlot.dir/GraviTAttributes.C.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/GGraviTPlot.dir/GraviTAttributes.C.s"
-	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /usr/bin/g++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/users/applekey/visit2.10.0/src/plots/GraviT/GraviTAttributes.C -o CMakeFiles/GGraviTPlot.dir/GraviTAttributes.C.s
+	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /home/users/applekey/intel/compilers_and_libraries/linux/bin/intel64/icpc  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/users/applekey/visit2.10.0/src/plots/GraviT/GraviTAttributes.C -o CMakeFiles/GGraviTPlot.dir/GraviTAttributes.C.s
 
 plots/GraviT/CMakeFiles/GGraviTPlot.dir/GraviTAttributes.C.o.requires:
 .PHONY : plots/GraviT/CMakeFiles/GGraviTPlot.dir/GraviTAttributes.C.o.requires
@@ -168,15 +168,15 @@ plots/GraviT/CMakeFiles/GGraviTPlot.dir/GraviTAttributes.C.o.provides.build: plo
 plots/GraviT/CMakeFiles/GGraviTPlot.dir/moc_QvisGraviTPlotWindow.cxx.o: plots/GraviT/moc_QvisGraviTPlotWindow.cxx
 	$(CMAKE_COMMAND) -E cmake_progress_report /home/users/applekey/visit2.10.0/src/CMakeFiles $(CMAKE_PROGRESS_7)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object plots/GraviT/CMakeFiles/GGraviTPlot.dir/moc_QvisGraviTPlotWindow.cxx.o"
-	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /usr/bin/g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/GGraviTPlot.dir/moc_QvisGraviTPlotWindow.cxx.o -c /home/users/applekey/visit2.10.0/src/plots/GraviT/moc_QvisGraviTPlotWindow.cxx
+	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /home/users/applekey/intel/compilers_and_libraries/linux/bin/intel64/icpc   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/GGraviTPlot.dir/moc_QvisGraviTPlotWindow.cxx.o -c /home/users/applekey/visit2.10.0/src/plots/GraviT/moc_QvisGraviTPlotWindow.cxx
 
 plots/GraviT/CMakeFiles/GGraviTPlot.dir/moc_QvisGraviTPlotWindow.cxx.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/GGraviTPlot.dir/moc_QvisGraviTPlotWindow.cxx.i"
-	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /usr/bin/g++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/users/applekey/visit2.10.0/src/plots/GraviT/moc_QvisGraviTPlotWindow.cxx > CMakeFiles/GGraviTPlot.dir/moc_QvisGraviTPlotWindow.cxx.i
+	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /home/users/applekey/intel/compilers_and_libraries/linux/bin/intel64/icpc  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/users/applekey/visit2.10.0/src/plots/GraviT/moc_QvisGraviTPlotWindow.cxx > CMakeFiles/GGraviTPlot.dir/moc_QvisGraviTPlotWindow.cxx.i
 
 plots/GraviT/CMakeFiles/GGraviTPlot.dir/moc_QvisGraviTPlotWindow.cxx.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/GGraviTPlot.dir/moc_QvisGraviTPlotWindow.cxx.s"
-	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /usr/bin/g++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/users/applekey/visit2.10.0/src/plots/GraviT/moc_QvisGraviTPlotWindow.cxx -o CMakeFiles/GGraviTPlot.dir/moc_QvisGraviTPlotWindow.cxx.s
+	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && /home/users/applekey/intel/compilers_and_libraries/linux/bin/intel64/icpc  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/users/applekey/visit2.10.0/src/plots/GraviT/moc_QvisGraviTPlotWindow.cxx -o CMakeFiles/GGraviTPlot.dir/moc_QvisGraviTPlotWindow.cxx.s
 
 plots/GraviT/CMakeFiles/GGraviTPlot.dir/moc_QvisGraviTPlotWindow.cxx.o.requires:
 .PHONY : plots/GraviT/CMakeFiles/GGraviTPlot.dir/moc_QvisGraviTPlotWindow.cxx.o.requires
@@ -207,6 +207,15 @@ plugins/plots/libGGraviTPlot.so: plots/GraviT/CMakeFiles/GGraviTPlot.dir/GraviTA
 plugins/plots/libGGraviTPlot.so: plots/GraviT/CMakeFiles/GGraviTPlot.dir/moc_QvisGraviTPlotWindow.cxx.o
 plugins/plots/libGGraviTPlot.so: lib/libvisitcommon.so
 plugins/plots/libGGraviTPlot.so: lib/libgui.so
+plugins/plots/libGGraviTPlot.so: /home/users/applekey/documents/gravit/install/lib/libgvtCore.a
+plugins/plots/libGGraviTPlot.so: /home/users/applekey/documents/gravit/install/lib/libgvtRender.a
+plugins/plots/libGGraviTPlot.so: /usr/lib/x86_64-linux-gnu/libboost_system.so
+plugins/plots/libGGraviTPlot.so: /usr/lib/libtbb.so
+plugins/plots/libGGraviTPlot.so: /usr/lib/libtbbmalloc.so
+plugins/plots/libGGraviTPlot.so: /usr/lib/libmpi_cxx.so
+plugins/plots/libGGraviTPlot.so: /usr/lib/libmpi.so
+plugins/plots/libGGraviTPlot.so: /usr/lib/x86_64-linux-gnu/libdl.so
+plugins/plots/libGGraviTPlot.so: /usr/lib/x86_64-linux-gnu/libhwloc.so
 plugins/plots/libGGraviTPlot.so: lib/libviewerproxy.so
 plugins/plots/libGGraviTPlot.so: lib/libviewerrpc.so
 plugins/plots/libGGraviTPlot.so: lib/libmdserverproxy.so
@@ -214,12 +223,12 @@ plugins/plots/libGGraviTPlot.so: lib/libmdserverrpc.so
 plugins/plots/libGGraviTPlot.so: lib/libwinutil.so
 plugins/plots/libGGraviTPlot.so: lib/libavtdbatts.so
 plugins/plots/libGGraviTPlot.so: lib/libvisitcommon.so
-plugins/plots/libGGraviTPlot.so: /home/users/applekey/visit2.10.0/visit/qt/4.8.3/linux-x86_64_gcc-4.8/lib/libQtUiTools.a
-plugins/plots/libGGraviTPlot.so: /home/users/applekey/visit2.10.0/visit/qt/4.8.3/linux-x86_64_gcc-4.8/lib/libQtOpenGL.so
-plugins/plots/libGGraviTPlot.so: /home/users/applekey/visit2.10.0/visit/qt/4.8.3/linux-x86_64_gcc-4.8/lib/libQtGui.so
-plugins/plots/libGGraviTPlot.so: /home/users/applekey/visit2.10.0/visit/qt/4.8.3/linux-x86_64_gcc-4.8/lib/libQtNetwork.so
-plugins/plots/libGGraviTPlot.so: /home/users/applekey/visit2.10.0/visit/qt/4.8.3/linux-x86_64_gcc-4.8/lib/libQtXml.so
-plugins/plots/libGGraviTPlot.so: /home/users/applekey/visit2.10.0/visit/qt/4.8.3/linux-x86_64_gcc-4.8/lib/libQtCore.so
+plugins/plots/libGGraviTPlot.so: /home/users/applekey/visit2.10.0/visit/qt/4.8.3/linux-x86_64_icc/lib/libQtUiTools.a
+plugins/plots/libGGraviTPlot.so: /home/users/applekey/visit2.10.0/visit/qt/4.8.3/linux-x86_64_icc/lib/libQtOpenGL.so
+plugins/plots/libGGraviTPlot.so: /home/users/applekey/visit2.10.0/visit/qt/4.8.3/linux-x86_64_icc/lib/libQtGui.so
+plugins/plots/libGGraviTPlot.so: /home/users/applekey/visit2.10.0/visit/qt/4.8.3/linux-x86_64_icc/lib/libQtNetwork.so
+plugins/plots/libGGraviTPlot.so: /home/users/applekey/visit2.10.0/visit/qt/4.8.3/linux-x86_64_icc/lib/libQtXml.so
+plugins/plots/libGGraviTPlot.so: /home/users/applekey/visit2.10.0/visit/qt/4.8.3/linux-x86_64_icc/lib/libQtCore.so
 plugins/plots/libGGraviTPlot.so: plots/GraviT/CMakeFiles/GGraviTPlot.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking CXX shared library ../../plugins/plots/libGGraviTPlot.so"
 	cd /home/users/applekey/visit2.10.0/src/plots/GraviT && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/GGraviTPlot.dir/link.txt --verbose=$(VERBOSE)
