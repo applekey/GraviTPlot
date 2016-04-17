@@ -310,15 +310,28 @@ plots/GraviT/CMakeFiles/VGraviTPlot.dir/avtGraviTPlot.C.o
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkAbstractMapper.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkAbstractMapper3D.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkAlgorithm.h
+ /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkArrayIterator.h
+ /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkArrayIteratorTemplate.h
+ /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkArrayIteratorTemplate.txx
+ /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkArrayIteratorTemplateImplicit.txx
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkAtomicInt.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkAutoInit.h
+ /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkCell.h
+ /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkCellArray.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkCellData.h
+ /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkCellLinks.h
+ /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkCellType.h
+ /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkCellTypes.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkCommonCoreModule.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkCommonDataModelModule.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkCommonExecutionModelModule.h
+ /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkCommonInformationKeyManager.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkConfigure.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkCriticalSection.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkDataArray.h
+ /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkDataArrayTemplate.h
+ /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkDataArrayTemplate.txx
+ /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkDataArrayTemplateImplicit.txx
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkDataObject.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkDataSet.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkDataSetAttributes.h
@@ -327,26 +340,48 @@ plots/GraviT/CMakeFiles/VGraviTPlot.dir/avtGraviTPlot.C.o
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkFieldData.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkIOStream.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkIOStreamFwd.h
+ /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkIdList.h
+ /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkIdTypeArray.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkImageData.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkIndent.h
+ /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkInformation.h
+ /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkInformationDoubleVectorKey.h
+ /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkInformationInformationVectorKey.h
+ /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkInformationKey.h
+ /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkInformationVector.h
+ /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkIntArray.h
+ /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkMappedDataArray.h
+ /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkMappedDataArray.txx
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkMapper.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkOStrStreamWrapper.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkOStreamWrapper.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkObject.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkObjectBase.h
+ /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkObjectFactory.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkPointSet.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkPoints.h
+ /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkPolyData.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkRenderingCoreModule.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkScalarsToColors.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkSetGet.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkSimpleCriticalSection.h
+ /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkSmartPointer.h
+ /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkSmartPointerBase.h
+ /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkSortDataArray.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkStdString.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkStructuredData.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkSystemIncludes.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkTimeStamp.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkType.h
+ /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkTypeTemplate.h
+ /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkTypeTraits.h
+ /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkTypedDataArray.h
+ /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkTypedDataArray.txx
+ /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkTypedDataArrayIterator.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkUnicodeString.h
+ /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkUnsignedCharArray.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkVariant.h
+ /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkVariantCast.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkVariantInlineOperators.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkVersionMacros.h
  /home/users/applekey/visit2.10.0/visit/vtk/6.1.0/linux-x86_64_icc/include/vtk-6.1/vtkWeakPointerBase.h

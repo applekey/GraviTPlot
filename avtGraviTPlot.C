@@ -56,6 +56,9 @@
 #include <vtkDataSet.h>
 #include <vtkPointSet.h>
 #include <vtkImageData.h>
+#include <vtkPolyData.h>
+#include <vtkCellArray.h>
+#include <vtkSmartPointer.h>
 struct GravitProgramConfig
 {
     // Camera Params
@@ -304,14 +307,44 @@ const WindowAttributes &window_atts)
     vtkDataSet *ds2 = ds->dataTree->GetSingleLeaf();
 
     vtkCellData * cellData = ds2->GetCellData();
-    int isA = ds2->IsA("vtkImageData");
+    int isA = ds2->IsA("vtkPolyData");
     int isB = ds2->IsA("vtkPointSet");
     std::cerr<<isA<<" "<<isB<<std::endl;
-    vtkPointSet * kk = (vtkPointSet *) ds2;
-    int numPoints = kk->GetNumberOfPoints();
+    vtkPolyData * contourPD = (vtkPolyData *) ds2;
+    int numPoints = contourPD->GetNumberOfPoints();
+    vtkCellArray * contourFaces = contourPD->GetPolys();
+    // get the verts
+     int contourSize = contourPD->GetNumberOfPoints();  
+    for(vtkIdType i = 0; i < contourSize; i++)  
+    {  
+            double vtkPts[3] = {0.0,0.0,0.0};  
+            contourPD->GetPoints()->GetPoint(i,vtkPts);  
+            std::cout<<vtkPts[0]<<" "<<vtkPts[1]<<" "<<vtkPts[2]<<std::endl;
+            //glm::vec3 currentPoint = glm::vec3(vtkPts[0], vtkPts[1], vtkPts[2]);  
+            //mesh->addVertex(currentPoint);  
+    }  
+
+
+
+
+    // link the verts
+
+    vtkSmartPointer<vtkIdList> idList = vtkSmartPointer<vtkIdList>::New();
+    contourFaces->InitTraversal();  
+    for(int i = 0; i < contourFaces->GetNumberOfCells(); i++)  
+    {  
+            contourFaces->GetNextCell(idList);  
+            int v1 = idList->GetId(0)+1;  
+            int v2 = idList->GetId(1)+1;  
+            int v3 = idList->GetId(2)+1;  
+           
+            //std::cerr<<v1<<" "<<v2<<" "<<v3<<" "<<std::endl;
+            //mesh->addFace(v1,v2,v3);  
+    } 
+
 
 __builtin_trap();
-    unsigned char * data =input->GetImage().GetRGBBuffer();
+unsigned char * data =input->GetImage().GetRGBBuffer();
     for(int i = 0;i< 30000;i++)
     {
       data[3*i] = (unsigned char) 255;
