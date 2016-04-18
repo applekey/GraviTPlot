@@ -273,6 +273,9 @@ const WindowAttributes &window_atts)
 //window attr has data about cam
 
     std::cerr<<"In Image Execute"<<std::endl;
+    char * abc;
+    VisitAdapter adapter;
+    
 
     // Get Visit view attributes
     int size[2];
@@ -283,11 +286,14 @@ const WindowAttributes &window_atts)
 
     View3DAttributes viewAttr= window_atts.GetView3D();
     double * focus = viewAttr.GetFocus();
+
+    double * viewNormal = viewAttr.GetViewNormal();
+    double upVector[3] = {0,1.0,0};
+    double * focalPoint = viewAttr.GetViewNormal();
     double zoom = viewAttr.GetImageZoom();
+    double fov = viewAttr.GetEyeAngle();
 
-    std::cerr<<zoom<<std::endl;
-    std::cerr<<focus[0]<<" "<<focus[1]<<std::endl;
-
+    adapter.SetCamera(focalPoint, upVector, focalPoint, zoom, fov);
 
     // check out the data
     const avtDataAttributes &datts = input->GetInfo().GetAttributes();
@@ -307,43 +313,61 @@ const WindowAttributes &window_atts)
     vtkDataSet *ds2 = ds->dataTree->GetSingleLeaf();
 
     vtkCellData * cellData = ds2->GetCellData();
-    int isA = ds2->IsA("vtkPolyData");
-    int isB = ds2->IsA("vtkPointSet");
-    std::cerr<<isA<<" "<<isB<<std::endl;
+    // int isA = ds2->IsA("vtkPolyData");
+    // int isB = ds2->IsA("vtkPointSet");
+    // std::cerr<<isA<<" "<<isB<<std::endl;
     vtkPolyData * contourPD = (vtkPolyData *) ds2;
     int numPoints = contourPD->GetNumberOfPoints();
     vtkCellArray * contourFaces = contourPD->GetPolys();
     // get the verts
-     int contourSize = contourPD->GetNumberOfPoints();  
+    int contourSize = contourPD->GetNumberOfPoints();  
+    
+    double * points = new double[contourSize *3];
+
+
     for(vtkIdType i = 0; i < contourSize; i++)  
     {  
             double vtkPts[3] = {0.0,0.0,0.0};  
-            contourPD->GetPoints()->GetPoint(i,vtkPts);  
-            std::cout<<vtkPts[0]<<" "<<vtkPts[1]<<" "<<vtkPts[2]<<std::endl;
+            contourPD->GetPoints()->GetPoint(i,vtkPts); 
+
+            points[i*3] = vtkPts[0];
+            points[i*3 +1] = vtkPts[1];
+            points[i*3 + 2] = vtkPts[2];
+
+            //std::cout<<vtkPts[0]<<" "<<vtkPts[1]<<" "<<vtkPts[2]<<std::endl;
             //glm::vec3 currentPoint = glm::vec3(vtkPts[0], vtkPts[1], vtkPts[2]);  
             //mesh->addVertex(currentPoint);  
     }  
 
-
-
-
-    // link the verts
+    // link the edge
 
     vtkSmartPointer<vtkIdList> idList = vtkSmartPointer<vtkIdList>::New();
     contourFaces->InitTraversal();  
-    for(int i = 0; i < contourFaces->GetNumberOfCells(); i++)  
+
+    int totalEdges = contourFaces->GetNumberOfCells();
+    int * edges = new int[totalEdges * 3];
+
+    for(int i = 0; i < totalEdges; i++)  
     {  
             contourFaces->GetNextCell(idList);  
             int v1 = idList->GetId(0)+1;  
             int v2 = idList->GetId(1)+1;  
             int v3 = idList->GetId(2)+1;  
+
+            edges[i*3] = v1;
+            edges[i*3 + 1] = v2;
+            edges[i*3 + 2] = v3;
            
             //std::cerr<<v1<<" "<<v2<<" "<<v3<<" "<<std::endl;
             //mesh->addFace(v1,v2,v3);  
     } 
 
+    double materialProp[3] ={0.5,0.5,0.5}; 
+    adapter.DrawTri(points, contourSize * 3, edges, totalEdges * 3,0, materialProp);
 
-__builtin_trap();
+    delete [] edges;
+    delete [] points;
+
 unsigned char * data =input->GetImage().GetRGBBuffer();
     for(int i = 0;i< 30000;i++)
     {
