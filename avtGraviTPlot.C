@@ -285,19 +285,32 @@ const WindowAttributes &window_atts)
     hackyConfig.filmSize[1] = size[1];
 
     View3DAttributes viewAttr= window_atts.GetView3D();
-    double * focus = viewAttr.GetFocus();
 
-    double * viewNormal = viewAttr.GetViewNormal();
+
+
+    // double * viewNormal = viewAttr.GetViewNormal();
+    // double * focalPoint = viewAttr.GetViewNormal();
+    // double zoom = viewAttr.GetImageZoom();
+    // double fov = viewAttr.GetEyeAngle(); // not owkring
+
+
+
+    //-0.01680081151425838 0.1101529560983181 -0.001482265070080757 focal point
+    //30 angle
+    //0 0 1 view normal
+
+    double fov = 30;
     double upVector[3] = {0,1.0,0};
-    double * focalPoint = viewAttr.GetViewNormal();
-    double zoom = viewAttr.GetImageZoom();
-    double fov = viewAttr.GetEyeAngle();
+    double focalPoint[3] = {0,0,0};
+    double viewNormal[3] = {0, 0, 1};
+    double zoom = 1.0;
 
-    adapter.SetCamera(focalPoint, upVector, focalPoint, zoom, fov);
+
+    adapter.SetCamera(focalPoint, upVector, viewNormal, zoom, fov);
 
     // check out the data
-    const avtDataAttributes &datts = input->GetInfo().GetAttributes();
-    std::string db = input->GetInfo().GetAttributes().GetFullDBName();
+    // const avtDataAttributes &datts = input->GetInfo().GetAttributes();
+    // std::string db = input->GetInfo().GetAttributes().GetFullDBName();
 
     //debug5<<"datts->GetTime(): "<<datts.GetTime()<<endl;
     //debug5<<"datts->GetTimeIndex(): "<<datts.GetTimeIndex()<<endl;
@@ -363,12 +376,12 @@ const WindowAttributes &window_atts)
     } 
 
     double materialProp[3] ={0.5,0.5,0.5}; 
-    adapter.DrawTri(points, contourSize * 3, edges, totalEdges * 3,0, materialProp);
+    adapter.DrawTri(points, contourSize, edges, totalEdges,0, materialProp);
 
     delete [] edges;
     delete [] points;
 
-unsigned char * data =input->GetImage().GetRGBBuffer();
+    unsigned char * data =input->GetImage().GetRGBBuffer();
     for(int i = 0;i< 30000;i++)
     {
       data[3*i] = (unsigned char) 255;
