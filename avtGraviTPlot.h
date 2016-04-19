@@ -49,6 +49,7 @@
 #include <avtUserDefinedMapper.h>
 
 #include <GraviTAttributes.h>
+#include <apps/render/RenderAPI.h>
 
 class     avtGraviTFilter;
 
@@ -90,6 +91,7 @@ class avtGraviTPlot : public avtSurfaceDataPlot
     virtual void                CustomizeMapper(avtDataObjectInformation &);
 
     virtual avtLegend_p         GetLegend(void) { return NULL; };
+    VisitAdapter adapter;
 };
 
 

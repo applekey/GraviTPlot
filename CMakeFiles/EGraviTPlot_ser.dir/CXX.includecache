@@ -13,8 +13,6 @@ avtGraviTPlot.h
 -
 avtGraviTFilter.h
 -
-apps/render/RenderAPI.h
--
 View3DAttributes.h
 -
 WindowAttributes.h
@@ -1910,5 +1908,7 @@ avtPlot.h
 avtUserDefinedMapper.h
 -
 GraviTAttributes.h
+-
+apps/render/RenderAPI.h
 -
 

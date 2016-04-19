@@ -46,7 +46,6 @@
 
 // GRAVIT includes
 
-#include <apps/render/RenderAPI.h>
 #include <View3DAttributes.h>
 #include <WindowAttributes.h>
 #include <avtDatabase.h>
@@ -93,10 +92,6 @@ class avtGraviTRenderer : public avtCustomRenderer
 };
 avtGraviTPlot::avtGraviTPlot()
 {
-    char * abc;
-    //Draw(abc);
-
-
     GraviTFilter = new avtGraviTFilter();
     ref_ptr<avtGraviTRenderer> renderer =  new avtGraviTRenderer;
 
@@ -187,6 +182,8 @@ avtGraviTPlot::GetMapper(void)
 avtDataObject_p
 avtGraviTPlot::ApplyOperators(avtDataObject_p input)
 {
+
+    //std::cerr<<"apply operators"<<std::endl;
     GraviTFilter->SetInput(input);
     return GraviTFilter->GetOutput();
 }
@@ -211,6 +208,7 @@ avtGraviTPlot::ApplyOperators(avtDataObject_p input)
 avtDataObject_p
 avtGraviTPlot::ApplyRenderingTransformation(avtDataObject_p input)
 {
+std::cerr<<"rendering transformation"<<std::endl;
 //input is the data to render
     //GraviTFilter->SetInput(input);
     //return GraviTFilter->GetOutput();
@@ -270,14 +268,12 @@ avtImage_p
 avtGraviTPlot::ImageExecute(avtImage_p input,
 const WindowAttributes &window_atts)
 {
-//window attr has data about cam
 
-    std::cerr<<"In Image Execute"<<std::endl;
-    char * abc;
-    VisitAdapter adapter;
+    //std::cerr<<"In Image Execute"<<std::endl;
     
-
     // Get Visit view attributes
+
+    /* ------------------------ SET CAMERA CONFIG ------------------------*/
     int size[2];
     input->GetSize(size,size+1);
 
@@ -286,52 +282,24 @@ const WindowAttributes &window_atts)
 
     View3DAttributes viewAttr= window_atts.GetView3D();
 
-
-
     double * viewNormal = viewAttr.GetViewNormal();
     double * focalPoint = viewAttr.GetFocus();
     double zoom = viewAttr.GetImageZoom();
-    double fov = viewAttr.GetViewAngle(); // not owkring
+    double fov = viewAttr.GetViewAngle();
     double * upVector  = viewAttr.GetViewUp();
     double parScale = viewAttr.GetParallelScale();
 
-    std::cerr<<"viewDirection fdsa"<<viewNormal[0]<<" "<<viewNormal[1]<<" "<<viewNormal[2]<<std::endl;
 
-
-    //-0.01680081151425838 0.1101529560983181 -0.001482265070080757 focal point
-    //30 angle
-    //0 0 1 view normal
-
-/*
-    double fov = 30;
-    double focalPoint[3] = {0,0,0};
-    double viewNormal[3] = {0, 0, 1};
-    double zoom = 1.0;
-*/
+    //std::cerr<<"viewDirection fdsa"<<viewNormal[0]<<" "<<viewNormal[1]<<" "<<viewNormal[2]<<std::endl;
 
     adapter.SetCamera(size,focalPoint, upVector, viewNormal, parScale, fov);
 
-    // check out the data
-    // const avtDataAttributes &datts = input->GetInfo().GetAttributes();
-    // std::string db = input->GetInfo().GetAttributes().GetFullDBName();
 
-    //debug5<<"datts->GetTime(): "<<datts.GetTime()<<endl;
-    //debug5<<"datts->GetTimeIndex(): "<<datts.GetTimeIndex()<<endl;
-    //debug5<<"datts->GetCycle(): "<<datts.GetCycle()<<endl;
-
-    //ref_ptr<avtDatabase> dbp = avtCallback::GetDatabase(db, datts.GetTimeIndex(), NULL);
-    //avtDatabaseMetaData *md = dbp->GetMetaData(datts.GetTimeIndex(), 1);
-    //std::string mesh = md->MeshForVar(datts.GetVariableName());
-    //const avtMeshMetaData *mmd = md->GetMesh(mesh);
-
-
+    /* ------------------------ SET DATA CONFIG ------------------------*/
     avtDataset *ds = (avtDataset *) *hackyInput;
     vtkDataSet *ds2 = ds->dataTree->GetSingleLeaf();
 
     vtkCellData * cellData = ds2->GetCellData();
-    // int isA = ds2->IsA("vtkPolyData");
-    // int isB = ds2->IsA("vtkPointSet");
-    // std::cerr<<isA<<" "<<isB<<std::endl;
     vtkPolyData * contourPD = (vtkPolyData *) ds2;
     int numPoints = contourPD->GetNumberOfPoints();
     vtkCellArray * contourFaces = contourPD->GetPolys();
@@ -349,10 +317,6 @@ const WindowAttributes &window_atts)
             points[i*3] = vtkPts[0];
             points[i*3 +1] = vtkPts[1];
             points[i*3 + 2] = vtkPts[2];
-
-            //std::cout<<vtkPts[0]<<" "<<vtkPts[1]<<" "<<vtkPts[2]<<std::endl;
-            //glm::vec3 currentPoint = glm::vec3(vtkPts[0], vtkPts[1], vtkPts[2]);  
-            //mesh->addVertex(currentPoint);  
     }  
 
     // link the edge
@@ -374,24 +338,20 @@ const WindowAttributes &window_atts)
             edges[i*3 + 1] = v2;
             edges[i*3 + 2] = v3;
            
-            //std::cerr<<v1<<" "<<v2<<" "<<v3<<" "<<std::endl;
-            //mesh->addFace(v1,v2,v3);  
     } 
 
-    double materialProp[3] ={0.5,0.5,0.5}; 
-    unsigned char * img = adapter.DrawTri(points, contourSize, edges, totalEdges,0, materialProp);
+    double materialProp[3] ={0.9,0.5,0.5}; 
+    adapter.SetData(points, contourSize, edges, totalEdges,0, materialProp);
 
     delete [] edges;
     delete [] points;
 
-    int totalPixels = size[0] * size[1];
+
+    /* ------------------------ DRAW ------------------------*/
+    
     unsigned char * data =input->GetImage().GetRGBBuffer();
-    std::cerr<<"buffer is"<<(void*)data<<std::endl;
-    for(int i = 0;i< totalPixels;i++)
-    {
-      data[i] = img[i];
-    }
-    delete [] img;// to do pass this in
+
+    adapter.Draw(data);
     avtImage_p rv = input;
 
     return rv;
