@@ -178,15 +178,6 @@ plugins/plots/libSGraviTPlot.so: plots/GraviT/CMakeFiles/SGraviTPlot.dir/GraviTA
 plugins/plots/libSGraviTPlot.so: lib/libvisitcommon.so
 plugins/plots/libSGraviTPlot.so: lib/libvisitpy.so
 plugins/plots/libSGraviTPlot.so: /home/users/applekey/visit2.10.0/visit/python/2.7.6/linux-x86_64_icc/lib/libpython2.7.so
-plugins/plots/libSGraviTPlot.so: /home/users/applekey/documents/gravit/install/lib/libgvtCore.a
-plugins/plots/libSGraviTPlot.so: /home/users/applekey/documents/gravit/install/lib/libgvtRender.a
-plugins/plots/libSGraviTPlot.so: /usr/lib/x86_64-linux-gnu/libboost_system.so
-plugins/plots/libSGraviTPlot.so: /usr/lib/libtbb.so
-plugins/plots/libSGraviTPlot.so: /usr/lib/libtbbmalloc.so
-plugins/plots/libSGraviTPlot.so: /usr/lib/libmpi_cxx.so
-plugins/plots/libSGraviTPlot.so: /usr/lib/libmpi.so
-plugins/plots/libSGraviTPlot.so: /usr/lib/x86_64-linux-gnu/libdl.so
-plugins/plots/libSGraviTPlot.so: /usr/lib/x86_64-linux-gnu/libhwloc.so
 plugins/plots/libSGraviTPlot.so: lib/libviewerrpc.so
 plugins/plots/libSGraviTPlot.so: lib/libavtdbatts.so
 plugins/plots/libSGraviTPlot.so: lib/libvisitcommon.so

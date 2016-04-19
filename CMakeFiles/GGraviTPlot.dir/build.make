@@ -207,16 +207,6 @@ plugins/plots/libGGraviTPlot.so: plots/GraviT/CMakeFiles/GGraviTPlot.dir/GraviTA
 plugins/plots/libGGraviTPlot.so: plots/GraviT/CMakeFiles/GGraviTPlot.dir/moc_QvisGraviTPlotWindow.cxx.o
 plugins/plots/libGGraviTPlot.so: lib/libvisitcommon.so
 plugins/plots/libGGraviTPlot.so: lib/libgui.so
-plugins/plots/libGGraviTPlot.so: /home/users/applekey/documents/gravit/install/lib/libAPICode.a
-plugins/plots/libGGraviTPlot.so: /home/users/applekey/documents/gravit/install/lib/libgvtCore.a
-plugins/plots/libGGraviTPlot.so: /home/users/applekey/documents/gravit/install/lib/libgvtRender.a
-plugins/plots/libGGraviTPlot.so: /usr/lib/x86_64-linux-gnu/libboost_system.so
-plugins/plots/libGGraviTPlot.so: /usr/lib/libtbb.so
-plugins/plots/libGGraviTPlot.so: /usr/lib/libtbbmalloc.so
-plugins/plots/libGGraviTPlot.so: /usr/lib/libmpi_cxx.so
-plugins/plots/libGGraviTPlot.so: /usr/lib/libmpi.so
-plugins/plots/libGGraviTPlot.so: /usr/lib/x86_64-linux-gnu/libdl.so
-plugins/plots/libGGraviTPlot.so: /usr/lib/x86_64-linux-gnu/libhwloc.so
 plugins/plots/libGGraviTPlot.so: lib/libviewerproxy.so
 plugins/plots/libGGraviTPlot.so: lib/libviewerrpc.so
 plugins/plots/libGGraviTPlot.so: lib/libmdserverproxy.so
