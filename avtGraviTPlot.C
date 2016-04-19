@@ -288,25 +288,28 @@ const WindowAttributes &window_atts)
 
 
 
-    // double * viewNormal = viewAttr.GetViewNormal();
-    // double * focalPoint = viewAttr.GetViewNormal();
-    // double zoom = viewAttr.GetImageZoom();
-    // double fov = viewAttr.GetEyeAngle(); // not owkring
+    double * viewNormal = viewAttr.GetViewNormal();
+    double * focalPoint = viewAttr.GetFocus();
+    double zoom = viewAttr.GetImageZoom();
+    double fov = viewAttr.GetViewAngle(); // not owkring
+    double * upVector  = viewAttr.GetViewUp();
+    double parScale = viewAttr.GetParallelScale();
 
+    std::cerr<<"viewDirection fdsa"<<viewNormal[0]<<" "<<viewNormal[1]<<" "<<viewNormal[2]<<std::endl;
 
 
     //-0.01680081151425838 0.1101529560983181 -0.001482265070080757 focal point
     //30 angle
     //0 0 1 view normal
 
+/*
     double fov = 30;
-    double upVector[3] = {0,1.0,0};
     double focalPoint[3] = {0,0,0};
     double viewNormal[3] = {0, 0, 1};
     double zoom = 1.0;
+*/
 
-
-    adapter.SetCamera(focalPoint, upVector, viewNormal, zoom, fov);
+    adapter.SetCamera(size,focalPoint, upVector, viewNormal, parScale, fov);
 
     // check out the data
     // const avtDataAttributes &datts = input->GetInfo().GetAttributes();
@@ -376,17 +379,19 @@ const WindowAttributes &window_atts)
     } 
 
     double materialProp[3] ={0.5,0.5,0.5}; 
-    adapter.DrawTri(points, contourSize, edges, totalEdges,0, materialProp);
+    unsigned char * img = adapter.DrawTri(points, contourSize, edges, totalEdges,0, materialProp);
 
     delete [] edges;
     delete [] points;
 
+    int totalPixels = size[0] * size[1];
     unsigned char * data =input->GetImage().GetRGBBuffer();
-    for(int i = 0;i< 30000;i++)
+    std::cerr<<"buffer is"<<(void*)data<<std::endl;
+    for(int i = 0;i< totalPixels;i++)
     {
-      data[3*i] = (unsigned char) 255;
+      data[i] = img[i];
     }
-    std::cerr<<size[0]<<" "<<size[1]<<std::endl;
+    delete [] img;// to do pass this in
     avtImage_p rv = input;
 
     return rv;

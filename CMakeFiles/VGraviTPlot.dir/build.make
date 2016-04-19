@@ -225,6 +225,7 @@ plugins/plots/libVGraviTPlot.so: plots/GraviT/CMakeFiles/VGraviTPlot.dir/GraviTC
 plugins/plots/libVGraviTPlot.so: plots/GraviT/CMakeFiles/VGraviTPlot.dir/GraviTAttributes.C.o
 plugins/plots/libVGraviTPlot.so: lib/libvisitcommon.so
 plugins/plots/libVGraviTPlot.so: lib/libviewer.so
+plugins/plots/libVGraviTPlot.so: /home/users/applekey/documents/gravit/install/lib/libAPICode.a
 plugins/plots/libVGraviTPlot.so: /home/users/applekey/documents/gravit/install/lib/libgvtCore.a
 plugins/plots/libVGraviTPlot.so: /home/users/applekey/documents/gravit/install/lib/libgvtRender.a
 plugins/plots/libVGraviTPlot.so: /usr/lib/x86_64-linux-gnu/libboost_system.so

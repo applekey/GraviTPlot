@@ -226,6 +226,7 @@ plugins/plots/libEGraviTPlot_ser.so: plots/GraviT/CMakeFiles/EGraviTPlot_ser.dir
 plugins/plots/libEGraviTPlot_ser.so: lib/libvisitcommon.so
 plugins/plots/libEGraviTPlot_ser.so: lib/libavtplotter_ser.so
 plugins/plots/libEGraviTPlot_ser.so: lib/libavtpipeline_ser.so
+plugins/plots/libEGraviTPlot_ser.so: /home/users/applekey/documents/gravit/install/lib/libAPICode.a
 plugins/plots/libEGraviTPlot_ser.so: /home/users/applekey/documents/gravit/install/lib/libgvtCore.a
 plugins/plots/libEGraviTPlot_ser.so: /home/users/applekey/documents/gravit/install/lib/libgvtRender.a
 plugins/plots/libEGraviTPlot_ser.so: /usr/lib/x86_64-linux-gnu/libboost_system.so
