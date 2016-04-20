@@ -17,6 +17,12 @@ View3DAttributes.h
 -
 WindowAttributes.h
 -
+LightList.h
+-
+LightAttributes.h
+-
+ColorAttribute.h
+-
 avtDatabase.h
 -
 avtCallback.h

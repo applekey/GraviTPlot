@@ -48,6 +48,9 @@
 
 #include <View3DAttributes.h>
 #include <WindowAttributes.h>
+#include <LightList.h>
+#include <LightAttributes.h>
+#include <ColorAttribute.h>
 #include <avtDatabase.h>
 #include <avtCallback.h>
 #include <avtDatabaseMetaData.h>
@@ -71,6 +74,7 @@ struct GravitProgramConfig
     int maxDepth;
     int samples;
     unsigned char backgroundColor[3];
+    bool dataLoaded;
 };
 
 
@@ -213,6 +217,7 @@ std::cerr<<"rendering transformation"<<std::endl;
     //GraviTFilter->SetInput(input);
     //return GraviTFilter->GetOutput();
     hackyInput = input;
+    hackyConfig.dataLoaded = false;
     return input;
 }
 
@@ -267,7 +272,8 @@ avtGraviTPlot::CustomizeMapper(avtDataObjectInformation &doi)
 avtImage_p
 avtGraviTPlot::ImageExecute(avtImage_p input,
 const WindowAttributes &window_atts)
-{
+{   
+    std::cerr<<"f:"<<NeedsRecalculation()<<std::endl;
 
     //std::cerr<<"In Image Execute"<<std::endl;
     
@@ -289,62 +295,99 @@ const WindowAttributes &window_atts)
     double * upVector  = viewAttr.GetViewUp();
     double parScale = viewAttr.GetParallelScale();
 
+    adapter.SetCamera(size,focalPoint, upVector, viewNormal, parScale/zoom, fov);
 
-    //std::cerr<<"viewDirection fdsa"<<viewNormal[0]<<" "<<viewNormal[1]<<" "<<viewNormal[2]<<std::endl;
 
-    adapter.SetCamera(size,focalPoint, upVector, viewNormal, parScale, fov);
+    /* ------------------------ GET LIGHTS ------------------------*/
+
+    LightList lightList = window_atts.GetLights();
+
+    int numLights = lightList.NumLights();
+
+    for(int i = 0;i <numLights;i++)
+    {
+        LightAttributes lightAttr = lightList.GetLight(i);
+
+        if(!lightAttr.GetEnabledFlagCanBeToggled())
+        {
+            continue;
+        }
+
+        if(lightAttr.GetEnabledFlag())
+        {
+            LightAttributes::LightType type = lightAttr.GetType();
+            /*
+            Ambient     
+            Object  
+            Camera  
+            */
+
+            double * direction = lightAttr.GetDirection();
+            ColorAttribute colorAttr = lightAttr.GetColor();
+            unsigned char * color = colorAttr.GetColor();
+            double brightness =  lightAttr.GetBrightness();
+        }
+        
+    }
+
 
 
     /* ------------------------ SET DATA CONFIG ------------------------*/
-    avtDataset *ds = (avtDataset *) *hackyInput;
-    vtkDataSet *ds2 = ds->dataTree->GetSingleLeaf();
 
-    vtkCellData * cellData = ds2->GetCellData();
-    vtkPolyData * contourPD = (vtkPolyData *) ds2;
-    int numPoints = contourPD->GetNumberOfPoints();
-    vtkCellArray * contourFaces = contourPD->GetPolys();
-    // get the verts
-    int contourSize = contourPD->GetNumberOfPoints();  
-    
-    double * points = new double[contourSize *3];
+    if(!hackyConfig.dataLoaded)
+    {
+        avtDataset *ds = (avtDataset *) *hackyInput;
+        vtkDataSet *ds2 = ds->dataTree->GetSingleLeaf();
+
+        vtkCellData * cellData = ds2->GetCellData();
+        vtkPolyData * contourPD = (vtkPolyData *) ds2;
+        int numPoints = contourPD->GetNumberOfPoints();
+        vtkCellArray * contourFaces = contourPD->GetPolys();
+        // get the verts
+        int contourSize = contourPD->GetNumberOfPoints();  
+        
+        double * points = new double[contourSize *3];
 
 
-    for(vtkIdType i = 0; i < contourSize; i++)  
-    {  
-            double vtkPts[3] = {0.0,0.0,0.0};  
-            contourPD->GetPoints()->GetPoint(i,vtkPts); 
+        for(vtkIdType i = 0; i < contourSize; i++)  
+        {  
+                double vtkPts[3] = {0.0,0.0,0.0};  
+                contourPD->GetPoints()->GetPoint(i,vtkPts); 
 
-            points[i*3] = vtkPts[0];
-            points[i*3 +1] = vtkPts[1];
-            points[i*3 + 2] = vtkPts[2];
-    }  
+                points[i*3] = vtkPts[0];
+                points[i*3 +1] = vtkPts[1];
+                points[i*3 + 2] = vtkPts[2];
+        }  
 
-    // link the edge
+        // link the edge
 
-    vtkSmartPointer<vtkIdList> idList = vtkSmartPointer<vtkIdList>::New();
-    contourFaces->InitTraversal();  
+        vtkSmartPointer<vtkIdList> idList = vtkSmartPointer<vtkIdList>::New();
+        contourFaces->InitTraversal();  
 
-    int totalEdges = contourFaces->GetNumberOfCells();
-    int * edges = new int[totalEdges * 3];
+        int totalEdges = contourFaces->GetNumberOfCells();
+        int * edges = new int[totalEdges * 3];
 
-    for(int i = 0; i < totalEdges; i++)  
-    {  
-            contourFaces->GetNextCell(idList);  
-            int v1 = idList->GetId(0)+1;  
-            int v2 = idList->GetId(1)+1;  
-            int v3 = idList->GetId(2)+1;  
+        for(int i = 0; i < totalEdges; i++)  
+        {  
+                contourFaces->GetNextCell(idList);  
+                int v1 = idList->GetId(0)+1;  
+                int v2 = idList->GetId(1)+1;  
+                int v3 = idList->GetId(2)+1;  
 
-            edges[i*3] = v1;
-            edges[i*3 + 1] = v2;
-            edges[i*3 + 2] = v3;
-           
-    } 
+                edges[i*3] = v1;
+                edges[i*3 + 1] = v2;
+                edges[i*3 + 2] = v3;
+               
+        } 
 
-    double materialProp[3] ={0.9,0.5,0.5}; 
-    adapter.SetData(points, contourSize, edges, totalEdges,0, materialProp);
+        double materialProp[3] ={0.9,0.5,0.5}; 
+        adapter.SetData(points, contourSize, edges, totalEdges,0, materialProp);
 
-    delete [] edges;
-    delete [] points;
+        delete [] edges;
+        delete [] points;
+        hackyConfig.dataLoaded = true;
+
+    }
 
 
     /* ------------------------ DRAW ------------------------*/
