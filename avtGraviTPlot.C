@@ -327,11 +327,16 @@ const WindowAttributes &window_atts)
             unsigned char * color = colorAttr.GetColor();
             double brightness =  lightAttr.GetBrightness();
         }
-        
     }
 
 
+    /* ------------------------ GET ATTRIBUTE PARMS ------------------------*/
 
+    //GraviTAttributes atts
+
+    unsigned char * color = atts.GetColor().GetColor();
+
+    std::cerr<<color[0]<<" "<<color[1]<<" "<<color[2]<<std::endl;
     /* ------------------------ SET DATA CONFIG ------------------------*/
 
     if(!hackyConfig.dataLoaded)
@@ -418,5 +423,10 @@ const WindowAttributes &window_atts)
 void
 avtGraviTPlot::SetAtts(const AttributeGroup *a)
 {
-    //const GraviTAttributes *newAtts = (const GraviTAttributes *)a;
+    const GraviTAttributes *newAtts = (const GraviTAttributes *)a;
+
+    const unsigned char * color = (newAtts->GetColor()).GetColor();
+
+    std::cerr<<color[0]<<" "<<color[1]<<" "<<color[2]<<std::endl;
+
 }
