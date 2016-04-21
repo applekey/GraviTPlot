@@ -273,11 +273,21 @@ avtImage_p
 avtGraviTPlot::ImageExecute(avtImage_p input,
 const WindowAttributes &window_atts)
 {   
-    std::cerr<<"f:"<<NeedsRecalculation()<<std::endl;
 
-    //std::cerr<<"In Image Execute"<<std::endl;
-    
-    // Get Visit view attributes
+    /* ------------------------ GET ATTRIBUTE PARMS ------------------------*/
+
+    //GraviTAttributes atts
+
+    unsigned char * color = atts.GetColor().GetColor();
+
+    //std::cerr<<color[0]<<" "<<color[1]<<" "<<color[2]<<std::endl;
+
+    VisitAdapter::RayTraceProperties rayTraceProps;
+    rayTraceProps.maxDepth = 2;
+    rayTraceProps.raySamples = 3;
+    rayTraceProps.windowJitterSize = 0.0;
+    adapter.SetRayTraceProperties(rayTraceProps);
+
 
     /* ------------------------ SET CAMERA CONFIG ------------------------*/
     int size[2];
@@ -304,14 +314,22 @@ const WindowAttributes &window_atts)
 
     int numLights = lightList.NumLights();
 
+
+    std::vector<int> lightTypes;
+    std::vector<double> lightDirection;
+    std::vector<unsigned char> lightColor;
+    std::vector<double> lightIntensity;
+
+    int totalValidLights = 0;
+
     for(int i = 0;i <numLights;i++)
     {
         LightAttributes lightAttr = lightList.GetLight(i);
 
-        if(!lightAttr.GetEnabledFlagCanBeToggled())
-        {
-            continue;
-        }
+        // if(!lightAttr.GetEnabledFlagCanBeToggled())
+        // {
+        //     continue;
+        // }
 
         if(lightAttr.GetEnabledFlag())
         {
@@ -322,21 +340,37 @@ const WindowAttributes &window_atts)
             Camera  
             */
 
+            totalValidLights++;
+
             double * direction = lightAttr.GetDirection();
             ColorAttribute colorAttr = lightAttr.GetColor();
             unsigned char * color = colorAttr.GetColor();
             double brightness =  lightAttr.GetBrightness();
+
+            lightTypes.push_back((int)type);
+
+            lightDirection.push_back(direction[0]);
+            lightDirection.push_back(direction[1]);
+            lightDirection.push_back(direction[2]);
+
+            lightColor.push_back(color[0]);
+            lightColor.push_back(color[1]);
+            lightColor.push_back(color[2]);
+
+            lightIntensity.push_back(brightness);
+
+            std::cerr<<"lightType:"<<type<<std::endl;
+            std::cerr<<"lightDirection:"<<direction[0]<<" "<<direction[1]<<" "<<direction[2]<<std::endl;
+            std::cerr<<"LightColor:"<<(unsigned int)color[0]<<" "<<(unsigned int)color[1]<<" "<<(unsigned int)color[2]<<std::endl;
+            std::cerr<<"LightIntensity:"<<brightness<<std::endl;
         }
     }
 
+    std::cerr<<"totalValidLights:"<<totalValidLights<<std::endl;
 
-    /* ------------------------ GET ATTRIBUTE PARMS ------------------------*/
+    adapter.SetLight(totalValidLights, lightTypes.data(), lightDirection.data(), lightColor.data(), lightIntensity.data());
 
-    //GraviTAttributes atts
 
-    unsigned char * color = atts.GetColor().GetColor();
-
-    std::cerr<<color[0]<<" "<<color[1]<<" "<<color[2]<<std::endl;
     /* ------------------------ SET DATA CONFIG ------------------------*/
 
     if(!hackyConfig.dataLoaded)
@@ -393,7 +427,6 @@ const WindowAttributes &window_atts)
         hackyConfig.dataLoaded = true;
 
     }
-
 
     /* ------------------------ DRAW ------------------------*/
     
