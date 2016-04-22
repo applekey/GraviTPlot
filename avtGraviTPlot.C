@@ -387,7 +387,6 @@ const WindowAttributes &window_atts)
         
         double * points = new double[contourSize *3];
 
-
         for(vtkIdType i = 0; i < contourSize; i++)  
         {  
                 double vtkPts[3] = {0.0,0.0,0.0};  
