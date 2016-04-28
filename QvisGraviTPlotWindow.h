@@ -91,14 +91,21 @@ class QvisGraviTPlotWindow : public QvisPostableWindowObserver
     void GetCurrentValues(int which_widget);
     void Apply(bool ignore = false);
   private slots:
-    void ColorChanged(const QColor &color);
+    void DiffColorChanged(const QColor &color);
+    void SpecColorChanged(const QColor &color);
     void MaxReflectionsProcessText();
+    void MaterialChanged(int val);
   private:
     int plotType;
-    QvisColorButton *Color;
+    QvisColorButton *DiffColor;
+    QvisColorButton *SpecColor;
     QLineEdit *MaxReflections;
-    QLabel *ColorLabel;
+    QWidget      *Material;
+    QButtonGroup *MaterialButtonGroup;
+    QLabel *DiffColorLabel;
+    QLabel *SpecColorLabel;
     QLabel *MaxReflectionsLabel;
+    QLabel *MaterialLabel;
 
     GraviTAttributes *atts;
 };

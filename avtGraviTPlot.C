@@ -92,8 +92,9 @@ avtDataObject_p hackyInput;
 // ****************************************************************************
 class avtGraviTRenderer : public avtCustomRenderer
 {
- virtual void Render(vtkDataSet * ds){std::cerr<<"Render"<<std::endl;}; 
+    virtual void Render(vtkDataSet * ds){std::cerr<<"Render"<<std::endl;}; 
 };
+
 avtGraviTPlot::avtGraviTPlot()
 {
     GraviTFilter = new avtGraviTFilter();
@@ -186,8 +187,6 @@ avtGraviTPlot::GetMapper(void)
 avtDataObject_p
 avtGraviTPlot::ApplyOperators(avtDataObject_p input)
 {
-
-    //std::cerr<<"apply operators"<<std::endl;
     GraviTFilter->SetInput(input);
     return GraviTFilter->GetOutput();
 }
@@ -212,8 +211,7 @@ avtGraviTPlot::ApplyOperators(avtDataObject_p input)
 avtDataObject_p
 avtGraviTPlot::ApplyRenderingTransformation(avtDataObject_p input)
 {
-std::cerr<<"rendering transformation"<<std::endl;
-//input is the data to render
+  //input is the data to render
     //GraviTFilter->SetInput(input);
     //return GraviTFilter->GetOutput();
     hackyInput = input;
@@ -269,16 +267,18 @@ avtGraviTPlot::CustomizeMapper(avtDataObjectInformation &doi)
     }
  */
 }
+
 avtImage_p
-avtGraviTPlot::ImageExecute(avtImage_p input,
-const WindowAttributes &window_atts)
+avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_atts)
 {   
+	std::cerr<<"entered avtGraviTPlot image execute"<<std::endl;
 
     /* ------------------------ GET ATTRIBUTE PARMS ------------------------*/
 
     //GraviTAttributes atts
 
-    unsigned char * color = atts.GetColor().GetColor();
+    unsigned char * diffcolor = atts.GetDiffColor().GetColor();
+    unsigned char * speccolor = atts.GetSpecColor().GetColor();
 
     //std::cerr<<color[0]<<" "<<color[1]<<" "<<color[2]<<std::endl;
 
@@ -290,6 +290,8 @@ const WindowAttributes &window_atts)
 
 
     /* ------------------------ SET CAMERA CONFIG ------------------------*/
+	std::cerr<<"entered avtGraviTPlot image execute : Cam Config"<<std::endl;
+
     int size[2];
     input->GetSize(size,size+1);
 
@@ -309,11 +311,11 @@ const WindowAttributes &window_atts)
 
 
     /* ------------------------ GET LIGHTS ------------------------*/
+	std::cerr<<"entered avtGraviTPlot image execute : Light Setup"<<std::endl;
 
     LightList lightList = window_atts.GetLights();
 
     int numLights = lightList.NumLights();
-
 
     std::vector<int> lightTypes;
     std::vector<double> lightDirection;
@@ -359,22 +361,25 @@ const WindowAttributes &window_atts)
 
             lightIntensity.push_back(brightness);
 
-            std::cerr<<"lightType:"<<type<<std::endl;
-            std::cerr<<"lightDirection:"<<direction[0]<<" "<<direction[1]<<" "<<direction[2]<<std::endl;
-            std::cerr<<"LightColor:"<<(unsigned int)color[0]<<" "<<(unsigned int)color[1]<<" "<<(unsigned int)color[2]<<std::endl;
-            std::cerr<<"LightIntensity:"<<brightness<<std::endl;
+          //  std::cerr<<"Light Type:"<<type<<std::endl;
+          //  std::cerr<<"Light Direction:"<<direction[0]<<" "<<direction[1]<<" "<<direction[2]<<std::endl;
+          //  std::cerr<<"Light Color:"<<(unsigned int)color[0]<<" "<<(unsigned int)color[1]<<" "<<(unsigned int)color[2]<<std::endl;
+          //  std::cerr<<"LightIntensity:"<<brightness<<std::endl;
         }
     }
 
-    std::cerr<<"totalValidLights:"<<totalValidLights<<std::endl;
+  //  std::cerr<<"Total Valid Lights:"<<totalValidLights<<std::endl;
 
     adapter.SetLight(totalValidLights, lightTypes.data(), lightDirection.data(), lightColor.data(), lightIntensity.data());
 
 
     /* ------------------------ SET DATA CONFIG ------------------------*/
+	std::cerr<<"entered avtGraviTPlot image execute : Data Config"<<std::endl;
 
-    if(!hackyConfig.dataLoaded)
-    {
+    //if(!hackyConfig.dataLoaded)
+    //{
+	std::cerr<<"entered avtGraviTPlot image execute : Mesh Load"<<std::endl;
+
         avtDataset *ds = (avtDataset *) *hackyInput;
         vtkDataSet *ds2 = ds->dataTree->GetSingleLeaf();
 
@@ -417,19 +422,30 @@ const WindowAttributes &window_atts)
                 edges[i*3 + 2] = v3;
                
         } 
+	
+	std::cerr<<"entered avtGraviTPlot image execute : Material Setup"<<std::endl;
+	
+	// Get material properties
+        double materialColor[8] = {0.5,0.5,0.5,1.0,0.5,0.5,0.5,1.0}; 
+	atts.GetDiffColor().GetRgba(materialColor);
+	atts.GetSpecColor().GetRgba(materialColor+4);
+	int material = atts.GetMaterial();
 
-        double materialProp[3] ={0.9,0.5,0.5}; 
-        adapter.SetData(points, contourSize, edges, totalEdges,0, materialProp);
-
+	//std::cerr<<"Diffuse Color: "<<materialColor[0]<<" "<<materialColor[1]<<" "<<materialColor[2]<<std::endl;
+	//std::cerr<<"Specular Color: "<<materialColor[4]<<" "<<materialColor[5]<<" "<<materialColor[6]<<std::endl;
+	//std::cerr<<"Material: "<<material<<std::endl;
+        
+	adapter.SetData(points, contourSize, edges, totalEdges, material, materialColor);
+	
         delete [] edges;
         delete [] points;
         hackyConfig.dataLoaded = true;
 
-    }
+    //}
 
     /* ------------------------ DRAW ------------------------*/
     
-    unsigned char * data =input->GetImage().GetRGBBuffer();
+    unsigned char * data = input->GetImage().GetRGBBuffer();
 
     adapter.Draw(data);
     avtImage_p rv = input;
@@ -457,8 +473,12 @@ avtGraviTPlot::SetAtts(const AttributeGroup *a)
 {
     const GraviTAttributes *newAtts = (const GraviTAttributes *)a;
 
-    const unsigned char * color = (newAtts->GetColor()).GetColor();
-
-    std::cerr<<color[0]<<" "<<color[1]<<" "<<color[2]<<std::endl;
-
+    //const unsigned char * color = newAtts->GetColor().GetColor();
+    double diffcolor[4];
+    newAtts->GetDiffColor().GetRgba(diffcolor);
+    double speccolor[4];
+    newAtts->GetSpecColor().GetRgba(speccolor);
+    int material = newAtts->GetMaterial();
+    
+    // might need to update attributes from here
 }

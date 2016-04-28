@@ -38,6 +38,7 @@
 
 #ifndef GRAVITATTRIBUTES_H
 #define GRAVITATTRIBUTES_H
+#include <string>
 #include <AttributeSubject.h>
 
 #include <ColorAttribute.h>
@@ -60,6 +61,13 @@
 class GraviTAttributes : public AttributeSubject
 {
 public:
+    enum MaterialType
+    {
+        Lambert,
+        Phong,
+        BlinnPhong
+    };
+
     // These constructors are for objects of this class
     GraviTAttributes();
     GraviTAttributes(const GraviTAttributes &obj);
@@ -85,21 +93,33 @@ public:
 
     // Property selection methods
     virtual void SelectAll();
-    void SelectColor();
+    void SelectDiffColor();
+    void SelectSpecColor();
 
     // Property setting methods
-    void SetColor(const ColorAttribute &Color_);
+    void SetDiffColor(const ColorAttribute &DiffColor_);
+    void SetSpecColor(const ColorAttribute &SpecColor_);
     void SetMaxReflections(int MaxReflections_);
+    void SetMaterial(MaterialType Material_);
 
     // Property getting methods
-    const ColorAttribute &GetColor() const;
-          ColorAttribute &GetColor();
+    const ColorAttribute &GetDiffColor() const;
+          ColorAttribute &GetDiffColor();
+    const ColorAttribute &GetSpecColor() const;
+          ColorAttribute &GetSpecColor();
     int                  GetMaxReflections() const;
+    MaterialType         GetMaterial() const;
 
     // Persistence methods
     virtual bool CreateNode(DataNode *node, bool completeSave, bool forceAdd);
     virtual void SetFromNode(DataNode *node);
 
+    // Enum conversion functions
+    static std::string MaterialType_ToString(MaterialType);
+    static bool MaterialType_FromString(const std::string &, MaterialType &);
+protected:
+    static std::string MaterialType_ToString(int);
+public:
 
     // Keyframing methods
     virtual std::string               GetFieldName(int index) const;
@@ -110,19 +130,23 @@ public:
 
     // IDs that can be used to identify fields in case statements
     enum {
-        ID_Color = 0,
+        ID_DiffColor = 0,
+        ID_SpecColor,
         ID_MaxReflections,
+        ID_Material,
         ID__LAST
     };
 
 private:
-    ColorAttribute Color;
+    ColorAttribute DiffColor;
+    ColorAttribute SpecColor;
     int            MaxReflections;
+    int            Material;
 
     // Static class format string for type map.
     static const char *TypeMapFormatString;
     static const private_tmfs_t TmfsStruct;
 };
-#define GRAVITATTRIBUTES_TMFS "ai"
+#define GRAVITATTRIBUTES_TMFS "aaii"
 
 #endif

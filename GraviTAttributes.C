@@ -39,6 +39,44 @@
 #include <GraviTAttributes.h>
 #include <DataNode.h>
 
+//
+// Enum conversion methods for GraviTAttributes::MaterialType
+//
+
+static const char *MaterialType_strings[] = {
+"Lambert", "Phong", "BlinnPhong"
+};
+
+std::string
+GraviTAttributes::MaterialType_ToString(GraviTAttributes::MaterialType t)
+{
+    int index = int(t);
+    if(index < 0 || index >= 3) index = 0;
+    return MaterialType_strings[index];
+}
+
+std::string
+GraviTAttributes::MaterialType_ToString(int t)
+{
+    int index = (t < 0 || t >= 3) ? 0 : t;
+    return MaterialType_strings[index];
+}
+
+bool
+GraviTAttributes::MaterialType_FromString(const std::string &s, GraviTAttributes::MaterialType &val)
+{
+    val = GraviTAttributes::Lambert;
+    for(int i = 0; i < 3; ++i)
+    {
+        if(s == MaterialType_strings[i])
+        {
+            val = (MaterialType)i;
+            return true;
+        }
+    }
+    return false;
+}
+
 // ****************************************************************************
 // Method: GraviTAttributes::GraviTAttributes
 //
@@ -57,6 +95,7 @@
 void GraviTAttributes::Init()
 {
     MaxReflections = 2;
+    Material = BlinnPhong;
 
     GraviTAttributes::SelectAll();
 }
@@ -78,8 +117,10 @@ void GraviTAttributes::Init()
 
 void GraviTAttributes::Copy(const GraviTAttributes &obj)
 {
-    Color = obj.Color;
+    DiffColor = obj.DiffColor;
+    SpecColor = obj.SpecColor;
     MaxReflections = obj.MaxReflections;
+    Material = obj.Material;
 
     GraviTAttributes::SelectAll();
 }
@@ -106,7 +147,7 @@ const AttributeGroup::private_tmfs_t GraviTAttributes::TmfsStruct = {GRAVITATTRI
 
 GraviTAttributes::GraviTAttributes() : 
     AttributeSubject(GraviTAttributes::TypeMapFormatString),
-    Color()
+    DiffColor(200, 127, 127), SpecColor(127, 127, 200)
 {
     GraviTAttributes::Init();
 }
@@ -128,7 +169,7 @@ GraviTAttributes::GraviTAttributes() :
 
 GraviTAttributes::GraviTAttributes(private_tmfs_t tmfs) : 
     AttributeSubject(tmfs.tmfs),
-    Color()
+    DiffColor(200, 127, 127), SpecColor(127, 127, 200)
 {
     GraviTAttributes::Init();
 }
@@ -239,8 +280,10 @@ bool
 GraviTAttributes::operator == (const GraviTAttributes &obj) const
 {
     // Create the return value
-    return ((Color == obj.Color) &&
-            (MaxReflections == obj.MaxReflections));
+    return ((DiffColor == obj.DiffColor) &&
+            (SpecColor == obj.SpecColor) &&
+            (MaxReflections == obj.MaxReflections) &&
+            (Material == obj.Material));
 }
 
 // ****************************************************************************
@@ -384,8 +427,10 @@ GraviTAttributes::NewInstance(bool copy) const
 void
 GraviTAttributes::SelectAll()
 {
-    Select(ID_Color,          (void *)&Color);
+    Select(ID_DiffColor,      (void *)&DiffColor);
+    Select(ID_SpecColor,      (void *)&SpecColor);
     Select(ID_MaxReflections, (void *)&MaxReflections);
+    Select(ID_Material,       (void *)&Material);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -418,18 +463,32 @@ GraviTAttributes::CreateNode(DataNode *parentNode, bool completeSave, bool force
     // Create a node for GraviTAttributes.
     DataNode *node = new DataNode("GraviTAttributes");
 
-        DataNode *ColorNode = new DataNode("Color");
-        if(Color.CreateNode(ColorNode, completeSave, true))
+        DataNode *DiffColorNode = new DataNode("DiffColor");
+        if(DiffColor.CreateNode(DiffColorNode, completeSave, true))
         {
             addToParent = true;
-            node->AddNode(ColorNode);
+            node->AddNode(DiffColorNode);
         }
         else
-            delete ColorNode;
+            delete DiffColorNode;
+        DataNode *SpecColorNode = new DataNode("SpecColor");
+        if(SpecColor.CreateNode(SpecColorNode, completeSave, true))
+        {
+            addToParent = true;
+            node->AddNode(SpecColorNode);
+        }
+        else
+            delete SpecColorNode;
     if(completeSave || !FieldsEqual(ID_MaxReflections, &defaultObject))
     {
         addToParent = true;
         node->AddNode(new DataNode("MaxReflections", MaxReflections));
+    }
+
+    if(completeSave || !FieldsEqual(ID_Material, &defaultObject))
+    {
+        addToParent = true;
+        node->AddNode(new DataNode("Material", MaterialType_ToString(Material)));
     }
 
 
@@ -468,10 +527,28 @@ GraviTAttributes::SetFromNode(DataNode *parentNode)
         return;
 
     DataNode *node;
-    if((node = searchNode->GetNode("Color")) != 0)
-        Color.SetFromNode(node);
+    if((node = searchNode->GetNode("DiffColor")) != 0)
+        DiffColor.SetFromNode(node);
+    if((node = searchNode->GetNode("SpecColor")) != 0)
+        SpecColor.SetFromNode(node);
     if((node = searchNode->GetNode("MaxReflections")) != 0)
         SetMaxReflections(node->AsInt());
+    if((node = searchNode->GetNode("Material")) != 0)
+    {
+        // Allow enums to be int or string in the config file
+        if(node->GetNodeType() == INT_NODE)
+        {
+            int ival = node->AsInt();
+            if(ival >= 0 && ival < 3)
+                SetMaterial(MaterialType(ival));
+        }
+        else if(node->GetNodeType() == STRING_NODE)
+        {
+            MaterialType value;
+            if(MaterialType_FromString(node->AsString(), value))
+                SetMaterial(value);
+        }
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -479,10 +556,17 @@ GraviTAttributes::SetFromNode(DataNode *parentNode)
 ///////////////////////////////////////////////////////////////////////////////
 
 void
-GraviTAttributes::SetColor(const ColorAttribute &Color_)
+GraviTAttributes::SetDiffColor(const ColorAttribute &DiffColor_)
 {
-    Color = Color_;
-    Select(ID_Color, (void *)&Color);
+    DiffColor = DiffColor_;
+    Select(ID_DiffColor, (void *)&DiffColor);
+}
+
+void
+GraviTAttributes::SetSpecColor(const ColorAttribute &SpecColor_)
+{
+    SpecColor = SpecColor_;
+    Select(ID_SpecColor, (void *)&SpecColor);
 }
 
 void
@@ -492,20 +576,39 @@ GraviTAttributes::SetMaxReflections(int MaxReflections_)
     Select(ID_MaxReflections, (void *)&MaxReflections);
 }
 
+void
+GraviTAttributes::SetMaterial(GraviTAttributes::MaterialType Material_)
+{
+    Material = Material_;
+    Select(ID_Material, (void *)&Material);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Get property methods
 ///////////////////////////////////////////////////////////////////////////////
 
 const ColorAttribute &
-GraviTAttributes::GetColor() const
+GraviTAttributes::GetDiffColor() const
 {
-    return Color;
+    return DiffColor;
 }
 
 ColorAttribute &
-GraviTAttributes::GetColor()
+GraviTAttributes::GetDiffColor()
 {
-    return Color;
+    return DiffColor;
+}
+
+const ColorAttribute &
+GraviTAttributes::GetSpecColor() const
+{
+    return SpecColor;
+}
+
+ColorAttribute &
+GraviTAttributes::GetSpecColor()
+{
+    return SpecColor;
 }
 
 int
@@ -514,14 +617,26 @@ GraviTAttributes::GetMaxReflections() const
     return MaxReflections;
 }
 
+GraviTAttributes::MaterialType
+GraviTAttributes::GetMaterial() const
+{
+    return MaterialType(Material);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Select property methods
 ///////////////////////////////////////////////////////////////////////////////
 
 void
-GraviTAttributes::SelectColor()
+GraviTAttributes::SelectDiffColor()
 {
-    Select(ID_Color, (void *)&Color);
+    Select(ID_DiffColor, (void *)&DiffColor);
+}
+
+void
+GraviTAttributes::SelectSpecColor()
+{
+    Select(ID_SpecColor, (void *)&SpecColor);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -548,8 +663,10 @@ GraviTAttributes::GetFieldName(int index) const
 {
     switch (index)
     {
-    case ID_Color:          return "Color";
+    case ID_DiffColor:      return "DiffColor";
+    case ID_SpecColor:      return "SpecColor";
     case ID_MaxReflections: return "MaxReflections";
+    case ID_Material:       return "Material";
     default:  return "invalid index";
     }
 }
@@ -574,8 +691,10 @@ GraviTAttributes::GetFieldType(int index) const
 {
     switch (index)
     {
-    case ID_Color:          return FieldType_color;
+    case ID_DiffColor:      return FieldType_color;
+    case ID_SpecColor:      return FieldType_color;
     case ID_MaxReflections: return FieldType_int;
+    case ID_Material:       return FieldType_enum;
     default:  return FieldType_unknown;
     }
 }
@@ -600,8 +719,10 @@ GraviTAttributes::GetFieldTypeName(int index) const
 {
     switch (index)
     {
-    case ID_Color:          return "color";
+    case ID_DiffColor:      return "color";
+    case ID_SpecColor:      return "color";
     case ID_MaxReflections: return "int";
+    case ID_Material:       return "enum";
     default:  return "invalid index";
     }
 }
@@ -628,14 +749,24 @@ GraviTAttributes::FieldsEqual(int index_, const AttributeGroup *rhs) const
     bool retval = false;
     switch (index_)
     {
-    case ID_Color:
+    case ID_DiffColor:
         {  // new scope
-        retval = (Color == obj.Color);
+        retval = (DiffColor == obj.DiffColor);
+        }
+        break;
+    case ID_SpecColor:
+        {  // new scope
+        retval = (SpecColor == obj.SpecColor);
         }
         break;
     case ID_MaxReflections:
         {  // new scope
         retval = (MaxReflections == obj.MaxReflections);
+        }
+        break;
+    case ID_Material:
+        {  // new scope
+        retval = (Material == obj.Material);
         }
         break;
     default: retval = false;
