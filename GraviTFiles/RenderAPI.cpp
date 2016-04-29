@@ -108,7 +108,7 @@ void VisitAdapter::SetLight(int numberOfLights, int * lighttypes, double * light
   }
 
   gvt::core::DBNodeH root = cntxt->getRootNode();
-
+  
   // check if lightnodes has already being created
 
   gvt::core::DBNodeH lightNodes = cntxt->findChildNodeByName("Lights",root.UUID());
@@ -283,10 +283,23 @@ void  VisitAdapter::SetData(double * points, int numPoints, int * edges, int num
 
   gvt::core::DBNodeH root = cntxt->getRootNode();
 
-  gvt::core::DBNodeH dataNodes = cntxt->createNodeFromType("Data", "Data", root.UUID());
+
+
+  gvt::core::DBNodeH dataNodes = cntxt->findChildNodeByName("Data",root.UUID());
+  if(!dataNodes)
+  {
+    dataNodes = cntxt->createNodeFromType("Data", "Data", root.UUID());
+  }
+  else
+  {
+    std::cerr<<"found data node"<<std::endl;
+    cntxt->deleteChildren(dataNodes.UUID());
+  }
+
+
 
   gvt::core::DBNodeH coneMeshNode = cntxt->createNodeFromType("Mesh", "conemesh", dataNodes.UUID());
-  {
+   {
 	
 	std::cerr << "Attribs: \n" << "Material: " << Material << "\nDiff Color: " << materialProp[0] << ", " << materialProp[1] << ", " << materialProp[2] << "\nSpec Color: " << materialProp[4] << ", " << materialProp[5] << ", " << materialProp[6] << std::endl;
 	
@@ -342,11 +355,22 @@ void  VisitAdapter::SetData(double * points, int numPoints, int * edges, int num
     coneMeshNode["file"] = string("/fake/path/to/cone");
     coneMeshNode["bbox"] = (unsigned long long)meshbbox;
     coneMeshNode["ptr"] = (unsigned long long)mesh;
+   }
+  
+
+  gvt::core::DBNodeH instNodes = cntxt->findChildNodeByName("Instances",root.UUID());
+  if(!instNodes)
+  {
+    instNodes = cntxt->createNodeFromType("Instances", "Instances", root.UUID());
+  }
+  else
+  {
+    std::cerr<<"found inst nodes"<<std::endl;
+    cntxt->deleteChildren(instNodes.UUID());
   }
 
-  gvt::core::DBNodeH instNodes = cntxt->createNodeFromType("Instances", "Instances", root.UUID());
-
   gvt::core::DBNodeH instnode = cntxt->createNodeFromType("Instance", "inst", instNodes.UUID());
+
   gvt::core::DBNodeH meshNode = coneMeshNode;
   Box3D *mbox = (Box3D *)meshNode["bbox"].value().toULongLong();
 
