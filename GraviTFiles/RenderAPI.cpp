@@ -203,8 +203,6 @@ void VisitAdapter::SetCamera(int * imageSize, double * focalPoint, double * upVe
 
 void VisitAdapter::Draw(unsigned char * image)
 {
-	std::cerr<<"entered Draw"<<std::endl;
-
   gvt::render::RenderContext *cntxt = gvt::render::RenderContext::instance();
   if (cntxt == NULL) {
     std::cout << "Something went wrong initializing the context" << std::endl;
@@ -268,8 +266,6 @@ void VisitAdapter::Draw(unsigned char * image)
 
 void  VisitAdapter::SetData(double * points, int numPoints, int * edges, int numEdges, int Material, double * materialProp)
 {
-	std::cerr<<"entered SetData"<<std::endl;
-
    // MPI_Init(NULL, NULL);
    // MPI_Pcontrol(0);
    // int rank = -1;
@@ -283,8 +279,6 @@ void  VisitAdapter::SetData(double * points, int numPoints, int * edges, int num
 
   gvt::core::DBNodeH root = cntxt->getRootNode();
 
-
-
   gvt::core::DBNodeH dataNodes = cntxt->findChildNodeByName("Data",root.UUID());
   if(!dataNodes)
   {
@@ -296,12 +290,10 @@ void  VisitAdapter::SetData(double * points, int numPoints, int * edges, int num
     cntxt->deleteChildren(dataNodes.UUID());
   }
 
-
-
   gvt::core::DBNodeH coneMeshNode = cntxt->createNodeFromType("Mesh", "conemesh", dataNodes.UUID());
-   {
+  {
 	
-	std::cerr << "Attribs: \n" << "Material: " << Material << "\nDiff Color: " << materialProp[0] << ", " << materialProp[1] << ", " << materialProp[2] << "\nSpec Color: " << materialProp[4] << ", " << materialProp[5] << ", " << materialProp[6] << std::endl;
+	//std::cerr << "Attribs: \n" << "Material: " << Material << "\nDiff Color: " << materialProp[0] << ", " << materialProp[1] << ", " << materialProp[2] << "\nSpec Color: " << materialProp[4] << ", " << materialProp[5] << ", " << materialProp[6] << std::endl;
 	
     Mesh *mesh;
     switch (Material)
@@ -355,9 +347,8 @@ void  VisitAdapter::SetData(double * points, int numPoints, int * edges, int num
     coneMeshNode["file"] = string("/fake/path/to/cone");
     coneMeshNode["bbox"] = (unsigned long long)meshbbox;
     coneMeshNode["ptr"] = (unsigned long long)mesh;
-   }
+  }
   
-
   gvt::core::DBNodeH instNodes = cntxt->findChildNodeByName("Instances",root.UUID());
   if(!instNodes)
   {

@@ -7,15 +7,15 @@
         BlinnPhong
       </Enum>
       <Field name="DiffColor" label="Diffuse Color" type="color" length="4">
-        200
-        127
-        127
+        0
+        20
+        240
         255
       </Field>
       <Field name="SpecColor" label="Specular Color" type="color" length="4">
-        127
-        127
-        200
+        0
+        255
+        255
         255
       </Field>
       <Field name="MaxReflections" label="Maximum number of reflections" type="int">
