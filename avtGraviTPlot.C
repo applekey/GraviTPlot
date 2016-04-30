@@ -271,8 +271,6 @@ avtGraviTPlot::CustomizeMapper(avtDataObjectInformation &doi)
 avtImage_p
 avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_atts)
 {   
-	std::cerr<<"entered avtGraviTPlot image execute"<<std::endl;
-
     /* ------------------------ GET ATTRIBUTE PARMS ------------------------*/
 
     //GraviTAttributes atts
@@ -290,8 +288,6 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
 
 
     /* ------------------------ SET CAMERA CONFIG ------------------------*/
-	std::cerr<<"entered avtGraviTPlot image execute : Cam Config"<<std::endl;
-
     int size[2];
     input->GetSize(size,size+1);
 
@@ -311,8 +307,6 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
 
 
     /* ------------------------ GET LIGHTS ------------------------*/
-	std::cerr<<"entered avtGraviTPlot image execute : Light Setup"<<std::endl;
-
     LightList lightList = window_atts.GetLights();
 
     int numLights = lightList.NumLights();
@@ -374,11 +368,9 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
 
 
     /* ------------------------ SET DATA CONFIG ------------------------*/
-	std::cerr<<"entered avtGraviTPlot image execute : Data Config"<<std::endl;
 
-    //if(!hackyConfig.dataLoaded)
-    //{
-	std::cerr<<"entered avtGraviTPlot image execute : Mesh Load"<<std::endl;
+    if(!hackyConfig.dataLoaded)
+    {
 
         avtDataset *ds = (avtDataset *) *hackyInput;
         vtkDataSet *ds2 = ds->dataTree->GetSingleLeaf();
@@ -423,25 +415,19 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
                
         } 
 	
-	std::cerr<<"entered avtGraviTPlot image execute : Material Setup"<<std::endl;
-	
 	// Get material properties
-        double materialColor[8] = {0.5,0.5,0.5,1.0,0.5,0.5,0.5,1.0}; 
+        double materialColor[8] = {-1,-1,-1,-1,-1,-1,-1,-1}; 
 	atts.GetDiffColor().GetRgba(materialColor);
 	atts.GetSpecColor().GetRgba(materialColor+4);
 	int material = atts.GetMaterial();
 
-	//std::cerr<<"Diffuse Color: "<<materialColor[0]<<" "<<materialColor[1]<<" "<<materialColor[2]<<std::endl;
-	//std::cerr<<"Specular Color: "<<materialColor[4]<<" "<<materialColor[5]<<" "<<materialColor[6]<<std::endl;
-	//std::cerr<<"Material: "<<material<<std::endl;
-        
 	adapter.SetData(points, contourSize, edges, totalEdges, material, materialColor);
 	
         delete [] edges;
         delete [] points;
         hackyConfig.dataLoaded = true;
 
-    //}
+    }
 
     /* ------------------------ DRAW ------------------------*/
     
@@ -470,15 +456,16 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
 
 void
 avtGraviTPlot::SetAtts(const AttributeGroup *a)
-{
-    const GraviTAttributes *newAtts = (const GraviTAttributes *)a;
+{std::cerr<<"called"<<std::endl;
 
-    //const unsigned char * color = newAtts->GetColor().GetColor();
-    double diffcolor[4];
-    newAtts->GetDiffColor().GetRgba(diffcolor);
-    double speccolor[4];
-    newAtts->GetSpecColor().GetRgba(speccolor);
-    int material = newAtts->GetMaterial();
+    const GraviTAttributes *newAtts = (const GraviTAttributes *)a;
+    atts = *(GraviTAttributes *)newAtts;
     
-    // might need to update attributes from here
+    //double materialColor[8];
+    //newAtts->GetDiffColor().GetRgba(materialColor);
+    //newAtts->GetSpecColor().GetRgba(materialColor+4);
+    //int material = newAtts->GetMaterial();
+    //std::cerr<<"Diffuse Color: "<<materialColor[0]<<" "<<materialColor[1]<<" "<<materialColor[2]<<std::endl;
+    //std::cerr<<"Specular Color: "<<materialColor[4]<<" "<<materialColor[5]<<" "<<materialColor[6]<<std::endl;
+    //std::cerr<<"Material: "<<material<<std::endl;
 }
