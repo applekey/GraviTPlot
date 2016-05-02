@@ -1,2 +1,6 @@
 CMakeFiles
-CMake
+cmake_install.cmake
+*.swn
+*.swp
+Makefile
+

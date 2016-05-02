@@ -89,6 +89,7 @@ class avtGraviTPlot : public avtSurfaceDataPlot
     virtual avtDataObject_p     ApplyRenderingTransformation(avtDataObject_p);
     virtual void                CustomizeBehavior(void);
     virtual void                CustomizeMapper(avtDataObjectInformation &);
+    virtual avtContract_p       EnhanceSpecification(avtContract_p contract);
 
     virtual avtLegend_p         GetLegend(void) { return NULL; };
     VisitAdapter adapter;

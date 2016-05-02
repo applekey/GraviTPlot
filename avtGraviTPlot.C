@@ -279,6 +279,8 @@ avtGraviTPlot::CustomizeMapper(avtDataObjectInformation &doi)
 avtImage_p
 avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_atts)
 {   
+    /* ------------------------ SET CALLBACK FUNC ------------------------*/
+    adapter.SetVisitProcessBlockFunc(&loadBlock);
     /* ------------------------ GET ATTRIBUTE PARMS ------------------------*/
 
     //GraviTAttributes atts
