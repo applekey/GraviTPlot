@@ -45,6 +45,7 @@
 
 
 #include <avtDataTreeIterator.h>
+#include <avtDatasetOnDemandFilter.h>
 
 
 // ****************************************************************************
@@ -58,7 +59,10 @@
 //
 // ****************************************************************************
 
-class avtGraviTFilter : public avtDataTreeIterator
+class avtGraviTFilter :  
+    virtual public avtDatasetOnDemandFilter
+   ,virtual public avtDatasetToDatasetFilter
+
 {
   public:
                               avtGraviTFilter();
@@ -68,9 +72,13 @@ class avtGraviTFilter : public avtDataTreeIterator
     virtual const char       *GetDescription(void)
                                   { return "Performing GraviT"; };
 
+    virtual int             LoadDomain(int domainId, double * points, int& numPoints, int * edges, int& numEdges);
+
+    virtual int             LoadBoundingBoxes(double * lower, double * upper);
 
   protected:
-
+    virtual void               Execute(){};
+    virtual void                 PurgeDomain( const int domain, const int timeStep ) {};
     virtual avtDataRepresentation *ExecuteData(avtDataRepresentation *);
     virtual void              UpdateDataObjectInfo(void);
 };

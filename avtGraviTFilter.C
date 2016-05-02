@@ -71,6 +71,64 @@ avtGraviTFilter::~avtGraviTFilter()
 }
 
 
+int avtGraviTFilter::LoadBoundingBoxes(double * lower, double * upper)
+{
+	
+	
+	
+}
+
+
+int avtGraviTFilter::LoadDomain(int domainId, double * points, int& numPoints, int * edges, int& numEdges)
+{
+	 // avtDataset *ds = (avtDataset *) *hackyInput;
+     //    vtkDataSet *ds2 = ds->dataTree->GetSingleLeaf();
+     //    std::cerr<<"ds2="<<ds2<<std::endl;
+     //    std::cerr<<"In ImageExecute"<<std::endl;
+
+     //    vtkCellData * cellData = ds2->GetCellData();
+     //    vtkPolyData * contourPD = (vtkPolyData *) ds2;
+     //    int numPoints = contourPD->GetNumberOfPoints();
+     //    vtkCellArray * contourFaces = contourPD->GetPolys();
+     //    // get the verts
+     //    int contourSize = contourPD->GetNumberOfPoints();  
+        
+     //    double * points = new double[contourSize *3];
+
+     //    for(vtkIdType i = 0; i < contourSize; i++)  
+     //    {  
+     //            double vtkPts[3] = {0.0,0.0,0.0};  
+     //            contourPD->GetPoints()->GetPoint(i,vtkPts); 
+
+     //            points[i*3] = vtkPts[0];
+     //            points[i*3 +1] = vtkPts[1];
+     //            points[i*3 + 2] = vtkPts[2];
+     //    }  
+
+     //    // link the edge
+
+     //    vtkSmartPointer<vtkIdList> idList = vtkSmartPointer<vtkIdList>::New();
+     //    contourFaces->InitTraversal();  
+
+     //    int totalEdges = contourFaces->GetNumberOfCells();
+     //    int * edges = new int[totalEdges * 3];
+
+     //    for(int i = 0; i < totalEdges; i++)  
+     //    {  
+     //            contourFaces->GetNextCell(idList);  
+     //            int v1 = idList->GetId(0)+1;  
+     //            int v2 = idList->GetId(1)+1;  
+     //            int v3 = idList->GetId(2)+1;  
+
+     //            edges[i*3] = v1;
+     //            edges[i*3 + 1] = v2;
+     //            edges[i*3 + 2] = v3;
+               
+     //    }
+
+	return 0;
+}
+
 
 
 // ****************************************************************************

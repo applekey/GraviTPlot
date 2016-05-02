@@ -75,6 +75,7 @@ struct GravitProgramConfig
     int samples;
     unsigned char backgroundColor[3];
     bool dataLoaded;
+    bool PreLoadData;
 };
 
 
@@ -96,7 +97,7 @@ class avtGraviTRenderer : public avtCustomRenderer
 };
 avtGraviTPlot::avtGraviTPlot()
 {
-    GraviTFilter = new avtGraviTFilter();
+    graviTFilter = new avtGraviTFilter();
     ref_ptr<avtGraviTRenderer> renderer =  new avtGraviTRenderer;
 
     avtCustomRenderer_p cr;
@@ -120,10 +121,10 @@ avtGraviTPlot::~avtGraviTPlot()
         delete mapper;
         mapper = NULL;
     }
-    if (GraviTFilter != NULL)
+    if (graviTFilter != NULL)
     {
-        delete GraviTFilter;
-        GraviTFilter = NULL;
+        delete graviTFilter;
+        graviTFilter = NULL;
     }
 }
 
@@ -186,10 +187,10 @@ avtGraviTPlot::GetMapper(void)
 avtDataObject_p
 avtGraviTPlot::ApplyOperators(avtDataObject_p input)
 {
-
+    return input;
     //std::cerr<<"apply operators"<<std::endl;
-    GraviTFilter->SetInput(input);
-    return GraviTFilter->GetOutput();
+    //graviTFilter->SetInput(input);
+    //return graviTFilter->GetOutput();
 }
 
 
@@ -212,13 +213,14 @@ avtGraviTPlot::ApplyOperators(avtDataObject_p input)
 avtDataObject_p
 avtGraviTPlot::ApplyRenderingTransformation(avtDataObject_p input)
 {
-std::cerr<<"rendering transformation"<<std::endl;
-//input is the data to render
-    //GraviTFilter->SetInput(input);
-    //return GraviTFilter->GetOutput();
+    std::cerr<<"rendering transformation"<<std::endl;
+
+    graviTFilter->SetInput(input);
     hackyInput = input;
     hackyConfig.dataLoaded = false;
-    return input;
+    hackyConfig.PreLoadData = false;
+    avtDataObject_p x = graviTFilter->GetOutput();
+    return x;
 }
 
 
@@ -255,13 +257,6 @@ avtGraviTPlot::CustomizeBehavior(void)
 //  Creation:   Thu Apr 14 09:20:02 PDT 2016
 //
 // ****************************************************************************
-int loadBlock(int blockId)
-{
-    std::cerr<<"func ptr block"<<blockId+1<<std::endl;
-    return blockId+1;
-}
-
-
 void
 avtGraviTPlot::CustomizeMapper(avtDataObjectInformation &doi)
 {
@@ -279,8 +274,9 @@ avtGraviTPlot::CustomizeMapper(avtDataObjectInformation &doi)
 avtImage_p
 avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_atts)
 {   
+    std::cerr<<"In ImageExecute"<<std::endl;
     /* ------------------------ SET CALLBACK FUNC ------------------------*/
-    adapter.SetVisitProcessBlockFunc(&loadBlock);
+    //adapter.SetVisitProcessBlockFunc((avtGraviTFilter::LoadDomain));
     /* ------------------------ GET ATTRIBUTE PARMS ------------------------*/
 
     //GraviTAttributes atts
@@ -379,7 +375,8 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
 
     /* ------------------------ SET DATA CONFIG ------------------------*/
 
-    if(!hackyConfig.dataLoaded)
+    // preLoadAllData
+    if(!hackyConfig.dataLoaded && hackyConfig.PreLoadData)
     {
 
         avtDataset *ds = (avtDataset *) *hackyInput;
@@ -396,12 +393,12 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
 
         for(vtkIdType i = 0; i < contourSize; i++)  
         {  
-                double vtkPts[3] = {0.0,0.0,0.0};  
-                contourPD->GetPoints()->GetPoint(i,vtkPts); 
+            double vtkPts[3] = {0.0,0.0,0.0};  
+            contourPD->GetPoints()->GetPoint(i,vtkPts); 
 
-                points[i*3] = vtkPts[0];
-                points[i*3 +1] = vtkPts[1];
-                points[i*3 + 2] = vtkPts[2];
+            points[i*3] = vtkPts[0];
+            points[i*3 +1] = vtkPts[1];
+            points[i*3 + 2] = vtkPts[2];
         }  
 
         // link the edge
@@ -414,29 +411,92 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
 
         for(int i = 0; i < totalEdges; i++)  
         {  
-                contourFaces->GetNextCell(idList);  
-                int v1 = idList->GetId(0)+1;  
-                int v2 = idList->GetId(1)+1;  
-                int v3 = idList->GetId(2)+1;  
+            contourFaces->GetNextCell(idList);  
+            int v1 = idList->GetId(0)+1;  
+            int v2 = idList->GetId(1)+1;  
+            int v3 = idList->GetId(2)+1;  
 
-                edges[i*3] = v1;
-                edges[i*3 + 1] = v2;
-                edges[i*3 + 2] = v3;
-               
+            edges[i*3] = v1;
+            edges[i*3 + 1] = v2;
+            edges[i*3 + 2] = v3;   
         } 
 	
-	// Get material properties
+    	// Get material properties
         double materialColor[8] = {-1,-1,-1,-1,-1,-1,-1,-1}; 
-	atts.GetDiffColor().GetRgba(materialColor);
-	atts.GetSpecColor().GetRgba(materialColor+4);
-	int material = atts.GetMaterial();
+    	atts.GetDiffColor().GetRgba(materialColor);
+    	atts.GetSpecColor().GetRgba(materialColor+4);
+    	int material = atts.GetMaterial();
 
-	adapter.SetData(points, contourSize, edges, totalEdges, material, materialColor);
+    	adapter.SetData(points, contourSize, edges, totalEdges, material, materialColor);
 	
         delete [] edges;
         delete [] points;
         hackyConfig.dataLoaded = true;
 
+    }
+
+    if(!hackyConfig.PreLoadData)
+    {
+        // load the bounding boxes as skeleton mesh
+
+        double lower[3] = {-1.0,-1.0,-1.0};
+        double upper[3] = {-1.0,-1.0,-1.0};
+        graviTFilter->LoadBoundingBoxes(lower, upper);
+
+        
+        double points[3*8];
+        int totalPoints = 3*8;
+        
+        int *edges;
+        int totalEdges = 0; // no need to set edges, just need points for the bb
+
+        //souce http://answers.unity3d.com/questions/29797/how-to-get-8-vertices-from-bounds-properties.html
+        points[0 * 3 + 0]  = lower[0];
+        points[0 * 3 + 1]  = lower[1];
+        points[0 * 3 + 2]  = lower[2];
+
+        points[1 * 3 + 0]  = upper[0];
+        points[1 * 3 + 1]  = upper[0];
+        points[1 * 3 + 2]  = upper[0];
+
+        //boundPoint1.x, boundPoint1.y, boundPoint2.z
+        points[2 * 3 + 0]  = lower[0];
+        points[2 * 3 + 1]  = lower[1];
+        points[2 * 3 + 2]  = upper[2];
+
+        //(boundPoint1.x, boundPoint2.y, boundPoint1.z);
+        points[3 * 3 + 0]  = lower[0];
+        points[3 * 3 + 1]  = upper[1];
+        points[3 * 3 + 2]  = lower[2];
+
+        //(boundPoint2.x, boundPoint1.y, boundPoint1.z);
+        points[4 * 3 + 0]  = upper[0];
+        points[4 * 3 + 1]  = lower[1];
+        points[4 * 3 + 2]  = lower[2];
+
+        //(boundPoint1.x, boundPoint2.y, boundPoint2.z);
+        points[5 * 3 + 0]  = lower[0];
+        points[5 * 3 + 1]  = upper[1];
+        points[5 * 3 + 2]  = upper[2];
+
+        //(boundPoint2.x, boundPoint1.y, boundPoint2.z);
+        points[6 * 3 + 0]  = upper[0];
+        points[6 * 3 + 1]  = lower[1];
+        points[6 * 3 + 2]  = upper[2];
+
+        //(boundPoint2.x, boundPoint2.y, boundPoint1.z);
+        points[7 * 3 + 0]  = upper[0];
+        points[7 * 3 + 1]  = upper[1];
+        points[7 * 3 + 2]  = lower[2];
+
+            
+        double materialColor[8] = {-1,-1,-1,-1,-1,-1,-1,-1}; 
+        atts.GetDiffColor().GetRgba(materialColor);
+        atts.GetSpecColor().GetRgba(materialColor+4);
+        int material = atts.GetMaterial();
+
+        adapter.SetData(points, totalPoints, edges, totalEdges, material, materialColor);
+        
     }
 
     /* ------------------------ DRAW ------------------------*/
@@ -466,8 +526,7 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
 
 void
 avtGraviTPlot::SetAtts(const AttributeGroup *a)
-{std::cerr<<"called"<<std::endl;
-
+{
     const GraviTAttributes *newAtts = (const GraviTAttributes *)a;
     atts = *(GraviTAttributes *)newAtts;
     

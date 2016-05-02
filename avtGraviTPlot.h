@@ -82,14 +82,13 @@ class avtGraviTPlot : public avtSurfaceDataPlot
   protected:
     GraviTAttributes              atts;
     avtUserDefinedMapper           *mapper;
-    avtGraviTFilter              *GraviTFilter;
+    avtGraviTFilter              *graviTFilter;
 
     virtual avtMapper          *GetMapper(void);
     virtual avtDataObject_p     ApplyOperators(avtDataObject_p);
     virtual avtDataObject_p     ApplyRenderingTransformation(avtDataObject_p);
     virtual void                CustomizeBehavior(void);
     virtual void                CustomizeMapper(avtDataObjectInformation &);
-    virtual avtContract_p       EnhanceSpecification(avtContract_p contract);
 
     virtual avtLegend_p         GetLegend(void) { return NULL; };
     VisitAdapter adapter;
