@@ -255,6 +255,12 @@ avtGraviTPlot::CustomizeBehavior(void)
 //  Creation:   Thu Apr 14 09:20:02 PDT 2016
 //
 // ****************************************************************************
+int loadBlock(int blockId)
+{
+    std::cerr<<"func ptr block"<<blockId+1<<std::endl;
+    return blockId+1;
+}
+
 
 void
 avtGraviTPlot::CustomizeMapper(avtDataObjectInformation &doi)
@@ -273,6 +279,9 @@ avtImage_p
 avtGraviTPlot::ImageExecute(avtImage_p input,
 const WindowAttributes &window_atts)
 {   
+
+    /* ------------------------ SET CALLBACK FUNC ------------------------*/
+    adapter.SetVisitProcessBlockFunc(&loadBlock);
 
     /* ------------------------ GET ATTRIBUTE PARMS ------------------------*/
 
