@@ -1,10 +1,28 @@
 <?xml version="1.0"?>
   <Plugin name="GraviT" type="plot" label="GraviT" version="1.0" enabled="true" mdspecificcode="false" engspecificcode="false" onlyengine="false" noengine="false" vartype="mesh,material,subset">
     <Attribute name="GraviTAttributes" purpose="Attributes for GraviT plot" persistent="true" keyframe="true" exportAPI="" exportInclude="">
-      <Field name="Color" label="Color" type="color" length="4">
+      <Enum name="MaterialType">
+        Lambert
+        Phong
+        BlinnPhong
+      </Enum>
+      <Field name="DiffColor" label="Diffuse Color" type="color" length="4">
+        0
+        20
+        240
+        255
+      </Field>
+      <Field name="SpecColor" label="Specular Color" type="color" length="4">
+        0
+        255
+        255
+        255
       </Field>
       <Field name="MaxReflections" label="Maximum number of reflections" type="int">
         2
+      </Field>
+      <Field name="Material" label="Material" type="enum" subtype="MaterialType">
+        BlinnPhong
       </Field>
     </Attribute>
   </Plugin>

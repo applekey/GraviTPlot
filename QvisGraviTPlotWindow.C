@@ -128,19 +128,46 @@ QvisGraviTPlotWindow::CreateWindowContents()
     QGridLayout *mainLayout = new QGridLayout(0);
     topLayout->addLayout(mainLayout);
 
-    ColorLabel = new QLabel(tr("Color"), central);
-    mainLayout->addWidget(ColorLabel,0,0);
-    Color = new QvisColorButton(central);
-    connect(Color, SIGNAL(selectedColor(const QColor&)),
-            this, SLOT(ColorChanged(const QColor&)));
-    mainLayout->addWidget(Color, 0,1);
+    DiffColorLabel = new QLabel(tr("Diffuse Color"), central);
+    mainLayout->addWidget(DiffColorLabel,0,0);
+    DiffColor = new QvisColorButton(central);
+    connect(DiffColor, SIGNAL(selectedColor(const QColor&)),
+            this, SLOT(DiffColorChanged(const QColor&)));
+    mainLayout->addWidget(DiffColor, 0,1);
+
+    SpecColorLabel = new QLabel(tr("Specular Color"), central);
+    mainLayout->addWidget(SpecColorLabel,1,0);
+    SpecColor = new QvisColorButton(central);
+    connect(SpecColor, SIGNAL(selectedColor(const QColor&)),
+            this, SLOT(SpecColorChanged(const QColor&)));
+    mainLayout->addWidget(SpecColor, 1,1);
 
     MaxReflectionsLabel = new QLabel(tr("Maximum number of reflections"), central);
-    mainLayout->addWidget(MaxReflectionsLabel,1,0);
+    mainLayout->addWidget(MaxReflectionsLabel,2,0);
     MaxReflections = new QLineEdit(central);
     connect(MaxReflections, SIGNAL(returnPressed()),
             this, SLOT(MaxReflectionsProcessText()));
-    mainLayout->addWidget(MaxReflections, 1,1);
+    mainLayout->addWidget(MaxReflections, 2,1);
+
+    MaterialLabel = new QLabel(tr("Material"), central);
+    mainLayout->addWidget(MaterialLabel,3,0);
+    Material = new QWidget(central);
+    MaterialButtonGroup= new QButtonGroup(Material);
+    QHBoxLayout *MaterialLayout = new QHBoxLayout(Material);
+    MaterialLayout->setMargin(0);
+    MaterialLayout->setSpacing(10);
+    QRadioButton *MaterialMaterialTypeLambert = new QRadioButton(tr("Lambert"), Material);
+    MaterialButtonGroup->addButton(MaterialMaterialTypeLambert,0);
+    MaterialLayout->addWidget(MaterialMaterialTypeLambert);
+    QRadioButton *MaterialMaterialTypePhong = new QRadioButton(tr("Phong"), Material);
+    MaterialButtonGroup->addButton(MaterialMaterialTypePhong,1);
+    MaterialLayout->addWidget(MaterialMaterialTypePhong);
+    QRadioButton *MaterialMaterialTypeBlinnPhong = new QRadioButton(tr("BlinnPhong"), Material);
+    MaterialButtonGroup->addButton(MaterialMaterialTypeBlinnPhong,2);
+    MaterialLayout->addWidget(MaterialMaterialTypeBlinnPhong);
+    connect(MaterialButtonGroup, SIGNAL(buttonClicked(int)),
+            this, SLOT(MaterialChanged(int)));
+    mainLayout->addWidget(Material, 3,1);
 
 }
 
@@ -176,18 +203,34 @@ QvisGraviTPlotWindow::UpdateWindow(bool doAll)
 
         switch(i)
         {
-          case GraviTAttributes::ID_Color:
+          case GraviTAttributes::ID_DiffColor:
             { // new scope
-                QColor tempcolor = QColor(atts->GetColor().Red(),
-                                   atts->GetColor().Green(),
-                                   atts->GetColor().Blue());
-                Color->blockSignals(true);
-                Color->setButtonColor(tempcolor);
-                Color->blockSignals(false);
+                QColor tempcolor = QColor(atts->GetDiffColor().Red(),
+                                   atts->GetDiffColor().Green(),
+                                   atts->GetDiffColor().Blue());
+                DiffColor->blockSignals(true);
+                DiffColor->setButtonColor(tempcolor);
+                DiffColor->blockSignals(false);
+            }
+            break;
+          case GraviTAttributes::ID_SpecColor:
+            { // new scope
+                QColor tempcolor = QColor(atts->GetSpecColor().Red(),
+                                   atts->GetSpecColor().Green(),
+                                   atts->GetSpecColor().Blue());
+                SpecColor->blockSignals(true);
+                SpecColor->setButtonColor(tempcolor);
+                SpecColor->blockSignals(false);
             }
             break;
           case GraviTAttributes::ID_MaxReflections:
             MaxReflections->setText(IntToQString(atts->GetMaxReflections()));
+            break;
+          case GraviTAttributes::ID_Material:
+            MaterialButtonGroup->blockSignals(true);
+            if(MaterialButtonGroup->button((int)atts->GetMaterial()) != 0)
+                MaterialButtonGroup->button((int)atts->GetMaterial())->setChecked(true);
+            MaterialButtonGroup->blockSignals(false);
             break;
         }
     }
@@ -335,10 +378,20 @@ QvisGraviTPlotWindow::reset()
 
 
 void
-QvisGraviTPlotWindow::ColorChanged(const QColor &color)
+QvisGraviTPlotWindow::DiffColorChanged(const QColor &color)
 {
     ColorAttribute temp(color.red(), color.green(), color.blue());
-    atts->SetColor(temp);
+    atts->SetDiffColor(temp);
+    SetUpdate(false);
+    Apply();
+}
+
+
+void
+QvisGraviTPlotWindow::SpecColorChanged(const QColor &color)
+{
+    ColorAttribute temp(color.red(), color.green(), color.blue());
+    atts->SetSpecColor(temp);
     SetUpdate(false);
     Apply();
 }
@@ -349,6 +402,18 @@ QvisGraviTPlotWindow::MaxReflectionsProcessText()
 {
     GetCurrentValues(GraviTAttributes::ID_MaxReflections);
     Apply();
+}
+
+
+void
+QvisGraviTPlotWindow::MaterialChanged(int val)
+{
+    if(val != atts->GetMaterial())
+    {
+        atts->SetMaterial(GraviTAttributes::MaterialType(val));
+        SetUpdate(false);
+        Apply();
+    }
 }
 
 

@@ -41,6 +41,7 @@
 #include <stdio.h>
 #include <snprintf.h>
 #include <ColorAttribute.h>
+#include <ColorAttribute.h>
 
 // ****************************************************************************
 // Module: PyGraviTAttributes
@@ -77,11 +78,33 @@ PyGraviTAttributes_ToString(const GraviTAttributes *atts, const char *prefix)
     std::string str;
     char tmpStr[1000];
 
-    const unsigned char *Color = atts->GetColor().GetColor();
-    SNPRINTF(tmpStr, 1000, "%sColor = (%d, %d, %d, %d)\n", prefix, int(Color[0]), int(Color[1]), int(Color[2]), int(Color[3]));
+    const unsigned char *DiffColor = atts->GetDiffColor().GetColor();
+    SNPRINTF(tmpStr, 1000, "%sDiffColor = (%d, %d, %d, %d)\n", prefix, int(DiffColor[0]), int(DiffColor[1]), int(DiffColor[2]), int(DiffColor[3]));
+    str += tmpStr;
+    const unsigned char *SpecColor = atts->GetSpecColor().GetColor();
+    SNPRINTF(tmpStr, 1000, "%sSpecColor = (%d, %d, %d, %d)\n", prefix, int(SpecColor[0]), int(SpecColor[1]), int(SpecColor[2]), int(SpecColor[3]));
     str += tmpStr;
     SNPRINTF(tmpStr, 1000, "%sMaxReflections = %d\n", prefix, atts->GetMaxReflections());
     str += tmpStr;
+    const char *Material_names = "Lambert, Phong, BlinnPhong";
+    switch (atts->GetMaterial())
+    {
+      case GraviTAttributes::Lambert:
+          SNPRINTF(tmpStr, 1000, "%sMaterial = %sLambert  # %s\n", prefix, prefix, Material_names);
+          str += tmpStr;
+          break;
+      case GraviTAttributes::Phong:
+          SNPRINTF(tmpStr, 1000, "%sMaterial = %sPhong  # %s\n", prefix, prefix, Material_names);
+          str += tmpStr;
+          break;
+      case GraviTAttributes::BlinnPhong:
+          SNPRINTF(tmpStr, 1000, "%sMaterial = %sBlinnPhong  # %s\n", prefix, prefix, Material_names);
+          str += tmpStr;
+          break;
+      default:
+          break;
+    }
+
     return str;
 }
 
@@ -95,7 +118,7 @@ GraviTAttributes_Notify(PyObject *self, PyObject *args)
 }
 
 /*static*/ PyObject *
-GraviTAttributes_SetColor(PyObject *self, PyObject *args)
+GraviTAttributes_SetDiffColor(PyObject *self, PyObject *args)
 {
     GraviTAttributesObject *obj = (GraviTAttributesObject *)self;
 
@@ -149,25 +172,102 @@ GraviTAttributes_SetColor(PyObject *self, PyObject *args)
         PyErr_Clear();
     }
 
-    // Set the Color in the object.
+    // Set the DiffColor in the object.
     ColorAttribute ca(c[0], c[1], c[2], c[3]);
-    obj->data->SetColor(ca);
+    obj->data->SetDiffColor(ca);
 
     Py_INCREF(Py_None);
     return Py_None;
 }
 
 /*static*/ PyObject *
-GraviTAttributes_GetColor(PyObject *self, PyObject *args)
+GraviTAttributes_GetDiffColor(PyObject *self, PyObject *args)
 {
     GraviTAttributesObject *obj = (GraviTAttributesObject *)self;
-    // Allocate a tuple the with enough entries to hold the Color.
+    // Allocate a tuple the with enough entries to hold the DiffColor.
     PyObject *retval = PyTuple_New(4);
-    const unsigned char *Color = obj->data->GetColor().GetColor();
-    PyTuple_SET_ITEM(retval, 0, PyInt_FromLong(long(Color[0])));
-    PyTuple_SET_ITEM(retval, 1, PyInt_FromLong(long(Color[1])));
-    PyTuple_SET_ITEM(retval, 2, PyInt_FromLong(long(Color[2])));
-    PyTuple_SET_ITEM(retval, 3, PyInt_FromLong(long(Color[3])));
+    const unsigned char *DiffColor = obj->data->GetDiffColor().GetColor();
+    PyTuple_SET_ITEM(retval, 0, PyInt_FromLong(long(DiffColor[0])));
+    PyTuple_SET_ITEM(retval, 1, PyInt_FromLong(long(DiffColor[1])));
+    PyTuple_SET_ITEM(retval, 2, PyInt_FromLong(long(DiffColor[2])));
+    PyTuple_SET_ITEM(retval, 3, PyInt_FromLong(long(DiffColor[3])));
+    return retval;
+}
+
+/*static*/ PyObject *
+GraviTAttributes_SetSpecColor(PyObject *self, PyObject *args)
+{
+    GraviTAttributesObject *obj = (GraviTAttributesObject *)self;
+
+    int c[4];
+    if(!PyArg_ParseTuple(args, "iiii", &c[0], &c[1], &c[2], &c[3]))
+    {
+        c[3] = 255;
+        if(!PyArg_ParseTuple(args, "iii", &c[0], &c[1], &c[2]))
+        {
+            double dr, dg, db, da;
+            if(PyArg_ParseTuple(args, "dddd", &dr, &dg, &db, &da))
+            {
+                c[0] = int(dr);
+                c[1] = int(dg);
+                c[2] = int(db);
+                c[3] = int(da);
+            }
+            else if(PyArg_ParseTuple(args, "ddd", &dr, &dg, &db))
+            {
+                c[0] = int(dr);
+                c[1] = int(dg);
+                c[2] = int(db);
+                c[3] = 255;
+            }
+            else
+            {
+                PyObject *tuple = NULL;
+                if(!PyArg_ParseTuple(args, "O", &tuple))
+                    return NULL;
+
+                if(!PyTuple_Check(tuple))
+                    return NULL;
+
+                // Make sure that the tuple is the right size.
+                if(PyTuple_Size(tuple) < 3 || PyTuple_Size(tuple) > 4)
+                    return NULL;
+
+                // Make sure that all elements in the tuple are ints.
+                for(int i = 0; i < PyTuple_Size(tuple); ++i)
+                {
+                    PyObject *item = PyTuple_GET_ITEM(tuple, i);
+                    if(PyInt_Check(item))
+                        c[i] = int(PyInt_AS_LONG(PyTuple_GET_ITEM(tuple, i)));
+                    else if(PyFloat_Check(item))
+                        c[i] = int(PyFloat_AS_DOUBLE(PyTuple_GET_ITEM(tuple, i)));
+                    else
+                        return NULL;
+                }
+            }
+        }
+        PyErr_Clear();
+    }
+
+    // Set the SpecColor in the object.
+    ColorAttribute ca(c[0], c[1], c[2], c[3]);
+    obj->data->SetSpecColor(ca);
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+/*static*/ PyObject *
+GraviTAttributes_GetSpecColor(PyObject *self, PyObject *args)
+{
+    GraviTAttributesObject *obj = (GraviTAttributesObject *)self;
+    // Allocate a tuple the with enough entries to hold the SpecColor.
+    PyObject *retval = PyTuple_New(4);
+    const unsigned char *SpecColor = obj->data->GetSpecColor().GetColor();
+    PyTuple_SET_ITEM(retval, 0, PyInt_FromLong(long(SpecColor[0])));
+    PyTuple_SET_ITEM(retval, 1, PyInt_FromLong(long(SpecColor[1])));
+    PyTuple_SET_ITEM(retval, 2, PyInt_FromLong(long(SpecColor[2])));
+    PyTuple_SET_ITEM(retval, 3, PyInt_FromLong(long(SpecColor[3])));
     return retval;
 }
 
@@ -195,14 +295,51 @@ GraviTAttributes_GetMaxReflections(PyObject *self, PyObject *args)
     return retval;
 }
 
+/*static*/ PyObject *
+GraviTAttributes_SetMaterial(PyObject *self, PyObject *args)
+{
+    GraviTAttributesObject *obj = (GraviTAttributesObject *)self;
+
+    int ival;
+    if(!PyArg_ParseTuple(args, "i", &ival))
+        return NULL;
+
+    // Set the Material in the object.
+    if(ival >= 0 && ival < 3)
+        obj->data->SetMaterial(GraviTAttributes::MaterialType(ival));
+    else
+    {
+        fprintf(stderr, "An invalid Material value was given. "
+                        "Valid values are in the range of [0,2]. "
+                        "You can also use the following names: "
+                        "Lambert, Phong, BlinnPhong.");
+        return NULL;
+    }
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+/*static*/ PyObject *
+GraviTAttributes_GetMaterial(PyObject *self, PyObject *args)
+{
+    GraviTAttributesObject *obj = (GraviTAttributesObject *)self;
+    PyObject *retval = PyInt_FromLong(long(obj->data->GetMaterial()));
+    return retval;
+}
+
 
 
 PyMethodDef PyGraviTAttributes_methods[GRAVITATTRIBUTES_NMETH] = {
     {"Notify", GraviTAttributes_Notify, METH_VARARGS},
-    {"SetColor", GraviTAttributes_SetColor, METH_VARARGS},
-    {"GetColor", GraviTAttributes_GetColor, METH_VARARGS},
+    {"SetDiffColor", GraviTAttributes_SetDiffColor, METH_VARARGS},
+    {"GetDiffColor", GraviTAttributes_GetDiffColor, METH_VARARGS},
+    {"SetSpecColor", GraviTAttributes_SetSpecColor, METH_VARARGS},
+    {"GetSpecColor", GraviTAttributes_GetSpecColor, METH_VARARGS},
     {"SetMaxReflections", GraviTAttributes_SetMaxReflections, METH_VARARGS},
     {"GetMaxReflections", GraviTAttributes_GetMaxReflections, METH_VARARGS},
+    {"SetMaterial", GraviTAttributes_SetMaterial, METH_VARARGS},
+    {"GetMaterial", GraviTAttributes_GetMaterial, METH_VARARGS},
     {NULL, NULL}
 };
 
@@ -231,10 +368,21 @@ GraviTAttributes_compare(PyObject *v, PyObject *w)
 PyObject *
 PyGraviTAttributes_getattr(PyObject *self, char *name)
 {
-    if(strcmp(name, "Color") == 0)
-        return GraviTAttributes_GetColor(self, NULL);
+    if(strcmp(name, "DiffColor") == 0)
+        return GraviTAttributes_GetDiffColor(self, NULL);
+    if(strcmp(name, "SpecColor") == 0)
+        return GraviTAttributes_GetSpecColor(self, NULL);
     if(strcmp(name, "MaxReflections") == 0)
         return GraviTAttributes_GetMaxReflections(self, NULL);
+    if(strcmp(name, "Material") == 0)
+        return GraviTAttributes_GetMaterial(self, NULL);
+    if(strcmp(name, "Lambert") == 0)
+        return PyInt_FromLong(long(GraviTAttributes::Lambert));
+    if(strcmp(name, "Phong") == 0)
+        return PyInt_FromLong(long(GraviTAttributes::Phong));
+    if(strcmp(name, "BlinnPhong") == 0)
+        return PyInt_FromLong(long(GraviTAttributes::BlinnPhong));
+
 
     return Py_FindMethod(PyGraviTAttributes_methods, self, name);
 }
@@ -249,10 +397,14 @@ PyGraviTAttributes_setattr(PyObject *self, char *name, PyObject *args)
     Py_INCREF(args);
     PyObject *obj = NULL;
 
-    if(strcmp(name, "Color") == 0)
-        obj = GraviTAttributes_SetColor(self, tuple);
+    if(strcmp(name, "DiffColor") == 0)
+        obj = GraviTAttributes_SetDiffColor(self, tuple);
+    else if(strcmp(name, "SpecColor") == 0)
+        obj = GraviTAttributes_SetSpecColor(self, tuple);
     else if(strcmp(name, "MaxReflections") == 0)
         obj = GraviTAttributes_SetMaxReflections(self, tuple);
+    else if(strcmp(name, "Material") == 0)
+        obj = GraviTAttributes_SetMaterial(self, tuple);
 
     if(obj != NULL)
         Py_DECREF(obj);

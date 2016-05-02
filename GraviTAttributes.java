@@ -60,30 +60,42 @@ import llnl.visit.ColorAttribute;
 
 public class GraviTAttributes extends AttributeSubject implements Plugin
 {
-    private static int GraviTAttributes_numAdditionalAtts = 2;
+    private static int GraviTAttributes_numAdditionalAtts = 4;
+
+    // Enum values
+    public final static int MATERIALTYPE_LAMBERT = 0;
+    public final static int MATERIALTYPE_PHONG = 1;
+    public final static int MATERIALTYPE_BLINNPHONG = 2;
+
 
     public GraviTAttributes()
     {
         super(GraviTAttributes_numAdditionalAtts);
 
-        Color = new ColorAttribute();
+        DiffColor = new ColorAttribute(200, 127, 127);
+        SpecColor = new ColorAttribute(127, 127, 200);
         MaxReflections = 2;
+        Material = MATERIALTYPE_BLINNPHONG;
     }
 
     public GraviTAttributes(int nMoreFields)
     {
         super(GraviTAttributes_numAdditionalAtts + nMoreFields);
 
-        Color = new ColorAttribute();
+        DiffColor = new ColorAttribute(200, 127, 127);
+        SpecColor = new ColorAttribute(127, 127, 200);
         MaxReflections = 2;
+        Material = MATERIALTYPE_BLINNPHONG;
     }
 
     public GraviTAttributes(GraviTAttributes obj)
     {
         super(GraviTAttributes_numAdditionalAtts);
 
-        Color = new ColorAttribute(obj.Color);
+        DiffColor = new ColorAttribute(obj.DiffColor);
+        SpecColor = new ColorAttribute(obj.SpecColor);
         MaxReflections = obj.MaxReflections;
+        Material = obj.Material;
 
         SelectAll();
     }
@@ -101,37 +113,57 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
     public boolean equals(GraviTAttributes obj)
     {
         // Create the return value
-        return ((Color == obj.Color) &&
-                (MaxReflections == obj.MaxReflections));
+        return ((DiffColor == obj.DiffColor) &&
+                (SpecColor == obj.SpecColor) &&
+                (MaxReflections == obj.MaxReflections) &&
+                (Material == obj.Material));
     }
 
     public String GetName() { return "GraviT"; }
     public String GetVersion() { return "1.0"; }
 
     // Property setting methods
-    public void SetColor(ColorAttribute Color_)
+    public void SetDiffColor(ColorAttribute DiffColor_)
     {
-        Color = Color_;
+        DiffColor = DiffColor_;
         Select(0);
+    }
+
+    public void SetSpecColor(ColorAttribute SpecColor_)
+    {
+        SpecColor = SpecColor_;
+        Select(1);
     }
 
     public void SetMaxReflections(int MaxReflections_)
     {
         MaxReflections = MaxReflections_;
-        Select(1);
+        Select(2);
+    }
+
+    public void SetMaterial(int Material_)
+    {
+        Material = Material_;
+        Select(3);
     }
 
     // Property getting methods
-    public ColorAttribute GetColor() { return Color; }
+    public ColorAttribute GetDiffColor() { return DiffColor; }
+    public ColorAttribute GetSpecColor() { return SpecColor; }
     public int            GetMaxReflections() { return MaxReflections; }
+    public int            GetMaterial() { return Material; }
 
     // Write and read methods.
     public void WriteAtts(CommunicationBuffer buf)
     {
         if(WriteSelect(0, buf))
-            Color.Write(buf);
+            DiffColor.Write(buf);
         if(WriteSelect(1, buf))
+            SpecColor.Write(buf);
+        if(WriteSelect(2, buf))
             buf.WriteInt(MaxReflections);
+        if(WriteSelect(3, buf))
+            buf.WriteInt(Material);
     }
 
     public void ReadAtts(int index, CommunicationBuffer buf)
@@ -139,11 +171,18 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
         switch(index)
         {
         case 0:
-            Color.Read(buf);
+            DiffColor.Read(buf);
             Select(0);
             break;
         case 1:
+            SpecColor.Read(buf);
+            Select(1);
+            break;
+        case 2:
             SetMaxReflections(buf.ReadInt());
+            break;
+        case 3:
+            SetMaterial(buf.ReadInt());
             break;
         }
     }
@@ -151,14 +190,25 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
     public String toString(String indent)
     {
         String str = new String();
-        str = str + indent + "Color = {" + Color.Red() + ", " + Color.Green() + ", " + Color.Blue() + ", " + Color.Alpha() + "}\n";
+        str = str + indent + "DiffColor = {" + DiffColor.Red() + ", " + DiffColor.Green() + ", " + DiffColor.Blue() + ", " + DiffColor.Alpha() + "}\n";
+        str = str + indent + "SpecColor = {" + SpecColor.Red() + ", " + SpecColor.Green() + ", " + SpecColor.Blue() + ", " + SpecColor.Alpha() + "}\n";
         str = str + intToString("MaxReflections", MaxReflections, indent) + "\n";
+        str = str + indent + "Material = ";
+        if(Material == MATERIALTYPE_LAMBERT)
+            str = str + "MATERIALTYPE_LAMBERT";
+        if(Material == MATERIALTYPE_PHONG)
+            str = str + "MATERIALTYPE_PHONG";
+        if(Material == MATERIALTYPE_BLINNPHONG)
+            str = str + "MATERIALTYPE_BLINNPHONG";
+        str = str + "\n";
         return str;
     }
 
 
     // Attributes
-    private ColorAttribute Color;
+    private ColorAttribute DiffColor;
+    private ColorAttribute SpecColor;
     private int            MaxReflections;
+    private int            Material;
 }
 

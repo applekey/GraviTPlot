@@ -275,19 +275,16 @@ avtGraviTPlot::CustomizeMapper(avtDataObjectInformation &doi)
     }
  */
 }
+
 avtImage_p
-avtGraviTPlot::ImageExecute(avtImage_p input,
-const WindowAttributes &window_atts)
+avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_atts)
 {   
-
-    /* ------------------------ SET CALLBACK FUNC ------------------------*/
-    adapter.SetVisitProcessBlockFunc(&loadBlock);
-
     /* ------------------------ GET ATTRIBUTE PARMS ------------------------*/
 
     //GraviTAttributes atts
 
-    unsigned char * color = atts.GetColor().GetColor();
+    unsigned char * diffcolor = atts.GetDiffColor().GetColor();
+    unsigned char * speccolor = atts.GetSpecColor().GetColor();
 
     //std::cerr<<color[0]<<" "<<color[1]<<" "<<color[2]<<std::endl;
 
@@ -318,11 +315,9 @@ const WindowAttributes &window_atts)
 
 
     /* ------------------------ GET LIGHTS ------------------------*/
-
     LightList lightList = window_atts.GetLights();
 
     int numLights = lightList.NumLights();
-
 
     std::vector<int> lightTypes;
     std::vector<double> lightDirection;
@@ -368,14 +363,14 @@ const WindowAttributes &window_atts)
 
             lightIntensity.push_back(brightness);
 
-            std::cerr<<"lightType:"<<type<<std::endl;
-            std::cerr<<"lightDirection:"<<direction[0]<<" "<<direction[1]<<" "<<direction[2]<<std::endl;
-            std::cerr<<"LightColor:"<<(unsigned int)color[0]<<" "<<(unsigned int)color[1]<<" "<<(unsigned int)color[2]<<std::endl;
-            std::cerr<<"LightIntensity:"<<brightness<<std::endl;
+          //  std::cerr<<"Light Type:"<<type<<std::endl;
+          //  std::cerr<<"Light Direction:"<<direction[0]<<" "<<direction[1]<<" "<<direction[2]<<std::endl;
+          //  std::cerr<<"Light Color:"<<(unsigned int)color[0]<<" "<<(unsigned int)color[1]<<" "<<(unsigned int)color[2]<<std::endl;
+          //  std::cerr<<"LightIntensity:"<<brightness<<std::endl;
         }
     }
 
-    std::cerr<<"totalValidLights:"<<totalValidLights<<std::endl;
+  //  std::cerr<<"Total Valid Lights:"<<totalValidLights<<std::endl;
 
     adapter.SetLight(totalValidLights, lightTypes.data(), lightDirection.data(), lightColor.data(), lightIntensity.data());
 
@@ -384,6 +379,7 @@ const WindowAttributes &window_atts)
 
     if(!hackyConfig.dataLoaded)
     {
+
         avtDataset *ds = (avtDataset *) *hackyInput;
         vtkDataSet *ds2 = ds->dataTree->GetSingleLeaf();
 
@@ -426,10 +422,15 @@ const WindowAttributes &window_atts)
                 edges[i*3 + 2] = v3;
                
         } 
+	
+	// Get material properties
+        double materialColor[8] = {-1,-1,-1,-1,-1,-1,-1,-1}; 
+	atts.GetDiffColor().GetRgba(materialColor);
+	atts.GetSpecColor().GetRgba(materialColor+4);
+	int material = atts.GetMaterial();
 
-        double materialProp[3] ={0.9,0.5,0.5}; 
-        adapter.SetData(points, contourSize, edges, totalEdges,0, materialProp);
-
+	adapter.SetData(points, contourSize, edges, totalEdges, material, materialColor);
+	
         delete [] edges;
         delete [] points;
         hackyConfig.dataLoaded = true;
@@ -438,7 +439,7 @@ const WindowAttributes &window_atts)
 
     /* ------------------------ DRAW ------------------------*/
     
-    unsigned char * data =input->GetImage().GetRGBBuffer();
+    unsigned char * data = input->GetImage().GetRGBBuffer();
 
     adapter.Draw(data);
     avtImage_p rv = input;
@@ -463,11 +464,16 @@ const WindowAttributes &window_atts)
 
 void
 avtGraviTPlot::SetAtts(const AttributeGroup *a)
-{
+{std::cerr<<"called"<<std::endl;
+
     const GraviTAttributes *newAtts = (const GraviTAttributes *)a;
-
-    const unsigned char * color = (newAtts->GetColor()).GetColor();
-
-    std::cerr<<color[0]<<" "<<color[1]<<" "<<color[2]<<std::endl;
-
+    atts = *(GraviTAttributes *)newAtts;
+    
+    //double materialColor[8];
+    //newAtts->GetDiffColor().GetRgba(materialColor);
+    //newAtts->GetSpecColor().GetRgba(materialColor+4);
+    //int material = newAtts->GetMaterial();
+    //std::cerr<<"Diffuse Color: "<<materialColor[0]<<" "<<materialColor[1]<<" "<<materialColor[2]<<std::endl;
+    //std::cerr<<"Specular Color: "<<materialColor[4]<<" "<<materialColor[5]<<" "<<materialColor[6]<<std::endl;
+    //std::cerr<<"Material: "<<material<<std::endl;
 }
