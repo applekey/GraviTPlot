@@ -47,6 +47,7 @@
 #include <avtDataTreeIterator.h>
 #include <avtDatasetOnDemandFilter.h>
 
+int avtGraviTFilter_LoadDomain(void*);
 
 // ****************************************************************************
 //  Class: avtGraviTFilter
@@ -59,11 +60,12 @@
 //
 // ****************************************************************************
 
+
 class avtGraviTFilter :  
     virtual public avtDatasetOnDemandFilter
    ,virtual public avtDatasetToDatasetFilter
-
 {
+    friend int avtGraviTFilter_LoadDomain(void*);
   public:
                               avtGraviTFilter();
     virtual                  ~avtGraviTFilter();

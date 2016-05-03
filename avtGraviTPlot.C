@@ -82,7 +82,13 @@ struct GravitProgramConfig
 GravitProgramConfig hackyConfig;
 avtDataObject_p hackyInput;
 
+int avtGraviTFilter_LoadDomain(void * p, int domainId, double * points, int& numPoints, int * edges, int& numEdges )
+{
+   avtGraviTFilter * in = (avtGraviTFilter*)p; 
 
+   return in->LoadDomain( domainId, points, numPoints, edges, numEdges);
+   
+}
 
 // ****************************************************************************
 //  Method: avtGraviTPlot constructor
@@ -215,12 +221,13 @@ avtGraviTPlot::ApplyRenderingTransformation(avtDataObject_p input)
 {
     std::cerr<<"rendering transformation"<<std::endl;
 
-    graviTFilter->SetInput(input);
+    //graviTFilter->SetInput(input);
     hackyInput = input;
     hackyConfig.dataLoaded = false;
-    hackyConfig.PreLoadData = false;
-    avtDataObject_p x = graviTFilter->GetOutput();
-    return x;
+    hackyConfig.PreLoadData = true;
+    return input;
+    // avtDataObject_p x = graviTFilter->GetOutput();
+    // return x;
 }
 
 
@@ -276,7 +283,9 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
 {   
     std::cerr<<"In ImageExecute"<<std::endl;
     /* ------------------------ SET CALLBACK FUNC ------------------------*/
-    //adapter.SetVisitProcessBlockFunc((avtGraviTFilter::LoadDomain));
+
+    adapter.SetVisitProcessBlockFunc((void*)graviTFilter,avtGraviTFilter_LoadDomain);
+    
     /* ------------------------ GET ATTRIBUTE PARMS ------------------------*/
 
     //GraviTAttributes atts

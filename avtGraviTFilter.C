@@ -70,7 +70,6 @@ avtGraviTFilter::~avtGraviTFilter()
 {
 }
 
-
 int avtGraviTFilter::LoadBoundingBoxes(double * lower, double * upper)
 {
 	
@@ -81,6 +80,7 @@ int avtGraviTFilter::LoadBoundingBoxes(double * lower, double * upper)
 
 int avtGraviTFilter::LoadDomain(int domainId, double * points, int& numPoints, int * edges, int& numEdges)
 {
+    std::cerr<<"I am called"<<std::endl;
 	 // avtDataset *ds = (avtDataset *) *hackyInput;
      //    vtkDataSet *ds2 = ds->dataTree->GetSingleLeaf();
      //    std::cerr<<"ds2="<<ds2<<std::endl;
