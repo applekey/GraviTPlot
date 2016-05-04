@@ -78,8 +78,6 @@ class avtGraviTFilter :
 
     virtual void             LoadBoundingBoxes(int & numBoundingBox, double ** lower, double ** upper);
 
-    vtkDataSet * hackyDS;
-
   protected:
     virtual void               Execute(){};
     virtual void                 PurgeDomain( const int domain, const int timeStep ) {};

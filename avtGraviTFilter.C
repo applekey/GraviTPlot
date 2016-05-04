@@ -48,7 +48,8 @@
 #include <vtkSmartPointer.h>
 #include <vtkCellArray.h>
 #include <float.h>
-
+#include <avtIntervalTree.h>
+#include <avtMetaData.h>
 
 // ****************************************************************************
 //  Method: avtGraviTFilter constructor
@@ -77,54 +78,45 @@ avtGraviTFilter::~avtGraviTFilter()
 
 void avtGraviTFilter::LoadBoundingBoxes(int & numBoundingBox, double ** lower, double ** upper)
 {
-	// spoof 
+    avtIntervalTree * tree = GetMetaData()->GetSpatialExtents();
+    numBoundingBox = tree->GetNLeaves();
 
-    numBoundingBox = 1;
+    std::cerr<<"NumBoundingBox"<<numBoundingBox<<std::endl;
+
     *lower = new double[numBoundingBox * 3];
     *upper = new double[numBoundingBox * 3];
 
+    double * lowerPtr = *lower;
+    double * upperPtr = *upper;
 
-    (*lower)[0] = FLT_MAX;
-    (*lower)[1] = FLT_MAX;
-    (*lower)[2] = FLT_MAX;
+    for(int i = 0;i<numBoundingBox;i++)
+    {   
+        double bBox[6];
+        tree->GetLeafExtents(i, bBox);
 
-    (*upper)[0] = FLT_MIN;
-    (*upper)[1] = FLT_MIN;
-    (*upper)[2] = FLT_MIN;
+        lowerPtr[0] = bBox[0];
+        lowerPtr[1] = bBox[2];
+        lowerPtr[2] = bBox[4];
 
-    double * u = *upper;
-    double * l = *lower;
+        upperPtr[0] = bBox[1];
+        upperPtr[1] = bBox[3];
+        upperPtr[2] = bBox[5];
+        std::cerr<<"bBox:"<<bBox[0]<<":"<<bBox[1]<<":"<<bBox[2]<<":"<<bBox[3]<<":"<<bBox[4]<<":"<<bBox[5]<<std::endl;
 
-    vtkDataSet *ds2 = hackyDS;
-
-    vtkCellData * cellData = ds2->GetCellData();
-    vtkPolyData * contourPD = (vtkPolyData *) ds2;
-    int numPoints = contourPD->GetNumberOfPoints();
-    vtkCellArray * contourFaces = contourPD->GetPolys();
-    // get the verts
-    int contourSize = contourPD->GetNumberOfPoints();  
-    
-
-    for(vtkIdType i = 0; i < contourSize; i++)  
-    {  
-        double vtkPts[3] = {0.0,0.0,0.0};  
-        contourPD->GetPoints()->GetPoint(i,vtkPts); 
-
-        u[0] = std::max(u[0], vtkPts[0]);
-        u[1] = std::max(u[1], vtkPts[1]);
-        u[2] = std::max(u[2], vtkPts[2]);
-
-        l[0] = std::min(l[0], vtkPts[0]);
-        l[1] = std::min(l[1], vtkPts[1]);
-        l[2] = std::min(l[2], vtkPts[2]);
-    }  
+        lowerPtr += 3;
+        upperPtr += 3;
+    }
 }
 
 
 int avtGraviTFilter::LoadDomain(int domainId, double ** ppoints, int& numPoints, int ** pedges, int& numEdges)
 {
-    std::cerr<<"I am called"<<std::endl;
-    vtkDataSet *ds2 = hackyDS;
+    std::cerr<<"Loading Domain Id: "<<domainId<<std::endl;
+
+    vtkDataSet *ds2 = GetDomain(domainId,0);
+
+    std::cerr<<"Got Domain Data"<<std::endl;
+
     vtkCellData * cellData = ds2->GetCellData();
     vtkPolyData * contourPD = (vtkPolyData *) ds2;
     numPoints = contourPD->GetNumberOfPoints();
@@ -158,15 +150,14 @@ int avtGraviTFilter::LoadDomain(int domainId, double ** ppoints, int& numPoints,
 
     for(int i = 0; i < totalEdges; i++)  
     {  
-            contourFaces->GetNextCell(idList);  
-            int v1 = idList->GetId(0)+1;  
-            int v2 = idList->GetId(1)+1;  
-            int v3 = idList->GetId(2)+1;  
+        contourFaces->GetNextCell(idList);  
+        int v1 = idList->GetId(0)+1;  
+        int v2 = idList->GetId(1)+1;  
+        int v3 = idList->GetId(2)+1;  
 
-            edges[i*3] = v1;
-            edges[i*3 + 1] = v2;
-            edges[i*3 + 2] = v3;
-           
+        edges[i*3] = v1;
+        edges[i*3 + 1] = v2;
+        edges[i*3 + 2] = v3;
     }
 
     std::cerr<<"callback func success"<<std::endl;

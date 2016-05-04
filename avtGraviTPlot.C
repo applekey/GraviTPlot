@@ -221,13 +221,12 @@ avtGraviTPlot::ApplyRenderingTransformation(avtDataObject_p input)
 {
     std::cerr<<"rendering transformation"<<std::endl;
 
-    //graviTFilter->SetInput(input);
+    graviTFilter->SetInput(input);
     hackyInput = input;
     hackyConfig.dataLoaded = false;
     hackyConfig.PreLoadData = false;
-    return input;
-    // avtDataObject_p x = graviTFilter->GetOutput();
-    // return x;
+    avtDataObject_p x = graviTFilter->GetOutput();
+    return x;
 }
 
 
@@ -442,10 +441,6 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
 
     if(!hackyConfig.dataLoaded && !hackyConfig.PreLoadData)
     {
-        avtDataset *ds = (avtDataset *) *hackyInput;
-        vtkDataSet *ds2 = ds->dataTree->GetSingleLeaf();
-        graviTFilter->hackyDS = ds2;
-
 
         /* ------------------------ SET CALLBACK FUNC ------------------------*/
         adapter.SetVisitProcessBlockFunc((void*)graviTFilter,avtGraviTFilter_LoadDomain);
@@ -456,7 +451,6 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
         double * uppers;
         graviTFilter->LoadBoundingBoxes(numBoundingBoxes, &lowers, &uppers);
 
-        std::cerr<<"fffff"<<numBoundingBoxes<<std::endl;
         for(int i =0; i < numBoundingBoxes; i++)
         {
             double * lower = lowers + 3 *i;
@@ -468,10 +462,6 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
             int *edges;
             int totalEdges = 0; // no need to set edges, just need points for the bb
 
-            std::cerr<<lower[0]<<"a"<<lower[1]<<"b"<<lower[2]<<std::endl;
-            std::cerr<<upper[0]<<"a"<<upper[1]<<"b"<<upper[2]<<std::endl;
-
-            //souce http://answers.unity3d.com/questions/29797/how-to-get-8-vertices-from-bounds-properties.html
             points[0 * 3 + 0]  = lower[0];
             points[0 * 3 + 1]  = lower[1];
             points[0 * 3 + 2]  = lower[2];
@@ -479,6 +469,8 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
             points[1 * 3 + 0]  = upper[0];
             points[1 * 3 + 1]  = upper[1];
             points[1 * 3 + 2]  = upper[2];
+
+            std::cerr<<"ffbox:"<<points[0]<<":"<<points[3]<<":"<<points[1]<<":"<<points[4]<<":"<<points[2]<<":"<<points[5]<<std::endl;
                 
             double materialColor[8] = {-1,-1,-1,-1,-1,-1,-1,-1}; 
             atts.GetDiffColor().GetRgba(materialColor);
