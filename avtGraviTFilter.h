@@ -74,9 +74,11 @@ class avtGraviTFilter :
     virtual const char       *GetDescription(void)
                                   { return "Performing GraviT"; };
 
-    virtual int             LoadDomain(int domainId, double * points, int& numPoints, int * edges, int& numEdges);
+    virtual int             LoadDomain(int domainId, double ** points, int& numPoints, int ** edges, int& numEdges);
 
-    virtual int             LoadBoundingBoxes(double * lower, double * upper);
+    virtual void             LoadBoundingBoxes(int & numBoundingBox, double ** lower, double ** upper);
+
+    vtkDataSet * hackyDS;
 
   protected:
     virtual void               Execute(){};

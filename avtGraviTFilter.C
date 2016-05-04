@@ -42,7 +42,12 @@
 
 #include <avtGraviTFilter.h>
 
+// remove these refs later
 #include <vtkDataSet.h>
+#include <vtkPolyData.h>
+#include <vtkSmartPointer.h>
+#include <vtkCellArray.h>
+#include <float.h>
 
 
 // ****************************************************************************
@@ -70,61 +75,101 @@ avtGraviTFilter::~avtGraviTFilter()
 {
 }
 
-int avtGraviTFilter::LoadBoundingBoxes(double * lower, double * upper)
+void avtGraviTFilter::LoadBoundingBoxes(int & numBoundingBox, double ** lower, double ** upper)
 {
-	
-	
-	
+	// spoof 
+
+    numBoundingBox = 1;
+    *lower = new double[numBoundingBox * 3];
+    *upper = new double[numBoundingBox * 3];
+
+
+    (*lower)[0] = FLT_MAX;
+    (*lower)[1] = FLT_MAX;
+    (*lower)[2] = FLT_MAX;
+
+    (*upper)[0] = FLT_MIN;
+    (*upper)[1] = FLT_MIN;
+    (*upper)[2] = FLT_MIN;
+
+    double * u = *upper;
+    double * l = *lower;
+
+    vtkDataSet *ds2 = hackyDS;
+
+    vtkCellData * cellData = ds2->GetCellData();
+    vtkPolyData * contourPD = (vtkPolyData *) ds2;
+    int numPoints = contourPD->GetNumberOfPoints();
+    vtkCellArray * contourFaces = contourPD->GetPolys();
+    // get the verts
+    int contourSize = contourPD->GetNumberOfPoints();  
+    
+
+    for(vtkIdType i = 0; i < contourSize; i++)  
+    {  
+        double vtkPts[3] = {0.0,0.0,0.0};  
+        contourPD->GetPoints()->GetPoint(i,vtkPts); 
+
+        u[0] = std::max(u[0], vtkPts[0]);
+        u[1] = std::max(u[1], vtkPts[1]);
+        u[2] = std::max(u[2], vtkPts[2]);
+
+        l[0] = std::min(l[0], vtkPts[0]);
+        l[1] = std::min(l[1], vtkPts[1]);
+        l[2] = std::min(l[2], vtkPts[2]);
+    }  
 }
 
 
-int avtGraviTFilter::LoadDomain(int domainId, double * points, int& numPoints, int * edges, int& numEdges)
+int avtGraviTFilter::LoadDomain(int domainId, double ** ppoints, int& numPoints, int ** pedges, int& numEdges)
 {
     std::cerr<<"I am called"<<std::endl;
-	 // avtDataset *ds = (avtDataset *) *hackyInput;
-     //    vtkDataSet *ds2 = ds->dataTree->GetSingleLeaf();
-     //    std::cerr<<"ds2="<<ds2<<std::endl;
-     //    std::cerr<<"In ImageExecute"<<std::endl;
+    vtkDataSet *ds2 = hackyDS;
+    vtkCellData * cellData = ds2->GetCellData();
+    vtkPolyData * contourPD = (vtkPolyData *) ds2;
+    numPoints = contourPD->GetNumberOfPoints();
+    vtkCellArray * contourFaces = contourPD->GetPolys();
+    // get the verts
+    int contourSize = contourPD->GetNumberOfPoints();  
+    
+    *ppoints = new double[contourSize *3];
 
-     //    vtkCellData * cellData = ds2->GetCellData();
-     //    vtkPolyData * contourPD = (vtkPolyData *) ds2;
-     //    int numPoints = contourPD->GetNumberOfPoints();
-     //    vtkCellArray * contourFaces = contourPD->GetPolys();
-     //    // get the verts
-     //    int contourSize = contourPD->GetNumberOfPoints();  
-        
-     //    double * points = new double[contourSize *3];
+    double * points =  *ppoints;
 
-     //    for(vtkIdType i = 0; i < contourSize; i++)  
-     //    {  
-     //            double vtkPts[3] = {0.0,0.0,0.0};  
-     //            contourPD->GetPoints()->GetPoint(i,vtkPts); 
+    for(vtkIdType i = 0; i < contourSize; i++)  
+    {  
+            double vtkPts[3] = {0.0,0.0,0.0};  
+            contourPD->GetPoints()->GetPoint(i,vtkPts); 
 
-     //            points[i*3] = vtkPts[0];
-     //            points[i*3 +1] = vtkPts[1];
-     //            points[i*3 + 2] = vtkPts[2];
-     //    }  
+            points[i*3] = vtkPts[0];
+            points[i*3 +1] = vtkPts[1];
+            points[i*3 + 2] = vtkPts[2];
+    }  
 
-     //    // link the edge
+    // link the edge
 
-     //    vtkSmartPointer<vtkIdList> idList = vtkSmartPointer<vtkIdList>::New();
-     //    contourFaces->InitTraversal();  
+    vtkSmartPointer<vtkIdList> idList = vtkSmartPointer<vtkIdList>::New();
+    contourFaces->InitTraversal();  
 
-     //    int totalEdges = contourFaces->GetNumberOfCells();
-     //    int * edges = new int[totalEdges * 3];
+    int totalEdges = contourFaces->GetNumberOfCells();
+    numEdges = totalEdges;
+    *pedges = new int[totalEdges * 3];
+    int * edges=  *pedges;
 
-     //    for(int i = 0; i < totalEdges; i++)  
-     //    {  
-     //            contourFaces->GetNextCell(idList);  
-     //            int v1 = idList->GetId(0)+1;  
-     //            int v2 = idList->GetId(1)+1;  
-     //            int v3 = idList->GetId(2)+1;  
+    for(int i = 0; i < totalEdges; i++)  
+    {  
+            contourFaces->GetNextCell(idList);  
+            int v1 = idList->GetId(0)+1;  
+            int v2 = idList->GetId(1)+1;  
+            int v3 = idList->GetId(2)+1;  
 
-     //            edges[i*3] = v1;
-     //            edges[i*3 + 1] = v2;
-     //            edges[i*3 + 2] = v3;
-               
-     //    }
+            edges[i*3] = v1;
+            edges[i*3 + 1] = v2;
+            edges[i*3 + 2] = v3;
+           
+    }
+
+    std::cerr<<"callback func success"<<std::endl;
 
 	return 0;
 }

@@ -82,7 +82,7 @@ struct GravitProgramConfig
 GravitProgramConfig hackyConfig;
 avtDataObject_p hackyInput;
 
-int avtGraviTFilter_LoadDomain(void * p, int domainId, double * points, int& numPoints, int * edges, int& numEdges )
+int avtGraviTFilter_LoadDomain(void * p, int domainId, double ** points, int& numPoints, int ** edges, int& numEdges )
 {
    avtGraviTFilter * in = (avtGraviTFilter*)p; 
 
@@ -224,7 +224,7 @@ avtGraviTPlot::ApplyRenderingTransformation(avtDataObject_p input)
     //graviTFilter->SetInput(input);
     hackyInput = input;
     hackyConfig.dataLoaded = false;
-    hackyConfig.PreLoadData = true;
+    hackyConfig.PreLoadData = false;
     return input;
     // avtDataObject_p x = graviTFilter->GetOutput();
     // return x;
@@ -282,9 +282,6 @@ avtImage_p
 avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_atts)
 {   
     std::cerr<<"In ImageExecute"<<std::endl;
-    /* ------------------------ SET CALLBACK FUNC ------------------------*/
-
-    adapter.SetVisitProcessBlockFunc((void*)graviTFilter,avtGraviTFilter_LoadDomain);
     
     /* ------------------------ GET ATTRIBUTE PARMS ------------------------*/
 
@@ -387,7 +384,6 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
     // preLoadAllData
     if(!hackyConfig.dataLoaded && hackyConfig.PreLoadData)
     {
-
         avtDataset *ds = (avtDataset *) *hackyInput;
         vtkDataSet *ds2 = ds->dataTree->GetSingleLeaf();
 
@@ -444,68 +440,56 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
 
     }
 
-    if(!hackyConfig.PreLoadData)
+    if(!hackyConfig.dataLoaded && !hackyConfig.PreLoadData)
     {
+        avtDataset *ds = (avtDataset *) *hackyInput;
+        vtkDataSet *ds2 = ds->dataTree->GetSingleLeaf();
+        graviTFilter->hackyDS = ds2;
+
+
+        /* ------------------------ SET CALLBACK FUNC ------------------------*/
+        adapter.SetVisitProcessBlockFunc((void*)graviTFilter,avtGraviTFilter_LoadDomain);
+
         // load the bounding boxes as skeleton mesh
+        int numBoundingBoxes;
+        double * lowers;
+        double * uppers;
+        graviTFilter->LoadBoundingBoxes(numBoundingBoxes, &lowers, &uppers);
 
-        double lower[3] = {-1.0,-1.0,-1.0};
-        double upper[3] = {-1.0,-1.0,-1.0};
-        graviTFilter->LoadBoundingBoxes(lower, upper);
-
-        
-        double points[3*8];
-        int totalPoints = 3*8;
-        
-        int *edges;
-        int totalEdges = 0; // no need to set edges, just need points for the bb
-
-        //souce http://answers.unity3d.com/questions/29797/how-to-get-8-vertices-from-bounds-properties.html
-        points[0 * 3 + 0]  = lower[0];
-        points[0 * 3 + 1]  = lower[1];
-        points[0 * 3 + 2]  = lower[2];
-
-        points[1 * 3 + 0]  = upper[0];
-        points[1 * 3 + 1]  = upper[0];
-        points[1 * 3 + 2]  = upper[0];
-
-        //boundPoint1.x, boundPoint1.y, boundPoint2.z
-        points[2 * 3 + 0]  = lower[0];
-        points[2 * 3 + 1]  = lower[1];
-        points[2 * 3 + 2]  = upper[2];
-
-        //(boundPoint1.x, boundPoint2.y, boundPoint1.z);
-        points[3 * 3 + 0]  = lower[0];
-        points[3 * 3 + 1]  = upper[1];
-        points[3 * 3 + 2]  = lower[2];
-
-        //(boundPoint2.x, boundPoint1.y, boundPoint1.z);
-        points[4 * 3 + 0]  = upper[0];
-        points[4 * 3 + 1]  = lower[1];
-        points[4 * 3 + 2]  = lower[2];
-
-        //(boundPoint1.x, boundPoint2.y, boundPoint2.z);
-        points[5 * 3 + 0]  = lower[0];
-        points[5 * 3 + 1]  = upper[1];
-        points[5 * 3 + 2]  = upper[2];
-
-        //(boundPoint2.x, boundPoint1.y, boundPoint2.z);
-        points[6 * 3 + 0]  = upper[0];
-        points[6 * 3 + 1]  = lower[1];
-        points[6 * 3 + 2]  = upper[2];
-
-        //(boundPoint2.x, boundPoint2.y, boundPoint1.z);
-        points[7 * 3 + 0]  = upper[0];
-        points[7 * 3 + 1]  = upper[1];
-        points[7 * 3 + 2]  = lower[2];
-
+        std::cerr<<"fffff"<<numBoundingBoxes<<std::endl;
+        for(int i =0; i < numBoundingBoxes; i++)
+        {
+            double * lower = lowers + 3 *i;
+            double * upper = uppers + 3 *i;
             
-        double materialColor[8] = {-1,-1,-1,-1,-1,-1,-1,-1}; 
-        atts.GetDiffColor().GetRgba(materialColor);
-        atts.GetSpecColor().GetRgba(materialColor+4);
-        int material = atts.GetMaterial();
+            double points[3*2];
+            int totalPoints = 2;
+            
+            int *edges;
+            int totalEdges = 0; // no need to set edges, just need points for the bb
 
-        adapter.SetData(points, totalPoints, edges, totalEdges, material, materialColor);
-        
+            std::cerr<<lower[0]<<"a"<<lower[1]<<"b"<<lower[2]<<std::endl;
+            std::cerr<<upper[0]<<"a"<<upper[1]<<"b"<<upper[2]<<std::endl;
+
+            //souce http://answers.unity3d.com/questions/29797/how-to-get-8-vertices-from-bounds-properties.html
+            points[0 * 3 + 0]  = lower[0];
+            points[0 * 3 + 1]  = lower[1];
+            points[0 * 3 + 2]  = lower[2];
+
+            points[1 * 3 + 0]  = upper[0];
+            points[1 * 3 + 1]  = upper[1];
+            points[1 * 3 + 2]  = upper[2];
+                
+            double materialColor[8] = {-1,-1,-1,-1,-1,-1,-1,-1}; 
+            atts.GetDiffColor().GetRgba(materialColor);
+            atts.GetSpecColor().GetRgba(materialColor+4);
+            int material = atts.GetMaterial();
+
+            std::cerr<<"adapter set data"<<std::endl;
+            adapter.SetData(points, totalPoints, edges, totalEdges, material, materialColor);
+        }
+        delete [] (uppers);
+        delete [] (lowers);
     }
 
     /* ------------------------ DRAW ------------------------*/
