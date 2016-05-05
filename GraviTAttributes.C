@@ -147,7 +147,7 @@ const AttributeGroup::private_tmfs_t GraviTAttributes::TmfsStruct = {GRAVITATTRI
 
 GraviTAttributes::GraviTAttributes() : 
     AttributeSubject(GraviTAttributes::TypeMapFormatString),
-    DiffColor(200, 127, 127), SpecColor(127, 127, 200)
+    DiffColor(0, 20, 240), SpecColor(0, 255, 255)
 {
     GraviTAttributes::Init();
 }
@@ -169,7 +169,7 @@ GraviTAttributes::GraviTAttributes() :
 
 GraviTAttributes::GraviTAttributes(private_tmfs_t tmfs) : 
     AttributeSubject(tmfs.tmfs),
-    DiffColor(200, 127, 127), SpecColor(127, 127, 200)
+    DiffColor(0, 20, 240), SpecColor(0, 255, 255)
 {
     GraviTAttributes::Init();
 }

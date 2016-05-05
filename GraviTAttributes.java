@@ -72,8 +72,8 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
     {
         super(GraviTAttributes_numAdditionalAtts);
 
-        DiffColor = new ColorAttribute(200, 127, 127);
-        SpecColor = new ColorAttribute(127, 127, 200);
+        DiffColor = new ColorAttribute(0, 20, 240);
+        SpecColor = new ColorAttribute(0, 255, 255);
         MaxReflections = 2;
         Material = MATERIALTYPE_BLINNPHONG;
     }
@@ -82,8 +82,8 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
     {
         super(GraviTAttributes_numAdditionalAtts + nMoreFields);
 
-        DiffColor = new ColorAttribute(200, 127, 127);
-        SpecColor = new ColorAttribute(127, 127, 200);
+        DiffColor = new ColorAttribute(0, 20, 240);
+        SpecColor = new ColorAttribute(0, 255, 255);
         MaxReflections = 2;
         Material = MATERIALTYPE_BLINNPHONG;
     }
