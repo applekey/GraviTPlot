@@ -316,68 +316,6 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
 
     adapter.SetCamera(size,focalPoint, upVector, viewNormal, parScale/zoom, fov);
 
-
-    /* ------------------------ GET LIGHTS ------------------------*/
-    LightList lightList = window_atts.GetLights();
-
-    int numLights = lightList.NumLights();
-
-    std::vector<int> lightTypes;
-    std::vector<double> lightDirection;
-    std::vector<unsigned char> lightColor;
-    std::vector<double> lightIntensity;
-
-    int totalValidLights = 0;
-
-    for(int i = 0;i <numLights;i++)
-    {
-        LightAttributes lightAttr = lightList.GetLight(i);
-
-        // if(!lightAttr.GetEnabledFlagCanBeToggled())
-        // {
-        //     continue;
-        // }
-
-        if(lightAttr.GetEnabledFlag())
-        {
-            LightAttributes::LightType type = lightAttr.GetType();
-            /*
-            Ambient     
-            Object  
-            Camera  
-            */
-
-            totalValidLights++;
-
-            double * direction = lightAttr.GetDirection();
-            ColorAttribute colorAttr = lightAttr.GetColor();
-            unsigned char * color = colorAttr.GetColor();
-            double brightness =  lightAttr.GetBrightness();
-
-            lightTypes.push_back((int)type);
-
-            lightDirection.push_back(direction[0]);
-            lightDirection.push_back(direction[1]);
-            lightDirection.push_back(direction[2]);
-
-            lightColor.push_back(color[0]);
-            lightColor.push_back(color[1]);
-            lightColor.push_back(color[2]);
-
-            lightIntensity.push_back(brightness);
-
-          //  std::cerr<<"Light Type:"<<type<<std::endl;
-          //  std::cerr<<"Light Direction:"<<direction[0]<<" "<<direction[1]<<" "<<direction[2]<<std::endl;
-          //  std::cerr<<"Light Color:"<<(unsigned int)color[0]<<" "<<(unsigned int)color[1]<<" "<<(unsigned int)color[2]<<std::endl;
-          //  std::cerr<<"LightIntensity:"<<brightness<<std::endl;
-        }
-    }
-
-  //  std::cerr<<"Total Valid Lights:"<<totalValidLights<<std::endl;
-
-    adapter.SetLight(totalValidLights, lightTypes.data(), lightDirection.data(), lightColor.data(), lightIntensity.data());
-
-
     /* ------------------------ SET DATA CONFIG ------------------------*/
 
     // preLoadAllData
@@ -482,7 +420,75 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
         }
         delete [] (uppers);
         delete [] (lowers);
+        hackyConfig.dataLoaded = true;
     }
+
+        
+    /* ------------------------ GET LIGHTS ------------------------*/
+    LightList lightList = window_atts.GetLights();
+
+    int numLights = lightList.NumLights();
+
+    std::vector<int> lightTypes;
+    std::vector<double> lightDirection;
+    std::vector<unsigned char> lightColor;
+    std::vector<double> lightIntensity;
+
+    int totalValidLights = 0;
+
+    for(int i = 0;i <numLights;i++)
+    {
+        LightAttributes lightAttr = lightList.GetLight(i);
+
+        // if(!lightAttr.GetEnabledFlagCanBeToggled())
+        // {
+        //     continue;
+        // }
+
+        if(lightAttr.GetEnabledFlag())
+        {
+            LightAttributes::LightType type = lightAttr.GetType();
+            /*
+            Ambient     
+            Object  
+            Camera  
+            */
+
+            totalValidLights++;
+
+            double * direction = lightAttr.GetDirection();
+            ColorAttribute colorAttr = lightAttr.GetColor();
+            unsigned char * color = colorAttr.GetColor();
+            double brightness =  lightAttr.GetBrightness();
+
+            lightTypes.push_back((int)type);
+
+            lightDirection.push_back(direction[0]);
+            lightDirection.push_back(direction[1]);
+            lightDirection.push_back(direction[2]);
+
+            lightColor.push_back(color[0]);
+            lightColor.push_back(color[1]);
+            lightColor.push_back(color[2]);
+
+            lightIntensity.push_back(brightness);
+
+
+           std::cerr<<"Light Type:"<<type<<std::endl;
+           std::cerr<<"Light Direction:"<<direction[0]<<" "<<direction[1]<<" "<<direction[2]<<std::endl;
+           std::cerr<<"Light Color:"<<(unsigned int)color[0]<<" "<<(unsigned int)color[1]<<" "<<(unsigned int)color[2]<<std::endl;
+           std::cerr<<"LightIntensity:"<<brightness<<std::endl;
+        }
+    }
+
+  //  std::cerr<<"Total Valid Lights:"<<totalValidLights<<std::endl;
+
+    adapter.SetLight(totalValidLights, lightTypes.data(), lightDirection.data(), lightColor.data(), lightIntensity.data());
+
+    /* -------------------------MODIFY MATERIAL -------------*/
+
+    double materialNew[3] ={0.5,0.5,0.5};
+    adapter.ChangeMaterial(0,0, materialNew);
 
     /* ------------------------ DRAW ------------------------*/
     

@@ -113,10 +113,10 @@ int avtGraviTFilter::LoadDomain(int domainId, double ** ppoints, int& numPoints,
 {
     std::cerr<<"Loading Domain Id: "<<domainId<<std::endl;
 
-    vtkDataSet *ds2 = GetDomain(domainId,0);
+    vtkDataSet *ds2 = GetDomain(domainId ,0);
 
     std::cerr<<"Got Domain Data"<<std::endl;
-
+    
     vtkCellData * cellData = ds2->GetCellData();
     vtkPolyData * contourPD = (vtkPolyData *) ds2;
     numPoints = contourPD->GetNumberOfPoints();
@@ -159,8 +159,10 @@ int avtGraviTFilter::LoadDomain(int domainId, double ** ppoints, int& numPoints,
         edges[i*3 + 1] = v2;
         edges[i*3 + 2] = v3;
     }
+    std::cerr<<"numverts"<<numPoints<<"numEdges"<<numEdges<<std::endl;
 
-    std::cerr<<"callback func success"<<std::endl;
+
+    std::cerr<<"Callback func success"<<std::endl;
 
 	return 0;
 }
