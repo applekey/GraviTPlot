@@ -91,7 +91,7 @@ class avtGraviTPlot : public avtSurfaceDataPlot
     virtual void                CustomizeMapper(avtDataObjectInformation &);
 
     virtual avtLegend_p         GetLegend(void) { return NULL; };
-    VisitAdapter adapter;
+    VisitAdapter * adapter;
 };
 
 

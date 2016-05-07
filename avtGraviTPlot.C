@@ -109,6 +109,7 @@ avtGraviTPlot::avtGraviTPlot()
     avtCustomRenderer_p cr;
     CopyTo(cr, renderer);
     mapper = new avtUserDefinedMapper(cr);
+    adapter = new VisitAdapter;
 }
 
 
@@ -131,6 +132,12 @@ avtGraviTPlot::~avtGraviTPlot()
     {
         delete graviTFilter;
         graviTFilter = NULL;
+    }
+
+    if (adapter != NULL)
+    {
+        delete adapter;
+        adapter = NULL;
     }
 }
 
@@ -295,7 +302,7 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
     rayTraceProps.maxDepth = 2;
     rayTraceProps.raySamples = 3;
     rayTraceProps.windowJitterSize = 0.0;
-    adapter.SetRayTraceProperties(rayTraceProps);
+    adapter->SetRayTraceProperties(rayTraceProps);
 
 
     /* ------------------------ SET CAMERA CONFIG ------------------------*/
@@ -314,7 +321,7 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
     double * upVector  = viewAttr.GetViewUp();
     double parScale = viewAttr.GetParallelScale();
 
-    adapter.SetCamera(size,focalPoint, upVector, viewNormal, parScale/zoom, fov);
+    adapter->SetCamera(size,focalPoint, upVector, viewNormal, parScale/zoom, fov);
 
     /* ------------------------ SET DATA CONFIG ------------------------*/
 
@@ -369,7 +376,7 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
     	atts.GetSpecColor().GetRgba(materialColor+4);
     	int material = atts.GetMaterial();
 
-    	adapter.SetData(points, contourSize, edges, totalEdges, material, materialColor);
+    	adapter->SetData(points, contourSize, edges, totalEdges, material, materialColor);
 	
         delete [] edges;
         delete [] points;
@@ -381,7 +388,7 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
     {
 
         /* ------------------------ SET CALLBACK FUNC ------------------------*/
-        adapter.SetVisitProcessBlockFunc((void*)graviTFilter,avtGraviTFilter_LoadDomain);
+        adapter->SetVisitProcessBlockFunc((void*)graviTFilter,avtGraviTFilter_LoadDomain);
 
         // load the bounding boxes as skeleton mesh
         int numBoundingBoxes;
@@ -416,7 +423,7 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
             int material = atts.GetMaterial();
 
             std::cerr<<"adapter set data"<<std::endl;
-            adapter.SetData(points, totalPoints, edges, totalEdges, material, materialColor);
+            adapter->SetData(points, totalPoints, edges, totalEdges, material, materialColor);
         }
         delete [] (uppers);
         delete [] (lowers);
@@ -483,18 +490,18 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
 
   //  std::cerr<<"Total Valid Lights:"<<totalValidLights<<std::endl;
 
-    adapter.SetLight(totalValidLights, lightTypes.data(), lightDirection.data(), lightColor.data(), lightIntensity.data());
+    adapter->SetLight(totalValidLights, lightTypes.data(), lightDirection.data(), lightColor.data(), lightIntensity.data());
 
     /* -------------------------MODIFY MATERIAL -------------*/
 
     double materialNew[3] ={0.5,0.5,0.5};
-    adapter.ChangeMaterial(0,0, materialNew);
+    adapter->ChangeMaterial(0,0, materialNew);
 
     /* ------------------------ DRAW ------------------------*/
     
     unsigned char * data = input->GetImage().GetRGBBuffer();
 
-    adapter.Draw(data);
+    adapter->Draw(data);
     avtImage_p rv = input;
 
     return rv;
