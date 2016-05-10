@@ -415,14 +415,14 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
             points[1 * 3 + 1]  = upper[1];
             points[1 * 3 + 2]  = upper[2];
 
-            std::cerr<<"ffbox:"<<points[0]<<":"<<points[3]<<":"<<points[1]<<":"<<points[4]<<":"<<points[2]<<":"<<points[5]<<std::endl;
+            //std::cerr<<"ffbox:"<<points[0]<<":"<<points[3]<<":"<<points[1]<<":"<<points[4]<<":"<<points[2]<<":"<<points[5]<<std::endl;
                 
             double materialColor[8] = {-1,-1,-1,-1,-1,-1,-1,-1}; 
             atts.GetDiffColor().GetRgba(materialColor);
             atts.GetSpecColor().GetRgba(materialColor+4);
             int material = atts.GetMaterial();
 
-            std::cerr<<"adapter set data"<<std::endl;
+            //std::cerr<<"adapter set data"<<std::endl;
             adapter->SetData(points, totalPoints, edges, totalEdges, material, materialColor);
         }
         delete [] (uppers);
@@ -481,10 +481,10 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
             lightIntensity.push_back(brightness);
 
 
-           std::cerr<<"Light Type:"<<type<<std::endl;
-           std::cerr<<"Light Direction:"<<direction[0]<<" "<<direction[1]<<" "<<direction[2]<<std::endl;
-           std::cerr<<"Light Color:"<<(unsigned int)color[0]<<" "<<(unsigned int)color[1]<<" "<<(unsigned int)color[2]<<std::endl;
-           std::cerr<<"LightIntensity:"<<brightness<<std::endl;
+           // std::cerr<<"Light Type:"<<type<<std::endl;
+           // std::cerr<<"Light Direction:"<<direction[0]<<" "<<direction[1]<<" "<<direction[2]<<std::endl;
+           // std::cerr<<"Light Color:"<<(unsigned int)color[0]<<" "<<(unsigned int)color[1]<<" "<<(unsigned int)color[2]<<std::endl;
+           // std::cerr<<"LightIntensity:"<<brightness<<std::endl;
         }
     }
 
@@ -493,9 +493,11 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
     adapter->SetLight(totalValidLights, lightTypes.data(), lightDirection.data(), lightColor.data(), lightIntensity.data());
 
     /* -------------------------MODIFY MATERIAL -------------*/
-
-    double materialNew[3] ={0.5,0.5,0.5};
-    adapter->ChangeMaterial(0,0, materialNew);
+    double materialColor[8] = {-1,-1,-1,-1,-1,-1,-1,-1};
+    atts.GetDiffColor().GetRgba(materialColor);
+    atts.GetSpecColor().GetRgba(materialColor+4);
+    int material = atts.GetMaterial();
+    adapter->ChangeMaterial(0,material, materialColor);
 
     /* ------------------------ DRAW ------------------------*/
     
