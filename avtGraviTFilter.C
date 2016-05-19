@@ -76,6 +76,12 @@ avtGraviTFilter::~avtGraviTFilter()
 {
 }
 
+bool avtGraviTFilter::HasExtents()
+{
+    avtIntervalTree * tree = GetMetaData()->GetSpatialExtents();
+    return (tree!= NULL? true:false);
+}
+
 void avtGraviTFilter::LoadBoundingBoxes(int & numBoundingBox, double ** lower, double ** upper)
 {
     avtIntervalTree * tree = GetMetaData()->GetSpatialExtents();
@@ -214,4 +220,6 @@ avtGraviTFilter::ExecuteData(avtDataRepresentation *in_dr)
 void
 avtGraviTFilter::UpdateDataObjectInfo(void)
 {
+    std::cerr<<"In Gravit Filter, hasExtents"<<HasExtents()<<std::endl;
+    SetOperatingOnDemand(HasExtents());
 }

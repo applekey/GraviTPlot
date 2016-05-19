@@ -61,6 +61,8 @@
 #include <vtkPolyData.h>
 #include <vtkCellArray.h>
 #include <vtkSmartPointer.h>
+#include <mpi.h>
+
 struct GravitProgramConfig
 {
     // Camera Params
@@ -77,6 +79,7 @@ struct GravitProgramConfig
     bool dataLoaded;
     bool PreLoadData;
 };
+
 
 
 GravitProgramConfig hackyConfig;
@@ -103,6 +106,7 @@ class avtGraviTRenderer : public avtCustomRenderer
 };
 avtGraviTPlot::avtGraviTPlot()
 {
+    std::cerr<<"called"<<std::endl;
     graviTFilter = new avtGraviTFilter();
     ref_ptr<avtGraviTRenderer> renderer =  new avtGraviTRenderer;
 
@@ -110,6 +114,11 @@ avtGraviTPlot::avtGraviTPlot()
     CopyTo(cr, renderer);
     mapper = new avtUserDefinedMapper(cr);
     adapter = new VisitAdapter;
+
+      // char *** abc;
+      // int a = 3;
+      // MPI_Init(&a,abc); 
+
 }
 
 
@@ -287,7 +296,14 @@ avtGraviTPlot::CustomizeMapper(avtDataObjectInformation &doi)
 avtImage_p
 avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_atts)
 {   
-    std::cerr<<"In ImageExecute"<<std::endl;
+    int rank,sfize;
+    MPI_Comm_rank (MPI_COMM_WORLD, &rank);  /* get current process id */
+    MPI_Comm_size (MPI_COMM_WORLD, &sfize);    /* get number of processes */
+
+    
+
+    std::cerr<<"fdsafd"<<rank<<":"<<sfize<<std::endl;
+
     
     /* ------------------------ GET ATTRIBUTE PARMS ------------------------*/
 
@@ -296,13 +312,20 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
     unsigned char * diffcolor = atts.GetDiffColor().GetColor();
     unsigned char * speccolor = atts.GetSpecColor().GetColor();
 
+    int maxReflections = atts.GetMaxReflections();
     //std::cerr<<color[0]<<" "<<color[1]<<" "<<color[2]<<std::endl;
 
     VisitAdapter::RayTraceProperties rayTraceProps;
-    rayTraceProps.maxDepth = 2;
+    rayTraceProps.maxDepth = maxReflections;
     rayTraceProps.raySamples = 3;
     rayTraceProps.windowJitterSize = 0.0;
+
+
+    std::cerr<<"In ImageExecute1"<<std::endl;
+
     adapter->SetRayTraceProperties(rayTraceProps);
+
+    std::cerr<<"In ImageExecute2"<<std::endl;
 
 
     /* ------------------------ SET CAMERA CONFIG ------------------------*/
@@ -323,8 +346,14 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
 
     adapter->SetCamera(size,focalPoint, upVector, viewNormal, parScale/zoom, fov);
 
+    std::cerr<<"In ImageExecute3"<<std::endl;
+
     /* ------------------------ SET DATA CONFIG ------------------------*/
 
+    // check if data has extens
+    //hackyConfig.PreLoadData = !(graviTFilter->HasExtents());
+    hackyConfig.PreLoadData = !(graviTFilter->HasExtents());
+    std::cerr<<"has ext"<<hackyConfig.PreLoadData<<std::endl;
     // preLoadAllData
     if(!hackyConfig.dataLoaded && hackyConfig.PreLoadData)
     {
@@ -430,6 +459,7 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
         hackyConfig.dataLoaded = true;
     }
 
+    std::cerr<<"In ImageExecute3.5"<<std::endl;
         
     /* ------------------------ GET LIGHTS ------------------------*/
     LightList lightList = window_atts.GetLights();
@@ -502,6 +532,9 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
     /* ------------------------ DRAW ------------------------*/
     
     unsigned char * data = input->GetImage().GetRGBBuffer();
+
+
+    std::cerr<<"In ImageExecute4"<<std::endl;
 
     adapter->Draw(data);
     avtImage_p rv = input;

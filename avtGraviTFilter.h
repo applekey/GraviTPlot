@@ -74,9 +74,9 @@ class avtGraviTFilter :
     virtual const char       *GetDescription(void)
                                   { return "Performing GraviT"; };
 
-    virtual int             LoadDomain(int domainId, double ** points, int& numPoints, int ** edges, int& numEdges);
-
-    virtual void             LoadBoundingBoxes(int & numBoundingBox, double ** lower, double ** upper);
+    int              LoadDomain(int domainId, double ** points, int& numPoints, int ** edges, int& numEdges);
+    void             LoadBoundingBoxes(int & numBoundingBox, double ** lower, double ** upper);
+    bool             HasExtents();
 
   protected:
     virtual void               Execute(){};
