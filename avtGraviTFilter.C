@@ -221,5 +221,5 @@ void
 avtGraviTFilter::UpdateDataObjectInfo(void)
 {
     std::cerr<<"In Gravit Filter, hasExtents"<<HasExtents()<<std::endl;
-    SetOperatingOnDemand(HasExtents());
+    SetOperatingOnDemand(false);
 }

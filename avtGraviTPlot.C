@@ -61,6 +61,7 @@
 #include <vtkPolyData.h>
 #include <vtkCellArray.h>
 #include <vtkSmartPointer.h>
+#include <avtIntervalTree.h>
 #include <mpi.h>
 
 struct GravitProgramConfig
@@ -78,6 +79,7 @@ struct GravitProgramConfig
     unsigned char backgroundColor[3];
     bool dataLoaded;
     bool PreLoadData;
+    int scheduler; // 0 is image, 1 is domain
 };
 
 
@@ -296,15 +298,14 @@ avtGraviTPlot::CustomizeMapper(avtDataObjectInformation &doi)
 avtImage_p
 avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_atts)
 {   
-    int rank,sfize;
+    int rank,world_size;
     MPI_Comm_rank (MPI_COMM_WORLD, &rank);  /* get current process id */
-    MPI_Comm_size (MPI_COMM_WORLD, &sfize);    /* get number of processes */
+    MPI_Comm_size (MPI_COMM_WORLD, &world_size);    /* get number of processes */
 
     
 
-    std::cerr<<"fdsafd"<<rank<<":"<<sfize<<std::endl;
+    // draw needs a barrier!
 
-    
     /* ------------------------ GET ATTRIBUTE PARMS ------------------------*/
 
     //GraviTAttributes atts
@@ -350,67 +351,146 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
 
     /* ------------------------ SET DATA CONFIG ------------------------*/
 
-    // check if data has extens
-    //hackyConfig.PreLoadData = !(graviTFilter->HasExtents());
-    hackyConfig.PreLoadData = !(graviTFilter->HasExtents());
-    std::cerr<<"has ext"<<hackyConfig.PreLoadData<<std::endl;
+    // check if data has extents
+    /* --------- conditions --------------------------------
+
+    Image Scheduler  -> only works with bounding boxes and callback
+
+    Domain Scheduler -> works without callbacks.
+
+    ----------------------------------------------------- */
+
+    // check both cases to see if viable, 
+
+
+    bool hasExtents = graviTFilter->HasExtents();
+ 
+    hackyConfig.PreLoadData = !hasExtents;
     // preLoadAllData
-    if(!hackyConfig.dataLoaded && hackyConfig.PreLoadData)
+    //if( && hackyConfig.PreLoadData)
+    if(!hackyConfig.dataLoaded)
     {
+
+        // use domain mode
+        adapter->SetTraceMode(1);
+
         avtDataset *ds = (avtDataset *) *hackyInput;
-        vtkDataSet *ds2 = ds->dataTree->GetSingleLeaf();
+        std::cerr<<"In ImageExecute3.5"<<std::endl;
+        avtIntervalTree * extents = ds->CalculateSpatialIntervalTree(true);
 
-        vtkCellData * cellData = ds2->GetCellData();
-        vtkPolyData * contourPD = (vtkPolyData *) ds2;
-        int numPoints = contourPD->GetNumberOfPoints();
-        vtkCellArray * contourFaces = contourPD->GetPolys();
-        // get the verts
-        int contourSize = contourPD->GetNumberOfPoints();  
+        int numBoundingBox = extents->GetNLeaves();
+
+
+        int numLocalData = -1;
+        vtkDataSet ** dataSets = ds->dataTree->GetAllLeaves(numLocalData);
+
+        std::vector<int> domainIds;
+        ds->dataTree->GetAllDomainIds(domainIds);
+
+        //std::cerr<<"numLeaves"<<numBoundingBox<<":"<<numLeaves<<endl;
         
-        double * points = new double[contourSize *3];
+        // for(int ii =0 ; ii<domainIds.size();ii++)
+        // {
+        //     std::cerr<<domainIds[ii]<<" ";
+        // }
+        // std::cerr<<std::endl;
 
-        for(vtkIdType i = 0; i < contourSize; i++)  
-        {  
-            double vtkPts[3] = {0.0,0.0,0.0};  
-            contourPD->GetPoints()->GetPoint(i,vtkPts); 
+        // int numBoundingBoxes;
+        // double * lowers;
+        // double * uppers;
+        // graviTFilter->LoadBoundingBoxes(extents, numBoundingBoxes, &lowers, &uppers);
 
-            points[i*3] = vtkPts[0];
-            points[i*3 +1] = vtkPts[1];
-            points[i*3 + 2] = vtkPts[2];
-        }  
+        int domainIdIndex = 0;
+        for(int lD = 0;lD<numBoundingBox;lD++)
+        {   
+            if(lD == domainIds[domainIdIndex])
+            {
+                vtkDataSet *ds2 = dataSets[domainIdIndex];
 
-        // link the edge
+                vtkCellData * cellData = ds2->GetCellData();
+                vtkPolyData * contourPD = (vtkPolyData *) ds2;
+                int numPoints = contourPD->GetNumberOfPoints();
+                vtkCellArray * contourFaces = contourPD->GetPolys();
+                // get the verts
+                int contourSize = contourPD->GetNumberOfPoints();  
+                
+                double * points = new double[contourSize *3];
 
-        vtkSmartPointer<vtkIdList> idList = vtkSmartPointer<vtkIdList>::New();
-        contourFaces->InitTraversal();  
+                for(vtkIdType i = 0; i < contourSize; i++)  
+                {  
+                    double vtkPts[3] = {0.0,0.0,0.0};  
+                    contourPD->GetPoints()->GetPoint(i,vtkPts); 
 
-        int totalEdges = contourFaces->GetNumberOfCells();
-        int * edges = new int[totalEdges * 3];
+                    points[i*3] = vtkPts[0];
+                    points[i*3 +1] = vtkPts[1];
+                    points[i*3 + 2] = vtkPts[2];
+                }  
 
-        for(int i = 0; i < totalEdges; i++)  
-        {  
-            contourFaces->GetNextCell(idList);  
-            int v1 = idList->GetId(0)+1;  
-            int v2 = idList->GetId(1)+1;  
-            int v3 = idList->GetId(2)+1;  
+                // link the edge
 
-            edges[i*3] = v1;
-            edges[i*3 + 1] = v2;
-            edges[i*3 + 2] = v3;   
-        } 
-	
-    	// Get material properties
-        double materialColor[8] = {-1,-1,-1,-1,-1,-1,-1,-1}; 
-    	atts.GetDiffColor().GetRgba(materialColor);
-    	atts.GetSpecColor().GetRgba(materialColor+4);
-    	int material = atts.GetMaterial();
+                vtkSmartPointer<vtkIdList> idList = vtkSmartPointer<vtkIdList>::New();
+                contourFaces->InitTraversal();  
 
-    	adapter->SetData(points, contourSize, edges, totalEdges, material, materialColor);
-	
-        delete [] edges;
-        delete [] points;
+                int totalEdges = contourFaces->GetNumberOfCells();
+                int * edges = new int[totalEdges * 3];
+
+                for(int i = 0; i < totalEdges; i++)  
+                {  
+                    contourFaces->GetNextCell(idList);  
+                    int v1 = idList->GetId(0)+1;  
+                    int v2 = idList->GetId(1)+1;  
+                    int v3 = idList->GetId(2)+1;  
+
+                    edges[i*3] = v1;
+                    edges[i*3 + 1] = v2;
+                    edges[i*3 + 2] = v3;   
+                } 
+        	
+            	// Get material properties
+                double materialColor[8] = {-1,-1,-1,-1,-1,-1,-1,-1}; 
+            	atts.GetDiffColor().GetRgba(materialColor);
+            	atts.GetSpecColor().GetRgba(materialColor+4);
+            	int material = atts.GetMaterial();
+
+            	adapter->SetData(points, contourSize, edges, totalEdges, material, materialColor);
+                adapter->RegisterDomain(lD, rank);
+        	
+                delete [] edges;
+                delete [] points;
+
+                domainIdIndex++;
+            }
+            else // just insert the bounding box
+            {                
+                double bBox[6];
+                extents->GetLeafExtents(lD, bBox);
+                    
+                double points[3*2];
+                int totalPoints = 2;
+                
+                int *edges;
+                int totalEdges = 0; // no need to set edges, just need points for the bb
+
+                points[0 * 3 + 0]  = bBox[0];
+                points[0 * 3 + 1]  = bBox[2];
+                points[0 * 3 + 2]  = bBox[4];
+
+                points[1 * 3 + 0]  = bBox[1];
+                points[1 * 3 + 1]  = bBox[3];
+                points[1 * 3 + 2]  = bBox[5];
+
+                //std::cerr<<"ffbox:"<<points[0]<<":"<<points[3]<<":"<<points[1]<<":"<<points[4]<<":"<<points[2]<<":"<<points[5]<<std::endl;
+                    
+                double materialColor[8] = {-1,-1,-1,-1,-1,-1,-1,-1}; 
+                atts.GetDiffColor().GetRgba(materialColor);
+                atts.GetSpecColor().GetRgba(materialColor+4);
+                int material = atts.GetMaterial();
+
+                adapter->SetData(points, totalPoints, edges, totalEdges, material, materialColor);
+            }   
+        }
+
         hackyConfig.dataLoaded = true;
-
     }
 
     if(!hackyConfig.dataLoaded && !hackyConfig.PreLoadData)
@@ -419,11 +499,17 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
         /* ------------------------ SET CALLBACK FUNC ------------------------*/
         adapter->SetVisitProcessBlockFunc((void*)graviTFilter,avtGraviTFilter_LoadDomain);
 
+        //adapter->SetTraceMode(0);//use domain
+
+        // need to figure out who belongs to what, 
+
         // load the bounding boxes as skeleton mesh
         int numBoundingBoxes;
         double * lowers;
         double * uppers;
         graviTFilter->LoadBoundingBoxes(numBoundingBoxes, &lowers, &uppers);
+
+        // if there are not enough pieces, don't call draw for the mpi task
 
         for(int i =0; i < numBoundingBoxes; i++)
         {
@@ -451,7 +537,7 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
             atts.GetSpecColor().GetRgba(materialColor+4);
             int material = atts.GetMaterial();
 
-            //std::cerr<<"adapter set data"<<std::endl;
+
             adapter->SetData(points, totalPoints, edges, totalEdges, material, materialColor);
         }
         delete [] (uppers);
@@ -459,7 +545,7 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
         hackyConfig.dataLoaded = true;
     }
 
-    std::cerr<<"In ImageExecute3.5"<<std::endl;
+    
         
     /* ------------------------ GET LIGHTS ------------------------*/
     LightList lightList = window_atts.GetLights();
@@ -536,6 +622,8 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
 
     std::cerr<<"In ImageExecute4"<<std::endl;
 
+
+    // barrier here?
     adapter->Draw(data);
     avtImage_p rv = input;
 
