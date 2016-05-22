@@ -387,7 +387,9 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
         std::vector<int> domainIds;
         ds->dataTree->GetAllDomainIds(domainIds);
 
-        //std::cerr<<"numLeaves"<<numBoundingBox<<":"<<numLeaves<<endl;
+        adapter->SetTotalInstances(numBoundingBox);
+
+        std::cerr<<"numLeaves"<<numBoundingBox<<std::endl;
         
         // for(int ii =0 ; ii<domainIds.size();ii++)
         // {
