@@ -169,6 +169,23 @@ QvisGraviTPlotWindow::CreateWindowContents()
             this, SLOT(MaterialChanged(int)));
     mainLayout->addWidget(Material, 3,1);
 
+    ScheduleTypeLabel = new QLabel(tr("Schedule Type"), central);
+    mainLayout->addWidget(ScheduleTypeLabel,4,0);
+    ScheduleType = new QWidget(central);
+    ScheduleTypeButtonGroup= new QButtonGroup(ScheduleType);
+    QHBoxLayout *ScheduleTypeLayout = new QHBoxLayout(ScheduleType);
+    ScheduleTypeLayout->setMargin(0);
+    ScheduleTypeLayout->setSpacing(10);
+    QRadioButton *ScheduleTypeSchedulerImage = new QRadioButton(tr("Image"), ScheduleType);
+    ScheduleTypeButtonGroup->addButton(ScheduleTypeSchedulerImage,0);
+    ScheduleTypeLayout->addWidget(ScheduleTypeSchedulerImage);
+    QRadioButton *ScheduleTypeSchedulerDomain = new QRadioButton(tr("Domain"), ScheduleType);
+    ScheduleTypeButtonGroup->addButton(ScheduleTypeSchedulerDomain,1);
+    ScheduleTypeLayout->addWidget(ScheduleTypeSchedulerDomain);
+    connect(ScheduleTypeButtonGroup, SIGNAL(buttonClicked(int)),
+            this, SLOT(ScheduleTypeChanged(int)));
+    mainLayout->addWidget(ScheduleType, 4,1);
+
 }
 
 
@@ -231,6 +248,12 @@ QvisGraviTPlotWindow::UpdateWindow(bool doAll)
             if(MaterialButtonGroup->button((int)atts->GetMaterial()) != 0)
                 MaterialButtonGroup->button((int)atts->GetMaterial())->setChecked(true);
             MaterialButtonGroup->blockSignals(false);
+            break;
+          case GraviTAttributes::ID_ScheduleType:
+            ScheduleTypeButtonGroup->blockSignals(true);
+            if(ScheduleTypeButtonGroup->button((int)atts->GetScheduleType()) != 0)
+                ScheduleTypeButtonGroup->button((int)atts->GetScheduleType())->setChecked(true);
+            ScheduleTypeButtonGroup->blockSignals(false);
             break;
         }
     }
@@ -411,6 +434,18 @@ QvisGraviTPlotWindow::MaterialChanged(int val)
     if(val != atts->GetMaterial())
     {
         atts->SetMaterial(GraviTAttributes::MaterialType(val));
+        SetUpdate(false);
+        Apply();
+    }
+}
+
+
+void
+QvisGraviTPlotWindow::ScheduleTypeChanged(int val)
+{
+    if(val != atts->GetScheduleType())
+    {
+        atts->SetScheduleType(GraviTAttributes::Scheduler(val));
         SetUpdate(false);
         Apply();
     }

@@ -60,32 +60,37 @@ import llnl.visit.ColorAttribute;
 
 public class GraviTAttributes extends AttributeSubject implements Plugin
 {
-    private static int GraviTAttributes_numAdditionalAtts = 4;
+    private static int GraviTAttributes_numAdditionalAtts = 5;
 
     // Enum values
     public final static int MATERIALTYPE_LAMBERT = 0;
     public final static int MATERIALTYPE_PHONG = 1;
     public final static int MATERIALTYPE_BLINNPHONG = 2;
 
+    public final static int SCHEDULER_IMAGE = 0;
+    public final static int SCHEDULER_DOMAIN = 1;
+
 
     public GraviTAttributes()
     {
         super(GraviTAttributes_numAdditionalAtts);
 
-        DiffColor = new ColorAttribute(200, 127, 127);
-        SpecColor = new ColorAttribute(127, 127, 200);
+        DiffColor = new ColorAttribute(0, 20, 240);
+        SpecColor = new ColorAttribute(0, 255, 255);
         MaxReflections = 2;
         Material = MATERIALTYPE_BLINNPHONG;
+        ScheduleType = SCHEDULER_IMAGE;
     }
 
     public GraviTAttributes(int nMoreFields)
     {
         super(GraviTAttributes_numAdditionalAtts + nMoreFields);
 
-        DiffColor = new ColorAttribute(200, 127, 127);
-        SpecColor = new ColorAttribute(127, 127, 200);
+        DiffColor = new ColorAttribute(0, 20, 240);
+        SpecColor = new ColorAttribute(0, 255, 255);
         MaxReflections = 2;
         Material = MATERIALTYPE_BLINNPHONG;
+        ScheduleType = SCHEDULER_IMAGE;
     }
 
     public GraviTAttributes(GraviTAttributes obj)
@@ -96,6 +101,7 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
         SpecColor = new ColorAttribute(obj.SpecColor);
         MaxReflections = obj.MaxReflections;
         Material = obj.Material;
+        ScheduleType = obj.ScheduleType;
 
         SelectAll();
     }
@@ -116,7 +122,8 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
         return ((DiffColor == obj.DiffColor) &&
                 (SpecColor == obj.SpecColor) &&
                 (MaxReflections == obj.MaxReflections) &&
-                (Material == obj.Material));
+                (Material == obj.Material) &&
+                (ScheduleType == obj.ScheduleType));
     }
 
     public String GetName() { return "GraviT"; }
@@ -147,11 +154,18 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
         Select(3);
     }
 
+    public void SetScheduleType(int ScheduleType_)
+    {
+        ScheduleType = ScheduleType_;
+        Select(4);
+    }
+
     // Property getting methods
     public ColorAttribute GetDiffColor() { return DiffColor; }
     public ColorAttribute GetSpecColor() { return SpecColor; }
     public int            GetMaxReflections() { return MaxReflections; }
     public int            GetMaterial() { return Material; }
+    public int            GetScheduleType() { return ScheduleType; }
 
     // Write and read methods.
     public void WriteAtts(CommunicationBuffer buf)
@@ -164,6 +178,8 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
             buf.WriteInt(MaxReflections);
         if(WriteSelect(3, buf))
             buf.WriteInt(Material);
+        if(WriteSelect(4, buf))
+            buf.WriteInt(ScheduleType);
     }
 
     public void ReadAtts(int index, CommunicationBuffer buf)
@@ -184,6 +200,9 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
         case 3:
             SetMaterial(buf.ReadInt());
             break;
+        case 4:
+            SetScheduleType(buf.ReadInt());
+            break;
         }
     }
 
@@ -201,6 +220,12 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
         if(Material == MATERIALTYPE_BLINNPHONG)
             str = str + "MATERIALTYPE_BLINNPHONG";
         str = str + "\n";
+        str = str + indent + "ScheduleType = ";
+        if(ScheduleType == SCHEDULER_IMAGE)
+            str = str + "SCHEDULER_IMAGE";
+        if(ScheduleType == SCHEDULER_DOMAIN)
+            str = str + "SCHEDULER_DOMAIN";
+        str = str + "\n";
         return str;
     }
 
@@ -210,5 +235,6 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
     private ColorAttribute SpecColor;
     private int            MaxReflections;
     private int            Material;
+    private int            ScheduleType;
 }
 

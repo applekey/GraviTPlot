@@ -67,6 +67,11 @@ public:
         Phong,
         BlinnPhong
     };
+    enum Scheduler
+    {
+        Image,
+        Domain
+    };
 
     // These constructors are for objects of this class
     GraviTAttributes();
@@ -101,6 +106,7 @@ public:
     void SetSpecColor(const ColorAttribute &SpecColor_);
     void SetMaxReflections(int MaxReflections_);
     void SetMaterial(MaterialType Material_);
+    void SetScheduleType(Scheduler ScheduleType_);
 
     // Property getting methods
     const ColorAttribute &GetDiffColor() const;
@@ -109,6 +115,7 @@ public:
           ColorAttribute &GetSpecColor();
     int                  GetMaxReflections() const;
     MaterialType         GetMaterial() const;
+    Scheduler            GetScheduleType() const;
 
     // Persistence methods
     virtual bool CreateNode(DataNode *node, bool completeSave, bool forceAdd);
@@ -119,6 +126,11 @@ public:
     static bool MaterialType_FromString(const std::string &, MaterialType &);
 protected:
     static std::string MaterialType_ToString(int);
+public:
+    static std::string Scheduler_ToString(Scheduler);
+    static bool Scheduler_FromString(const std::string &, Scheduler &);
+protected:
+    static std::string Scheduler_ToString(int);
 public:
 
     // Keyframing methods
@@ -134,6 +146,7 @@ public:
         ID_SpecColor,
         ID_MaxReflections,
         ID_Material,
+        ID_ScheduleType,
         ID__LAST
     };
 
@@ -142,11 +155,12 @@ private:
     ColorAttribute SpecColor;
     int            MaxReflections;
     int            Material;
+    int            ScheduleType;
 
     // Static class format string for type map.
     static const char *TypeMapFormatString;
     static const private_tmfs_t TmfsStruct;
 };
-#define GRAVITATTRIBUTES_TMFS "aaii"
+#define GRAVITATTRIBUTES_TMFS "aaiii"
 
 #endif

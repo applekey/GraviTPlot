@@ -105,6 +105,21 @@ PyGraviTAttributes_ToString(const GraviTAttributes *atts, const char *prefix)
           break;
     }
 
+    const char *ScheduleType_names = "Image, Domain";
+    switch (atts->GetScheduleType())
+    {
+      case GraviTAttributes::Image:
+          SNPRINTF(tmpStr, 1000, "%sScheduleType = %sImage  # %s\n", prefix, prefix, ScheduleType_names);
+          str += tmpStr;
+          break;
+      case GraviTAttributes::Domain:
+          SNPRINTF(tmpStr, 1000, "%sScheduleType = %sDomain  # %s\n", prefix, prefix, ScheduleType_names);
+          str += tmpStr;
+          break;
+      default:
+          break;
+    }
+
     return str;
 }
 
@@ -328,6 +343,39 @@ GraviTAttributes_GetMaterial(PyObject *self, PyObject *args)
     return retval;
 }
 
+/*static*/ PyObject *
+GraviTAttributes_SetScheduleType(PyObject *self, PyObject *args)
+{
+    GraviTAttributesObject *obj = (GraviTAttributesObject *)self;
+
+    int ival;
+    if(!PyArg_ParseTuple(args, "i", &ival))
+        return NULL;
+
+    // Set the ScheduleType in the object.
+    if(ival >= 0 && ival < 2)
+        obj->data->SetScheduleType(GraviTAttributes::Scheduler(ival));
+    else
+    {
+        fprintf(stderr, "An invalid ScheduleType value was given. "
+                        "Valid values are in the range of [0,1]. "
+                        "You can also use the following names: "
+                        "Image, Domain.");
+        return NULL;
+    }
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+/*static*/ PyObject *
+GraviTAttributes_GetScheduleType(PyObject *self, PyObject *args)
+{
+    GraviTAttributesObject *obj = (GraviTAttributesObject *)self;
+    PyObject *retval = PyInt_FromLong(long(obj->data->GetScheduleType()));
+    return retval;
+}
+
 
 
 PyMethodDef PyGraviTAttributes_methods[GRAVITATTRIBUTES_NMETH] = {
@@ -340,6 +388,8 @@ PyMethodDef PyGraviTAttributes_methods[GRAVITATTRIBUTES_NMETH] = {
     {"GetMaxReflections", GraviTAttributes_GetMaxReflections, METH_VARARGS},
     {"SetMaterial", GraviTAttributes_SetMaterial, METH_VARARGS},
     {"GetMaterial", GraviTAttributes_GetMaterial, METH_VARARGS},
+    {"SetScheduleType", GraviTAttributes_SetScheduleType, METH_VARARGS},
+    {"GetScheduleType", GraviTAttributes_GetScheduleType, METH_VARARGS},
     {NULL, NULL}
 };
 
@@ -383,6 +433,13 @@ PyGraviTAttributes_getattr(PyObject *self, char *name)
     if(strcmp(name, "BlinnPhong") == 0)
         return PyInt_FromLong(long(GraviTAttributes::BlinnPhong));
 
+    if(strcmp(name, "ScheduleType") == 0)
+        return GraviTAttributes_GetScheduleType(self, NULL);
+    if(strcmp(name, "Image") == 0)
+        return PyInt_FromLong(long(GraviTAttributes::Image));
+    if(strcmp(name, "Domain") == 0)
+        return PyInt_FromLong(long(GraviTAttributes::Domain));
+
 
     return Py_FindMethod(PyGraviTAttributes_methods, self, name);
 }
@@ -405,6 +462,8 @@ PyGraviTAttributes_setattr(PyObject *self, char *name, PyObject *args)
         obj = GraviTAttributes_SetMaxReflections(self, tuple);
     else if(strcmp(name, "Material") == 0)
         obj = GraviTAttributes_SetMaterial(self, tuple);
+    else if(strcmp(name, "ScheduleType") == 0)
+        obj = GraviTAttributes_SetScheduleType(self, tuple);
 
     if(obj != NULL)
         Py_DECREF(obj);

@@ -6,6 +6,10 @@
         Phong
         BlinnPhong
       </Enum>
+      <Enum name="Scheduler">
+        Image
+        Domain
+      </Enum>
       <Field name="DiffColor" label="Diffuse Color" type="color" length="4">
         0
         20
@@ -23,6 +27,9 @@
       </Field>
       <Field name="Material" label="Material" type="enum" subtype="MaterialType">
         BlinnPhong
+      </Field>
+      <Field name="ScheduleType" label="Schedule Type" type="enum" subtype="Scheduler">
+        Image
       </Field>
     </Attribute>
   </Plugin>

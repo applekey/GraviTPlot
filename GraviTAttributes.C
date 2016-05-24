@@ -77,6 +77,43 @@ GraviTAttributes::MaterialType_FromString(const std::string &s, GraviTAttributes
     return false;
 }
 
+//
+// Enum conversion methods for GraviTAttributes::Scheduler
+//
+
+static const char *Scheduler_strings[] = {
+"Image", "Domain"};
+
+std::string
+GraviTAttributes::Scheduler_ToString(GraviTAttributes::Scheduler t)
+{
+    int index = int(t);
+    if(index < 0 || index >= 2) index = 0;
+    return Scheduler_strings[index];
+}
+
+std::string
+GraviTAttributes::Scheduler_ToString(int t)
+{
+    int index = (t < 0 || t >= 2) ? 0 : t;
+    return Scheduler_strings[index];
+}
+
+bool
+GraviTAttributes::Scheduler_FromString(const std::string &s, GraviTAttributes::Scheduler &val)
+{
+    val = GraviTAttributes::Image;
+    for(int i = 0; i < 2; ++i)
+    {
+        if(s == Scheduler_strings[i])
+        {
+            val = (Scheduler)i;
+            return true;
+        }
+    }
+    return false;
+}
+
 // ****************************************************************************
 // Method: GraviTAttributes::GraviTAttributes
 //
@@ -96,6 +133,7 @@ void GraviTAttributes::Init()
 {
     MaxReflections = 2;
     Material = BlinnPhong;
+    ScheduleType = Image;
 
     GraviTAttributes::SelectAll();
 }
@@ -121,6 +159,7 @@ void GraviTAttributes::Copy(const GraviTAttributes &obj)
     SpecColor = obj.SpecColor;
     MaxReflections = obj.MaxReflections;
     Material = obj.Material;
+    ScheduleType = obj.ScheduleType;
 
     GraviTAttributes::SelectAll();
 }
@@ -147,7 +186,7 @@ const AttributeGroup::private_tmfs_t GraviTAttributes::TmfsStruct = {GRAVITATTRI
 
 GraviTAttributes::GraviTAttributes() : 
     AttributeSubject(GraviTAttributes::TypeMapFormatString),
-    DiffColor(200, 127, 127), SpecColor(127, 127, 200)
+    DiffColor(0, 20, 240), SpecColor(0, 255, 255)
 {
     GraviTAttributes::Init();
 }
@@ -169,7 +208,7 @@ GraviTAttributes::GraviTAttributes() :
 
 GraviTAttributes::GraviTAttributes(private_tmfs_t tmfs) : 
     AttributeSubject(tmfs.tmfs),
-    DiffColor(200, 127, 127), SpecColor(127, 127, 200)
+    DiffColor(0, 20, 240), SpecColor(0, 255, 255)
 {
     GraviTAttributes::Init();
 }
@@ -283,7 +322,8 @@ GraviTAttributes::operator == (const GraviTAttributes &obj) const
     return ((DiffColor == obj.DiffColor) &&
             (SpecColor == obj.SpecColor) &&
             (MaxReflections == obj.MaxReflections) &&
-            (Material == obj.Material));
+            (Material == obj.Material) &&
+            (ScheduleType == obj.ScheduleType));
 }
 
 // ****************************************************************************
@@ -431,6 +471,7 @@ GraviTAttributes::SelectAll()
     Select(ID_SpecColor,      (void *)&SpecColor);
     Select(ID_MaxReflections, (void *)&MaxReflections);
     Select(ID_Material,       (void *)&Material);
+    Select(ID_ScheduleType,   (void *)&ScheduleType);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -491,6 +532,12 @@ GraviTAttributes::CreateNode(DataNode *parentNode, bool completeSave, bool force
         node->AddNode(new DataNode("Material", MaterialType_ToString(Material)));
     }
 
+    if(completeSave || !FieldsEqual(ID_ScheduleType, &defaultObject))
+    {
+        addToParent = true;
+        node->AddNode(new DataNode("ScheduleType", Scheduler_ToString(ScheduleType)));
+    }
+
 
     // Add the node to the parent node.
     if(addToParent || forceAdd)
@@ -549,6 +596,22 @@ GraviTAttributes::SetFromNode(DataNode *parentNode)
                 SetMaterial(value);
         }
     }
+    if((node = searchNode->GetNode("ScheduleType")) != 0)
+    {
+        // Allow enums to be int or string in the config file
+        if(node->GetNodeType() == INT_NODE)
+        {
+            int ival = node->AsInt();
+            if(ival >= 0 && ival < 2)
+                SetScheduleType(Scheduler(ival));
+        }
+        else if(node->GetNodeType() == STRING_NODE)
+        {
+            Scheduler value;
+            if(Scheduler_FromString(node->AsString(), value))
+                SetScheduleType(value);
+        }
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -581,6 +644,13 @@ GraviTAttributes::SetMaterial(GraviTAttributes::MaterialType Material_)
 {
     Material = Material_;
     Select(ID_Material, (void *)&Material);
+}
+
+void
+GraviTAttributes::SetScheduleType(GraviTAttributes::Scheduler ScheduleType_)
+{
+    ScheduleType = ScheduleType_;
+    Select(ID_ScheduleType, (void *)&ScheduleType);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -621,6 +691,12 @@ GraviTAttributes::MaterialType
 GraviTAttributes::GetMaterial() const
 {
     return MaterialType(Material);
+}
+
+GraviTAttributes::Scheduler
+GraviTAttributes::GetScheduleType() const
+{
+    return Scheduler(ScheduleType);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -667,6 +743,7 @@ GraviTAttributes::GetFieldName(int index) const
     case ID_SpecColor:      return "SpecColor";
     case ID_MaxReflections: return "MaxReflections";
     case ID_Material:       return "Material";
+    case ID_ScheduleType:   return "ScheduleType";
     default:  return "invalid index";
     }
 }
@@ -695,6 +772,7 @@ GraviTAttributes::GetFieldType(int index) const
     case ID_SpecColor:      return FieldType_color;
     case ID_MaxReflections: return FieldType_int;
     case ID_Material:       return FieldType_enum;
+    case ID_ScheduleType:   return FieldType_enum;
     default:  return FieldType_unknown;
     }
 }
@@ -723,6 +801,7 @@ GraviTAttributes::GetFieldTypeName(int index) const
     case ID_SpecColor:      return "color";
     case ID_MaxReflections: return "int";
     case ID_Material:       return "enum";
+    case ID_ScheduleType:   return "enum";
     default:  return "invalid index";
     }
 }
@@ -767,6 +846,11 @@ GraviTAttributes::FieldsEqual(int index_, const AttributeGroup *rhs) const
     case ID_Material:
         {  // new scope
         retval = (Material == obj.Material);
+        }
+        break;
+    case ID_ScheduleType:
+        {  // new scope
+        retval = (ScheduleType == obj.ScheduleType);
         }
         break;
     default: retval = false;
