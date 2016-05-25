@@ -64,27 +64,6 @@
 #include <avtIntervalTree.h>
 #include <mpi.h>
 
-struct GravitProgramConfig
-{
-    // Camera Params
-    double eyePoint[3];
-    double focalPoint[3];
-    double upVector[3];
-    double view_direction[3];
-    int filmSize[2];
-
-    //Tracing Parms
-    int maxDepth;
-    int samples;
-    unsigned char backgroundColor[3];
-    bool dataLoaded;
-    bool PreLoadData;
-    int scheduler; // 0 is image, 1 is domain
-};
-
-
-
-GravitProgramConfig hackyConfig;
 avtDataObject_p hackyInput;
 
 int avtGraviTFilter_LoadDomain(void * p, int domainId, double ** points, int& numPoints, int ** edges, int& numEdges )
@@ -108,7 +87,6 @@ class avtGraviTRenderer : public avtCustomRenderer
 };
 avtGraviTPlot::avtGraviTPlot()
 {
-    std::cerr<<"called"<<std::endl;
     graviTFilter = new avtGraviTFilter();
     ref_ptr<avtGraviTRenderer> renderer =  new avtGraviTRenderer;
 
@@ -116,11 +94,6 @@ avtGraviTPlot::avtGraviTPlot()
     CopyTo(cr, renderer);
     mapper = new avtUserDefinedMapper(cr);
     adapter = new VisitAdapter;
-
-      // char *** abc;
-      // int a = 3;
-      // MPI_Init(&a,abc); 
-
 }
 
 
@@ -170,7 +143,6 @@ avtGraviTPlot::Create()
     return new avtGraviTPlot;
 }
 
-
 // ****************************************************************************
 //  Method: avtGraviTPlot::GetMapper
 //
@@ -212,9 +184,6 @@ avtDataObject_p
 avtGraviTPlot::ApplyOperators(avtDataObject_p input)
 {
     return input;
-    //std::cerr<<"apply operators"<<std::endl;
-    //graviTFilter->SetInput(input);
-    //return graviTFilter->GetOutput();
 }
 
 
@@ -236,15 +205,36 @@ avtGraviTPlot::ApplyOperators(avtDataObject_p input)
 
 avtDataObject_p
 avtGraviTPlot::ApplyRenderingTransformation(avtDataObject_p input)
-{
-    std::cerr<<"rendering transformation"<<std::endl;
-
+{   
     graviTFilter->SetInput(input);
+    /* ------------------------ Check Scheduler    ------------------------*/
+
+    // Check the Scheduler Type
+
+    progConfig.scheduler = atts.GetScheduleType();
+
+    // Verify Scheduler Type is valid
+    bool hasExtents = graviTFilter->HasExtents();
+
+    if(progConfig.scheduler == GraviTAttributes::Image)
+    {
+        if(!hasExtents) progConfig.scheduler = GraviTAttributes::Domain;
+    }
+    else if(progConfig.scheduler == GraviTAttributes::Domain)
+    {
+        
+    }
+    else
+    {
+        //TODO: debug message here
+    }
+
+    bool filterOperateOnDemand = (progConfig.scheduler == GraviTAttributes::Image)? true:false;
+    graviTFilter->SetFilterOperatingOnDemand(filterOperateOnDemand);
+
     hackyInput = input;
-    hackyConfig.dataLoaded = false;
-    hackyConfig.PreLoadData = false;
-    avtDataObject_p x = graviTFilter->GetOutput();
-    return x;
+    progConfig.dataLoaded = false;
+    return graviTFilter->GetOutput();
 }
 
 
@@ -302,39 +292,29 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
     MPI_Comm_rank (MPI_COMM_WORLD, &rank);  /* get current process id */
     MPI_Comm_size (MPI_COMM_WORLD, &world_size);    /* get number of processes */
 
-    
-
     // draw needs a barrier!
 
     /* ------------------------ GET ATTRIBUTE PARMS ------------------------*/
-
     //GraviTAttributes atts
 
     unsigned char * diffcolor = atts.GetDiffColor().GetColor();
     unsigned char * speccolor = atts.GetSpecColor().GetColor();
 
     int maxReflections = atts.GetMaxReflections();
-    //std::cerr<<color[0]<<" "<<color[1]<<" "<<color[2]<<std::endl;
 
     VisitAdapter::RayTraceProperties rayTraceProps;
     rayTraceProps.maxDepth = maxReflections;
     rayTraceProps.raySamples = 3;
     rayTraceProps.windowJitterSize = 0.0;
 
-
-    std::cerr<<"In ImageExecute1"<<std::endl;
-
     adapter->SetRayTraceProperties(rayTraceProps);
-
-    std::cerr<<"In ImageExecute2"<<std::endl;
-
 
     /* ------------------------ SET CAMERA CONFIG ------------------------*/
     int size[2];
     input->GetSize(size,size+1);
 
-    hackyConfig.filmSize[0] = size[0];
-    hackyConfig.filmSize[1] = size[1];
+    progConfig.filmSize[0] = size[0];
+    progConfig.filmSize[1] = size[1];
 
     View3DAttributes viewAttr= window_atts.GetView3D();
 
@@ -347,39 +327,14 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
 
     adapter->SetCamera(size,focalPoint, upVector, viewNormal, parScale/zoom, fov);
 
-    std::cerr<<"In ImageExecute3"<<std::endl;
-
-    /* ------------------------ SET DATA CONFIG ------------------------*/
-
-    // check if data has extents
-    /* --------- conditions --------------------------------
-
-    Image Scheduler  -> only works with bounding boxes and callback
-
-    Domain Scheduler -> works without callbacks.
-
-    ----------------------------------------------------- */
-
     // check both cases to see if viable, 
-
-
-    bool hasExtents = graviTFilter->HasExtents();
- 
-    hackyConfig.PreLoadData = !hasExtents;
-    // preLoadAllData
-    //if( && hackyConfig.PreLoadData)
-    if(!hackyConfig.dataLoaded)
+    if(!progConfig.dataLoaded && progConfig.scheduler == GraviTAttributes::Domain)
     {
-
         // use domain mode
         adapter->SetTraceMode(1);
-
         avtDataset *ds = (avtDataset *) *hackyInput;
-        std::cerr<<"In ImageExecute3.5"<<std::endl;
         avtIntervalTree * extents = ds->CalculateSpatialIntervalTree(true);
-
         int numBoundingBox = extents->GetNLeaves();
-
 
         int numLocalData = -1;
         vtkDataSet ** dataSets = ds->dataTree->GetAllLeaves(numLocalData);
@@ -388,20 +343,7 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
         ds->dataTree->GetAllDomainIds(domainIds);
 
         adapter->SetTotalInstances(numBoundingBox);
-
-        std::cerr<<"numLeaves"<<numBoundingBox<<std::endl;
         
-        // for(int ii =0 ; ii<domainIds.size();ii++)
-        // {
-        //     std::cerr<<domainIds[ii]<<" ";
-        // }
-        // std::cerr<<std::endl;
-
-        // int numBoundingBoxes;
-        // double * lowers;
-        // double * uppers;
-        // graviTFilter->LoadBoundingBoxes(extents, numBoundingBoxes, &lowers, &uppers);
-
         int domainIdIndex = 0;
         for(int lD = 0;lD<numBoundingBox;lD++)
         {   
@@ -427,8 +369,6 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
                     points[i*3 +1] = vtkPts[1];
                     points[i*3 + 2] = vtkPts[2];
                 }  
-
-                // link the edge
 
                 vtkSmartPointer<vtkIdList> idList = vtkSmartPointer<vtkIdList>::New();
                 contourFaces->InitTraversal();  
@@ -480,9 +420,7 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
                 points[1 * 3 + 0]  = bBox[1];
                 points[1 * 3 + 1]  = bBox[3];
                 points[1 * 3 + 2]  = bBox[5];
-
-                //std::cerr<<"ffbox:"<<points[0]<<":"<<points[3]<<":"<<points[1]<<":"<<points[4]<<":"<<points[2]<<":"<<points[5]<<std::endl;
-                    
+         
                 double materialColor[8] = {-1,-1,-1,-1,-1,-1,-1,-1}; 
                 atts.GetDiffColor().GetRgba(materialColor);
                 atts.GetSpecColor().GetRgba(materialColor+4);
@@ -492,26 +430,19 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
             }   
         }
 
-        hackyConfig.dataLoaded = true;
+        progConfig.dataLoaded = true;
     }
 
-    if(!hackyConfig.dataLoaded && !hackyConfig.PreLoadData)
+    if(!progConfig.dataLoaded && progConfig.scheduler == GraviTAttributes::Image)
     {
-
         /* ------------------------ SET CALLBACK FUNC ------------------------*/
         adapter->SetVisitProcessBlockFunc((void*)graviTFilter,avtGraviTFilter_LoadDomain);
+        adapter->SetTraceMode(0);
 
-        //adapter->SetTraceMode(0);//use domain
-
-        // need to figure out who belongs to what, 
-
-        // load the bounding boxes as skeleton mesh
         int numBoundingBoxes;
         double * lowers;
         double * uppers;
         graviTFilter->LoadBoundingBoxes(numBoundingBoxes, &lowers, &uppers);
-
-        // if there are not enough pieces, don't call draw for the mpi task
 
         for(int i =0; i < numBoundingBoxes; i++)
         {
@@ -522,7 +453,8 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
             int totalPoints = 2;
             
             int *edges;
-            int totalEdges = 0; // no need to set edges, just need points for the bb
+            int totalEdges = 0; // Don't need to set any edges, just setting a dummy bounding box
+            //TODO: write a custom empty bounding box function?
 
             points[0 * 3 + 0]  = lower[0];
             points[0 * 3 + 1]  = lower[1];
@@ -531,24 +463,19 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
             points[1 * 3 + 0]  = upper[0];
             points[1 * 3 + 1]  = upper[1];
             points[1 * 3 + 2]  = upper[2];
-
-            //std::cerr<<"ffbox:"<<points[0]<<":"<<points[3]<<":"<<points[1]<<":"<<points[4]<<":"<<points[2]<<":"<<points[5]<<std::endl;
                 
             double materialColor[8] = {-1,-1,-1,-1,-1,-1,-1,-1}; 
             atts.GetDiffColor().GetRgba(materialColor);
             atts.GetSpecColor().GetRgba(materialColor+4);
             int material = atts.GetMaterial();
 
-
             adapter->SetData(points, totalPoints, edges, totalEdges, material, materialColor);
         }
         delete [] (uppers);
         delete [] (lowers);
-        hackyConfig.dataLoaded = true;
+        progConfig.dataLoaded = true;
     }
 
-    
-        
     /* ------------------------ GET LIGHTS ------------------------*/
     LightList lightList = window_atts.GetLights();
 
@@ -597,16 +524,8 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
             lightColor.push_back(color[2]);
 
             lightIntensity.push_back(brightness);
-
-
-           // std::cerr<<"Light Type:"<<type<<std::endl;
-           // std::cerr<<"Light Direction:"<<direction[0]<<" "<<direction[1]<<" "<<direction[2]<<std::endl;
-           // std::cerr<<"Light Color:"<<(unsigned int)color[0]<<" "<<(unsigned int)color[1]<<" "<<(unsigned int)color[2]<<std::endl;
-           // std::cerr<<"LightIntensity:"<<brightness<<std::endl;
         }
     }
-
-  //  std::cerr<<"Total Valid Lights:"<<totalValidLights<<std::endl;
 
     adapter->SetLight(totalValidLights, lightTypes.data(), lightDirection.data(), lightColor.data(), lightIntensity.data());
 
@@ -620,10 +539,6 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
     /* ------------------------ DRAW ------------------------*/
     
     unsigned char * data = input->GetImage().GetRGBBuffer();
-
-
-    std::cerr<<"In ImageExecute4"<<std::endl;
-
 
     // barrier here?
     adapter->Draw(data);
@@ -652,12 +567,4 @@ avtGraviTPlot::SetAtts(const AttributeGroup *a)
 {
     const GraviTAttributes *newAtts = (const GraviTAttributes *)a;
     atts = *(GraviTAttributes *)newAtts;
-    
-    //double materialColor[8];
-    //newAtts->GetDiffColor().GetRgba(materialColor);
-    //newAtts->GetSpecColor().GetRgba(materialColor+4);
-    //int material = newAtts->GetMaterial();
-    //std::cerr<<"Diffuse Color: "<<materialColor[0]<<" "<<materialColor[1]<<" "<<materialColor[2]<<std::endl;
-    //std::cerr<<"Specular Color: "<<materialColor[4]<<" "<<materialColor[5]<<" "<<materialColor[6]<<std::endl;
-    //std::cerr<<"Material: "<<material<<std::endl;
 }

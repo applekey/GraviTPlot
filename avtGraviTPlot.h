@@ -80,9 +80,27 @@ class avtGraviTPlot : public avtSurfaceDataPlot
     virtual avtImage_p          ImageExecute(avtImage_p, const WindowAttributes &);
 
   protected:
+    struct GravitProgramConfig
+    {
+        // Camera Params
+        double eyePoint[3];
+        double focalPoint[3];
+        double upVector[3];
+        double view_direction[3];
+        int filmSize[2];
+
+        //Tracing Parms
+        int maxDepth;
+        int samples;
+        unsigned char backgroundColor[3];
+        bool dataLoaded;
+        GraviTAttributes::Scheduler scheduler;
+    };
+
+    GravitProgramConfig           progConfig;
     GraviTAttributes              atts;
-    avtUserDefinedMapper           *mapper;
-    avtGraviTFilter              *graviTFilter;
+    avtUserDefinedMapper          *mapper;
+    avtGraviTFilter               *graviTFilter;
 
     virtual avtMapper          *GetMapper(void);
     virtual avtDataObject_p     ApplyOperators(avtDataObject_p);
@@ -93,6 +111,4 @@ class avtGraviTPlot : public avtSurfaceDataPlot
     virtual avtLegend_p         GetLegend(void) { return NULL; };
     VisitAdapter * adapter;
 };
-
-
 #endif

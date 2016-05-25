@@ -87,8 +87,6 @@ void avtGraviTFilter::LoadBoundingBoxes(int & numBoundingBox, double ** lower, d
     avtIntervalTree * tree = GetMetaData()->GetSpatialExtents();
     numBoundingBox = tree->GetNLeaves();
 
-    //std::cerr<<"NumBoundingBox"<<numBoundingBox<<std::endl;
-
     *lower = new double[numBoundingBox * 3];
     *upper = new double[numBoundingBox * 3];
 
@@ -107,7 +105,6 @@ void avtGraviTFilter::LoadBoundingBoxes(int & numBoundingBox, double ** lower, d
         upperPtr[0] = bBox[1];
         upperPtr[1] = bBox[3];
         upperPtr[2] = bBox[5];
-        //std::cerr<<"bBox:"<<bBox[0]<<":"<<bBox[1]<<":"<<bBox[2]<<":"<<bBox[3]<<":"<<bBox[4]<<":"<<bBox[5]<<std::endl;
 
         lowerPtr += 3;
         upperPtr += 3;
@@ -117,11 +114,9 @@ void avtGraviTFilter::LoadBoundingBoxes(int & numBoundingBox, double ** lower, d
 
 int avtGraviTFilter::LoadDomain(int domainId, double ** ppoints, int& numPoints, int ** pedges, int& numEdges)
 {
-    std::cerr<<"Loading Domain Id: "<<domainId<<std::endl;
+    //std::cerr<<"Loading Domain Id: "<<domainId<<std::endl;
 
     vtkDataSet *ds2 = GetDomain(domainId ,0);
-
-    //std::cerr<<"Got Domain Data"<<std::endl;
     
     vtkCellData * cellData = ds2->GetCellData();
     vtkPolyData * contourPD = (vtkPolyData *) ds2;
@@ -165,11 +160,6 @@ int avtGraviTFilter::LoadDomain(int domainId, double ** ppoints, int& numPoints,
         edges[i*3 + 1] = v2;
         edges[i*3 + 2] = v3;
     }
-    //std::cerr<<"numverts"<<numPoints<<"numEdges"<<numEdges<<std::endl;
-
-
-    //std::cerr<<"Callback func success"<<std::endl;
-
 	return 0;
 }
 
@@ -194,14 +184,7 @@ int avtGraviTFilter::LoadDomain(int domainId, double ** ppoints, int& numPoints,
 avtDataRepresentation *
 avtGraviTFilter::ExecuteData(avtDataRepresentation *in_dr)
 {
-    //
-    // Get the VTK data set, the domain number, and the label.
-    //
-   // vtkDataSet *in_ds = in_dr->GetDataVTK();
-    //int domain = in_dr->GetDomain();
-    //std::string label = in_dr->GetLabel();
-    return in_dr;
-    
+    return in_dr;   
 }
 
 
@@ -220,6 +203,5 @@ avtGraviTFilter::ExecuteData(avtDataRepresentation *in_dr)
 void
 avtGraviTFilter::UpdateDataObjectInfo(void)
 {
-    std::cerr<<"In Gravit Filter, hasExtents"<<HasExtents()<<std::endl;
-    SetOperatingOnDemand(false);
+    //SetOperatingOnDemand(false);
 }

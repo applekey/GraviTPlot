@@ -77,13 +77,15 @@ class avtGraviTFilter :
     int              LoadDomain(int domainId, double ** points, int& numPoints, int ** edges, int& numEdges);
     void             LoadBoundingBoxes(int & numBoundingBox, double ** lower, double ** upper);
     bool             HasExtents();
+    void             SetFilterOperatingOnDemand(bool onDemand){SetOperatingOnDemand(onDemand);}
 
   protected:
     virtual void               Execute(){};
     virtual void                 PurgeDomain( const int domain, const int timeStep ) {};
     virtual avtDataRepresentation *ExecuteData(avtDataRepresentation *);
     virtual void              UpdateDataObjectInfo(void);
-};
+    
+}; 
 
 
 #endif
