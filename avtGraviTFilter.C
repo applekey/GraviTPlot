@@ -114,8 +114,6 @@ void avtGraviTFilter::LoadBoundingBoxes(int & numBoundingBox, double ** lower, d
 
 int avtGraviTFilter::LoadDomain(int domainId, double ** ppoints, int& numPoints, int ** pedges, int& numEdges)
 {
-    //std::cerr<<"Loading Domain Id: "<<domainId<<std::endl;
-
     vtkDataSet *ds2 = GetDomain(domainId ,0);
     
     vtkCellData * cellData = ds2->GetCellData();

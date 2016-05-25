@@ -347,7 +347,7 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
         int domainIdIndex = 0;
         for(int lD = 0;lD<numBoundingBox;lD++)
         {   
-            if(lD == domainIds[domainIdIndex])
+            if(numLocalData>0 && lD == domainIds[domainIdIndex])
             {
                 vtkDataSet *ds2 = dataSets[domainIdIndex];
 
