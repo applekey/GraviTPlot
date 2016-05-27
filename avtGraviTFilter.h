@@ -66,20 +66,20 @@ class avtGraviTFilter :
    ,virtual public avtDatasetToDatasetFilter
 {
     friend int avtGraviTFilter_LoadDomain(void*);
-  public:
+public:
                               avtGraviTFilter();
     virtual                  ~avtGraviTFilter();
 
     virtual const char       *GetType(void)   { return "avtGraviTFilter"; };
     virtual const char       *GetDescription(void)
-                                  { return "Performing GraviT"; };
+                                  { return "Performing GraviT Visit Integration"; };
 
     int              LoadDomain(int domainId, double ** points, int& numPoints, int ** edges, int& numEdges);
     void             LoadBoundingBoxes(int & numBoundingBox, double ** lower, double ** upper);
     bool             HasExtents();
     void             SetFilterOperatingOnDemand(bool onDemand){SetOperatingOnDemand(onDemand);}
 
-  protected:
+protected:
     virtual void               Execute(){};
     virtual void                 PurgeDomain( const int domain, const int timeStep ) {};
     virtual avtDataRepresentation *ExecuteData(avtDataRepresentation *);

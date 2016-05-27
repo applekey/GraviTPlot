@@ -93,7 +93,7 @@ void avtGraviTFilter::LoadBoundingBoxes(int & numBoundingBox, double ** lower, d
     double * lowerPtr = *lower;
     double * upperPtr = *upper;
 
-    for(int i = 0;i<numBoundingBox;i++)
+    for(int i = 0; i < numBoundingBox; i++)
     {   
         double bBox[6];
         tree->GetLeafExtents(i, bBox);
@@ -119,18 +119,17 @@ int avtGraviTFilter::LoadDomain(int domainId, double ** ppoints, int& numPoints,
     vtkCellData * cellData = ds2->GetCellData();
     vtkPolyData * contourPD = (vtkPolyData *) ds2;
     numPoints = contourPD->GetNumberOfPoints();
-    vtkCellArray * contourFaces = contourPD->GetPolys();
-    // get the verts
-    int contourSize = contourPD->GetNumberOfPoints();  
-    
+    vtkCellArray * allFaces = contourPD->GetPolys();
+
+    int contourSize = contourPD->GetNumberOfPoints();      
     *ppoints = new double[contourSize *3];
 
-    double * points =  *ppoints;
+    double * points = *ppoints;
 
     for(vtkIdType i = 0; i < contourSize; i++)  
     {  
-        double vtkPts[3] = {0.0,0.0,0.0};  
-        contourPD->GetPoints()->GetPoint(i,vtkPts); 
+        double vtkPts[3] = {0.0, 0.0, 0.0};  
+        contourPD->GetPoints()->GetPoint(i, vtkPts); 
 
         points[i*3] = vtkPts[0];
         points[i*3 +1] = vtkPts[1];
@@ -140,16 +139,16 @@ int avtGraviTFilter::LoadDomain(int domainId, double ** ppoints, int& numPoints,
     // link the edge
 
     vtkSmartPointer<vtkIdList> idList = vtkSmartPointer<vtkIdList>::New();
-    contourFaces->InitTraversal();  
+    allFaces->InitTraversal();  
 
-    int totalEdges = contourFaces->GetNumberOfCells();
+    int totalEdges = allFaces->GetNumberOfCells();
     numEdges = totalEdges;
     *pedges = new int[totalEdges * 3];
-    int * edges=  *pedges;
+    int * edges= *pedges;
 
     for(int i = 0; i < totalEdges; i++)  
     {  
-        contourFaces->GetNextCell(idList);  
+        allFaces->GetNextCell(idList);  
         int v1 = idList->GetId(0)+1;  
         int v2 = idList->GetId(1)+1;  
         int v3 = idList->GetId(2)+1;  
