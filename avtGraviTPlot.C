@@ -289,8 +289,21 @@ avtImage_p
 avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_atts)
 {   
     int rank,world_size;
-    MPI_Comm_rank (MPI_COMM_WORLD, &rank);  /* get current process id */
-    MPI_Comm_size (MPI_COMM_WORLD, &world_size);    /* get number of processes */
+
+    int flag;
+    flag = 0;
+    MPI_Initialized(&flag);
+
+    if(flag)
+    {
+        MPI_Comm_rank (MPI_COMM_WORLD, &rank);  /* get current process id */
+        MPI_Comm_size (MPI_COMM_WORLD, &world_size);    /* get number of processes */
+    }
+    else
+    {
+        rank = 0;
+        world_size = 1;
+    }
 
     // draw needs a barrier!
 
@@ -426,7 +439,7 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
                 atts.GetSpecColor().GetRgba(materialColor+4);
                 int material = atts.GetMaterial();
 
-                adapter->SetData(points, totalPoints, edges, totalEdges, material, materialColor);
+                adapter->SetBoundingBoxHolder(points, totalPoints, edges, totalEdges, material, materialColor);
             }   
         }
 
@@ -469,7 +482,7 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
             atts.GetSpecColor().GetRgba(materialColor+4);
             int material = atts.GetMaterial();
 
-            adapter->SetData(points, totalPoints, edges, totalEdges, material, materialColor);
+            adapter->SetBoundingBoxHolder(points, totalPoints, edges, totalEdges, material, materialColor);
         }
         delete [] (uppers);
         delete [] (lowers);

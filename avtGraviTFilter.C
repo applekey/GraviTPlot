@@ -129,12 +129,12 @@ int avtGraviTFilter::LoadDomain(int domainId, double ** ppoints, int& numPoints,
 
     for(vtkIdType i = 0; i < contourSize; i++)  
     {  
-            double vtkPts[3] = {0.0,0.0,0.0};  
-            contourPD->GetPoints()->GetPoint(i,vtkPts); 
+        double vtkPts[3] = {0.0,0.0,0.0};  
+        contourPD->GetPoints()->GetPoint(i,vtkPts); 
 
-            points[i*3] = vtkPts[0];
-            points[i*3 +1] = vtkPts[1];
-            points[i*3 + 2] = vtkPts[2];
+        points[i*3] = vtkPts[0];
+        points[i*3 +1] = vtkPts[1];
+        points[i*3 + 2] = vtkPts[2];
     }  
 
     // link the edge
