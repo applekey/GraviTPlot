@@ -200,5 +200,4 @@ avtGraviTFilter::ExecuteData(avtDataRepresentation *in_dr)
 void
 avtGraviTFilter::UpdateDataObjectInfo(void)
 {
-    //SetOperatingOnDemand(false);
 }

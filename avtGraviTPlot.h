@@ -49,7 +49,10 @@
 #include <avtUserDefinedMapper.h>
 
 #include <GraviTAttributes.h>
+
+#ifdef GRAVITADAPTER
 #include <apps/render/RenderAPI.h>
+#endif
 
 class     avtGraviTFilter;
 
@@ -111,6 +114,10 @@ protected:
     virtual void                CustomizeMapper(avtDataObjectInformation &);
 
     virtual avtLegend_p         GetLegend(void) { return NULL; };
+
+#ifdef GRAVITADAPTER
     VisitAdapter * adapter;
+
+#endif
 };
 #endif

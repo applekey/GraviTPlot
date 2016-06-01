@@ -42,9 +42,6 @@ ENDIF()
     ${EMBREE_INCLUDE}
     )
 
-message("linking embree")
-message(${EMBREE_LINK_DIRECTORIES})
-
   # Include Embree library directory.
   LINK_DIRECTORIES(
     ${EMBREE_LINK_DIRECTORIES}

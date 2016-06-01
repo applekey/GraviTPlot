@@ -62,7 +62,10 @@
 #include <vtkCellArray.h>
 #include <vtkSmartPointer.h>
 #include <avtIntervalTree.h>
+
+#ifdef GRAVITADAPTER
 #include <mpi.h>
+#endif
 
 avtDataObject_p hackyInput;
 
@@ -93,7 +96,12 @@ avtGraviTPlot::avtGraviTPlot()
     avtCustomRenderer_p cr;
     CopyTo(cr, renderer);
     mapper = new avtUserDefinedMapper(cr);
+#ifdef GRAVITADAPTER
     adapter = new VisitAdapter;
+    std::cerr<<"definition defined"<<std::endl;
+#else
+    std::cerr<<"definition not defined"<<std::endl;
+#endif
 }
 
 
@@ -118,12 +126,13 @@ avtGraviTPlot::~avtGraviTPlot()
         delete graviTFilter;
         graviTFilter = NULL;
     }
-
+#ifdef GRAVITADAPTER
     if (adapter != NULL)
     {
         delete adapter;
         adapter = NULL;
     }
+#endif
 }
 
 
@@ -294,6 +303,7 @@ avtGraviTPlot::CustomizeMapper(avtDataObjectInformation &doi)
 avtImage_p
 avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_atts)
 {   
+#ifdef GRAVITADAPTER
     int rank,world_size;
 
     int flag;
@@ -565,6 +575,7 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
     unsigned char * data = input->GetImage().GetRGBBuffer();
 
     adapter->Draw(data);
+#endif
     avtImage_p rv = input;
 
     return rv;

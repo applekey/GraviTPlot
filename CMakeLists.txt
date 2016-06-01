@@ -5,14 +5,24 @@ INCLUDE(${VISIT_SOURCE_DIR}/CMake/PluginMacros.cmake)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/CMake)
 
+if (DEFINED GRAVIT_SOURCE_DIR AND DEFINED GRAVIT_INSTALL_DIR)
 ## GRAvit Includes
 find_package(Boost REQUIRED COMPONENTS system)
 find_package(TBB REQUIRED)
 find_package(MPI REQUIRED)
 find_package(Embree REQUIRED)
+Message("defined gravit adapter")
 
-SET(GRAVIT_INSTALL_DIR /home/users/applekey/documents/gravit/install/lib)
-SET(GRAVIT_SOURCE_DIR /home/users/applekey/documents/gravit/src)
+INCLUDE_DIRECTORIES(
+${GRAVIT_SOURCE_DIR}
+## gravit includes
+${TBB_INCLUDE_DIRS}
+${Boost_INCLUDE_DIRS}
+${MPI_INCLUDE_PATH}
+)
+add_definitions(-DGRAVITADAPTER)
+endif()
+
 
 SET(COMMON_SOURCES
 GraviTPluginInfo.C
@@ -55,6 +65,8 @@ IF(VISIT_PYTHON_SCRIPTING)
     SET(PYINCLUDES ${PYTHON_INCLUDE_PATH} ${VISIT_INCLUDE_DIR}/visitpy/visitpy)
 ENDIF(VISIT_PYTHON_SCRIPTING)
 
+
+
 INCLUDE_DIRECTORIES(
 ${CMAKE_CURRENT_SOURCE_DIR}
 ${VISIT_COMMON_INCLUDES}
@@ -93,12 +105,10 @@ ${QT_QTGUI_INCLUDE_DIR}
 ${EAVL_INCLUDE_DIR} 
 ${VTK_INCLUDE_DIRS} 
 ${PYINCLUDES}
-## gravit includes
-${TBB_INCLUDE_DIRS}
-${Boost_INCLUDE_DIRS}
-${MPI_INCLUDE_PATH}
-${GRAVIT_SOURCE_DIR}
 )
+
+
+
 SET(MPILIBS ${MPI_LIBRARIES} /usr/lib/libmpi_cxx.so)
 
 LINK_DIRECTORIES(${VISIT_LIBRARY_DIR} ${QT_LIBRARY_DIR} ${GLEW_LIBRARY_DIR} ${EAVL_LIBRARY_DIR} ${VTK_LIBRARY_DIRS} )
@@ -113,8 +123,17 @@ IF(NOT VISIT_SERVER_COMPONENTS_ONLY AND NOT VISIT_ENGINE_ONLY AND NOT VISIT_DBIO
     TARGET_LINK_LIBRARIES(GGraviTPlot visitcommon gui)
 
     ADD_LIBRARY(VGraviTPlot ${LIBV_SOURCES})
-    TARGET_LINK_LIBRARIES(VGraviTPlot /usr/lib/libmpi.so visitcommon viewer  ${GRAVIT_INSTALL_DIR}/libAPICode.a  ${GRAVIT_INSTALL_DIR}/libgvtCore.a   ${GRAVIT_INSTALL_DIR}/libgvtRender.a  ${MPILIBS}  /usr/lib/libmpi_cxx.so ${Boost_LIBRARIES} ${TBB_LIBRARIES}  ${EMBREE_TARGET_LINK_LIBRARIES} )
 
+    if (DEFINED GRAVIT_SOURCE_DIR AND DEFINED GRAVIT_INSTALL_DIR)
+        TARGET_LINK_LIBRARIES(VGraviTPlot /usr/lib/libmpi.so visitcommon viewer  ${GRAVIT_INSTALL_DIR}/libAPICode.a  ${GRAVIT_INSTALL_DIR}/libgvtCore.a   ${GRAVIT_INSTALL_DIR}/libgvtRender.a  ${MPILIBS}  /usr/lib/libmpi_cxx.so ${Boost_LIBRARIES} ${TBB_LIBRARIES}  ${EMBREE_TARGET_LINK_LIBRARIES} )
+
+    else()
+        TARGET_LINK_LIBRARIES(VGraviTPlot /usr/lib/libmpi.so visitcommon viewer)
+
+    endif()
+
+    
+  
     SET(INSTALLTARGETS ${INSTALLTARGETS} GGraviTPlot VGraviTPlot)
 
     IF(VISIT_PYTHON_SCRIPTING)
@@ -136,14 +155,28 @@ IF(NOT VISIT_SERVER_COMPONENTS_ONLY AND NOT VISIT_ENGINE_ONLY AND NOT VISIT_DBIO
     ENDIF(VISIT_JAVA)
 ENDIF(NOT VISIT_SERVER_COMPONENTS_ONLY AND NOT VISIT_ENGINE_ONLY AND NOT VISIT_DBIO_ONLY)
 
+
+
+
 ADD_LIBRARY(EGraviTPlot_ser ${LIBE_SOURCES})
-TARGET_LINK_LIBRARIES(EGraviTPlot_ser visitcommon avtplotter_ser avtpipeline_ser  ${GRAVIT_INSTALL_DIR}/libAPICode.a  ${GRAVIT_INSTALL_DIR}/libgvtCore.a  ${GRAVIT_INSTALL_DIR}/libgvtRender.a  ${Boost_LIBRARIES} ${TBB_LIBRARIES} ${MPILIBS} ${EMBREE_TARGET_LINK_LIBRARIES} /usr/lib/libmpi.so)
+if (DEFINED GRAVIT_SOURCE_DIR AND DEFINED GRAVIT_INSTALL_DIR)
+    TARGET_LINK_LIBRARIES(EGraviTPlot_ser visitcommon avtplotter_ser avtpipeline_ser  ${GRAVIT_INSTALL_DIR}/libAPICode.a  ${GRAVIT_INSTALL_DIR}/libgvtCore.a  ${GRAVIT_INSTALL_DIR}/libgvtRender.a  ${Boost_LIBRARIES} ${TBB_LIBRARIES} ${MPILIBS} ${EMBREE_TARGET_LINK_LIBRARIES} /usr/lib/libmpi.so)
+else()
+    TARGET_LINK_LIBRARIES(EGraviTPlot_ser visitcommon avtplotter_ser avtpipeline_ser)
+endif()
+
 SET(INSTALLTARGETS ${INSTALLTARGETS} EGraviTPlot_ser)
 ADD_TARGET_DEFINITIONS(EGraviTPlot_ser ENGINE)
 
 IF(VISIT_PARALLEL)
     ADD_PARALLEL_LIBRARY(EGraviTPlot_par ${LIBE_SOURCES})
-    TARGET_LINK_LIBRARIES(EGraviTPlot_par visitcommon avtplotter_par avtpipeline_par ${GRAVIT_INSTALL_DIR}/libAPICode.a  ${GRAVIT_INSTALL_DIR}/libgvtCore.a  ${GRAVIT_INSTALL_DIR}/libgvtRender.a  ${Boost_LIBRARIES} ${TBB_LIBRARIES} ${MPILIBS} ${EMBREE_TARGET_LINK_LIBRARIES} )
+
+    if (DEFINED GRAVIT_SOURCE_DIR AND DEFINED GRAVIT_INSTALL_DIR)
+        TARGET_LINK_LIBRARIES(EGraviTPlot_par visitcommon avtplotter_par avtpipeline_par ${GRAVIT_INSTALL_DIR}/libAPICode.a  ${GRAVIT_INSTALL_DIR}/libgvtCore.a  ${GRAVIT_INSTALL_DIR}/libgvtRender.a  ${Boost_LIBRARIES} ${TBB_LIBRARIES} ${MPILIBS} ${EMBREE_TARGET_LINK_LIBRARIES} )
+    else()
+        TARGET_LINK_LIBRARIES(EGraviTPlot_par visitcommon avtplotter_par avtpipeline_par)
+    endif()
+
     SET(INSTALLTARGETS ${INSTALLTARGETS} EGraviTPlot_par)
     ADD_TARGET_DEFINITIONS(EGraviTPlot_par ENGINE)
 ENDIF(VISIT_PARALLEL)
