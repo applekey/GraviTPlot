@@ -120,6 +120,10 @@ PyGraviTAttributes_ToString(const GraviTAttributes *atts, const char *prefix)
           break;
     }
 
+    SNPRINTF(tmpStr, 1000, "%sSamples = %d\n", prefix, atts->GetSamples());
+    str += tmpStr;
+    SNPRINTF(tmpStr, 1000, "%sJitterSize = %g\n", prefix, atts->GetJitterSize());
+    str += tmpStr;
     return str;
 }
 
@@ -376,6 +380,54 @@ GraviTAttributes_GetScheduleType(PyObject *self, PyObject *args)
     return retval;
 }
 
+/*static*/ PyObject *
+GraviTAttributes_SetSamples(PyObject *self, PyObject *args)
+{
+    GraviTAttributesObject *obj = (GraviTAttributesObject *)self;
+
+    int ival;
+    if(!PyArg_ParseTuple(args, "i", &ival))
+        return NULL;
+
+    // Set the Samples in the object.
+    obj->data->SetSamples((int)ival);
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+/*static*/ PyObject *
+GraviTAttributes_GetSamples(PyObject *self, PyObject *args)
+{
+    GraviTAttributesObject *obj = (GraviTAttributesObject *)self;
+    PyObject *retval = PyInt_FromLong(long(obj->data->GetSamples()));
+    return retval;
+}
+
+/*static*/ PyObject *
+GraviTAttributes_SetJitterSize(PyObject *self, PyObject *args)
+{
+    GraviTAttributesObject *obj = (GraviTAttributesObject *)self;
+
+    double dval;
+    if(!PyArg_ParseTuple(args, "d", &dval))
+        return NULL;
+
+    // Set the JitterSize in the object.
+    obj->data->SetJitterSize(dval);
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+/*static*/ PyObject *
+GraviTAttributes_GetJitterSize(PyObject *self, PyObject *args)
+{
+    GraviTAttributesObject *obj = (GraviTAttributesObject *)self;
+    PyObject *retval = PyFloat_FromDouble(obj->data->GetJitterSize());
+    return retval;
+}
+
 
 
 PyMethodDef PyGraviTAttributes_methods[GRAVITATTRIBUTES_NMETH] = {
@@ -390,6 +442,10 @@ PyMethodDef PyGraviTAttributes_methods[GRAVITATTRIBUTES_NMETH] = {
     {"GetMaterial", GraviTAttributes_GetMaterial, METH_VARARGS},
     {"SetScheduleType", GraviTAttributes_SetScheduleType, METH_VARARGS},
     {"GetScheduleType", GraviTAttributes_GetScheduleType, METH_VARARGS},
+    {"SetSamples", GraviTAttributes_SetSamples, METH_VARARGS},
+    {"GetSamples", GraviTAttributes_GetSamples, METH_VARARGS},
+    {"SetJitterSize", GraviTAttributes_SetJitterSize, METH_VARARGS},
+    {"GetJitterSize", GraviTAttributes_GetJitterSize, METH_VARARGS},
     {NULL, NULL}
 };
 
@@ -440,6 +496,10 @@ PyGraviTAttributes_getattr(PyObject *self, char *name)
     if(strcmp(name, "Domain") == 0)
         return PyInt_FromLong(long(GraviTAttributes::Domain));
 
+    if(strcmp(name, "Samples") == 0)
+        return GraviTAttributes_GetSamples(self, NULL);
+    if(strcmp(name, "JitterSize") == 0)
+        return GraviTAttributes_GetJitterSize(self, NULL);
 
     return Py_FindMethod(PyGraviTAttributes_methods, self, name);
 }
@@ -464,6 +524,10 @@ PyGraviTAttributes_setattr(PyObject *self, char *name, PyObject *args)
         obj = GraviTAttributes_SetMaterial(self, tuple);
     else if(strcmp(name, "ScheduleType") == 0)
         obj = GraviTAttributes_SetScheduleType(self, tuple);
+    else if(strcmp(name, "Samples") == 0)
+        obj = GraviTAttributes_SetSamples(self, tuple);
+    else if(strcmp(name, "JitterSize") == 0)
+        obj = GraviTAttributes_SetJitterSize(self, tuple);
 
     if(obj != NULL)
         Py_DECREF(obj);

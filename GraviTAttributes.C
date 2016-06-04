@@ -131,9 +131,11 @@ GraviTAttributes::Scheduler_FromString(const std::string &s, GraviTAttributes::S
 
 void GraviTAttributes::Init()
 {
-    MaxReflections = 1;
+    MaxReflections = 2;
     Material = BlinnPhong;
-    ScheduleType = Domain;
+    ScheduleType = Image;
+    Samples = 2;
+    JitterSize = 0;
 
     GraviTAttributes::SelectAll();
 }
@@ -160,6 +162,8 @@ void GraviTAttributes::Copy(const GraviTAttributes &obj)
     MaxReflections = obj.MaxReflections;
     Material = obj.Material;
     ScheduleType = obj.ScheduleType;
+    Samples = obj.Samples;
+    JitterSize = obj.JitterSize;
 
     GraviTAttributes::SelectAll();
 }
@@ -323,7 +327,9 @@ GraviTAttributes::operator == (const GraviTAttributes &obj) const
             (SpecColor == obj.SpecColor) &&
             (MaxReflections == obj.MaxReflections) &&
             (Material == obj.Material) &&
-            (ScheduleType == obj.ScheduleType));
+            (ScheduleType == obj.ScheduleType) &&
+            (Samples == obj.Samples) &&
+            (JitterSize == obj.JitterSize));
 }
 
 // ****************************************************************************
@@ -472,6 +478,8 @@ GraviTAttributes::SelectAll()
     Select(ID_MaxReflections, (void *)&MaxReflections);
     Select(ID_Material,       (void *)&Material);
     Select(ID_ScheduleType,   (void *)&ScheduleType);
+    Select(ID_Samples,        (void *)&Samples);
+    Select(ID_JitterSize,     (void *)&JitterSize);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -536,6 +544,18 @@ GraviTAttributes::CreateNode(DataNode *parentNode, bool completeSave, bool force
     {
         addToParent = true;
         node->AddNode(new DataNode("ScheduleType", Scheduler_ToString(ScheduleType)));
+    }
+
+    if(completeSave || !FieldsEqual(ID_Samples, &defaultObject))
+    {
+        addToParent = true;
+        node->AddNode(new DataNode("Samples", Samples));
+    }
+
+    if(completeSave || !FieldsEqual(ID_JitterSize, &defaultObject))
+    {
+        addToParent = true;
+        node->AddNode(new DataNode("JitterSize", JitterSize));
     }
 
 
@@ -612,6 +632,10 @@ GraviTAttributes::SetFromNode(DataNode *parentNode)
                 SetScheduleType(value);
         }
     }
+    if((node = searchNode->GetNode("Samples")) != 0)
+        SetSamples(node->AsInt());
+    if((node = searchNode->GetNode("JitterSize")) != 0)
+        SetJitterSize(node->AsDouble());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -651,6 +675,20 @@ GraviTAttributes::SetScheduleType(GraviTAttributes::Scheduler ScheduleType_)
 {
     ScheduleType = ScheduleType_;
     Select(ID_ScheduleType, (void *)&ScheduleType);
+}
+
+void
+GraviTAttributes::SetSamples(int Samples_)
+{
+    Samples = Samples_;
+    Select(ID_Samples, (void *)&Samples);
+}
+
+void
+GraviTAttributes::SetJitterSize(double JitterSize_)
+{
+    JitterSize = JitterSize_;
+    Select(ID_JitterSize, (void *)&JitterSize);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -699,6 +737,18 @@ GraviTAttributes::GetScheduleType() const
     return Scheduler(ScheduleType);
 }
 
+int
+GraviTAttributes::GetSamples() const
+{
+    return Samples;
+}
+
+double
+GraviTAttributes::GetJitterSize() const
+{
+    return JitterSize;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Select property methods
 ///////////////////////////////////////////////////////////////////////////////
@@ -744,6 +794,8 @@ GraviTAttributes::GetFieldName(int index) const
     case ID_MaxReflections: return "MaxReflections";
     case ID_Material:       return "Material";
     case ID_ScheduleType:   return "ScheduleType";
+    case ID_Samples:        return "Samples";
+    case ID_JitterSize:     return "JitterSize";
     default:  return "invalid index";
     }
 }
@@ -773,6 +825,8 @@ GraviTAttributes::GetFieldType(int index) const
     case ID_MaxReflections: return FieldType_int;
     case ID_Material:       return FieldType_enum;
     case ID_ScheduleType:   return FieldType_enum;
+    case ID_Samples:        return FieldType_int;
+    case ID_JitterSize:     return FieldType_double;
     default:  return FieldType_unknown;
     }
 }
@@ -802,6 +856,8 @@ GraviTAttributes::GetFieldTypeName(int index) const
     case ID_MaxReflections: return "int";
     case ID_Material:       return "enum";
     case ID_ScheduleType:   return "enum";
+    case ID_Samples:        return "int";
+    case ID_JitterSize:     return "double";
     default:  return "invalid index";
     }
 }
@@ -851,6 +907,16 @@ GraviTAttributes::FieldsEqual(int index_, const AttributeGroup *rhs) const
     case ID_ScheduleType:
         {  // new scope
         retval = (ScheduleType == obj.ScheduleType);
+        }
+        break;
+    case ID_Samples:
+        {  // new scope
+        retval = (Samples == obj.Samples);
+        }
+        break;
+    case ID_JitterSize:
+        {  // new scope
+        retval = (JitterSize == obj.JitterSize);
         }
         break;
     default: retval = false;

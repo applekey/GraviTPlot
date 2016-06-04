@@ -107,6 +107,8 @@ public:
     void SetMaxReflections(int MaxReflections_);
     void SetMaterial(MaterialType Material_);
     void SetScheduleType(Scheduler ScheduleType_);
+    void SetSamples(int Samples_);
+    void SetJitterSize(double JitterSize_);
 
     // Property getting methods
     const ColorAttribute &GetDiffColor() const;
@@ -116,6 +118,8 @@ public:
     int                  GetMaxReflections() const;
     MaterialType         GetMaterial() const;
     Scheduler            GetScheduleType() const;
+    int                  GetSamples() const;
+    double               GetJitterSize() const;
 
     // Persistence methods
     virtual bool CreateNode(DataNode *node, bool completeSave, bool forceAdd);
@@ -147,6 +151,8 @@ public:
         ID_MaxReflections,
         ID_Material,
         ID_ScheduleType,
+        ID_Samples,
+        ID_JitterSize,
         ID__LAST
     };
 
@@ -156,11 +162,13 @@ private:
     int            MaxReflections;
     int            Material;
     int            ScheduleType;
+    int            Samples;
+    double         JitterSize;
 
     // Static class format string for type map.
     static const char *TypeMapFormatString;
     static const private_tmfs_t TmfsStruct;
 };
-#define GRAVITATTRIBUTES_TMFS "aaiii"
+#define GRAVITATTRIBUTES_TMFS "aaiiiid"
 
 #endif

@@ -31,5 +31,11 @@
       <Field name="ScheduleType" label="Schedule Type" type="enum" subtype="Scheduler">
         Image
       </Field>
+      <Field name="Samples" label="Samples" type="int">
+        1
+      </Field>
+      <Field name="JitterSize" label="JitterSize" type="double">
+        0.000000
+      </Field>
     </Attribute>
   </Plugin>

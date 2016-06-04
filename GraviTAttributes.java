@@ -60,7 +60,7 @@ import llnl.visit.ColorAttribute;
 
 public class GraviTAttributes extends AttributeSubject implements Plugin
 {
-    private static int GraviTAttributes_numAdditionalAtts = 5;
+    private static int GraviTAttributes_numAdditionalAtts = 7;
 
     // Enum values
     public final static int MATERIALTYPE_LAMBERT = 0;
@@ -80,6 +80,8 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
         MaxReflections = 2;
         Material = MATERIALTYPE_BLINNPHONG;
         ScheduleType = SCHEDULER_IMAGE;
+        Samples = 1;
+        JitterSize = 0;
     }
 
     public GraviTAttributes(int nMoreFields)
@@ -91,6 +93,8 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
         MaxReflections = 2;
         Material = MATERIALTYPE_BLINNPHONG;
         ScheduleType = SCHEDULER_IMAGE;
+        Samples = 1;
+        JitterSize = 0;
     }
 
     public GraviTAttributes(GraviTAttributes obj)
@@ -102,6 +106,8 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
         MaxReflections = obj.MaxReflections;
         Material = obj.Material;
         ScheduleType = obj.ScheduleType;
+        Samples = obj.Samples;
+        JitterSize = obj.JitterSize;
 
         SelectAll();
     }
@@ -123,7 +129,9 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
                 (SpecColor == obj.SpecColor) &&
                 (MaxReflections == obj.MaxReflections) &&
                 (Material == obj.Material) &&
-                (ScheduleType == obj.ScheduleType));
+                (ScheduleType == obj.ScheduleType) &&
+                (Samples == obj.Samples) &&
+                (JitterSize == obj.JitterSize));
     }
 
     public String GetName() { return "GraviT"; }
@@ -160,12 +168,26 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
         Select(4);
     }
 
+    public void SetSamples(int Samples_)
+    {
+        Samples = Samples_;
+        Select(5);
+    }
+
+    public void SetJitterSize(double JitterSize_)
+    {
+        JitterSize = JitterSize_;
+        Select(6);
+    }
+
     // Property getting methods
     public ColorAttribute GetDiffColor() { return DiffColor; }
     public ColorAttribute GetSpecColor() { return SpecColor; }
     public int            GetMaxReflections() { return MaxReflections; }
     public int            GetMaterial() { return Material; }
     public int            GetScheduleType() { return ScheduleType; }
+    public int            GetSamples() { return Samples; }
+    public double         GetJitterSize() { return JitterSize; }
 
     // Write and read methods.
     public void WriteAtts(CommunicationBuffer buf)
@@ -180,6 +202,10 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
             buf.WriteInt(Material);
         if(WriteSelect(4, buf))
             buf.WriteInt(ScheduleType);
+        if(WriteSelect(5, buf))
+            buf.WriteInt(Samples);
+        if(WriteSelect(6, buf))
+            buf.WriteDouble(JitterSize);
     }
 
     public void ReadAtts(int index, CommunicationBuffer buf)
@@ -202,6 +228,12 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
             break;
         case 4:
             SetScheduleType(buf.ReadInt());
+            break;
+        case 5:
+            SetSamples(buf.ReadInt());
+            break;
+        case 6:
+            SetJitterSize(buf.ReadDouble());
             break;
         }
     }
@@ -226,6 +258,8 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
         if(ScheduleType == SCHEDULER_DOMAIN)
             str = str + "SCHEDULER_DOMAIN";
         str = str + "\n";
+        str = str + intToString("Samples", Samples, indent) + "\n";
+        str = str + doubleToString("JitterSize", JitterSize, indent) + "\n";
         return str;
     }
 
@@ -236,5 +270,7 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
     private int            MaxReflections;
     private int            Material;
     private int            ScheduleType;
+    private int            Samples;
+    private double         JitterSize;
 }
 

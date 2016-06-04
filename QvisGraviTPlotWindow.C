@@ -186,6 +186,20 @@ QvisGraviTPlotWindow::CreateWindowContents()
             this, SLOT(ScheduleTypeChanged(int)));
     mainLayout->addWidget(ScheduleType, 4,1);
 
+    SamplesLabel = new QLabel(tr("Samples"), central);
+    mainLayout->addWidget(SamplesLabel,5,0);
+    Samples = new QLineEdit(central);
+    connect(Samples, SIGNAL(returnPressed()),
+            this, SLOT(SamplesProcessText()));
+    mainLayout->addWidget(Samples, 5,1);
+
+    JitterSizeLabel = new QLabel(tr("JitterSize"), central);
+    mainLayout->addWidget(JitterSizeLabel,6,0);
+    JitterSize = new QLineEdit(central);
+    connect(JitterSize, SIGNAL(returnPressed()),
+            this, SLOT(JitterSizeProcessText()));
+    mainLayout->addWidget(JitterSize, 6,1);
+
 }
 
 
@@ -255,6 +269,12 @@ QvisGraviTPlotWindow::UpdateWindow(bool doAll)
                 ScheduleTypeButtonGroup->button((int)atts->GetScheduleType())->setChecked(true);
             ScheduleTypeButtonGroup->blockSignals(false);
             break;
+          case GraviTAttributes::ID_Samples:
+            Samples->setText(IntToQString(atts->GetSamples()));
+            break;
+          case GraviTAttributes::ID_JitterSize:
+            JitterSize->setText(DoubleToQString(atts->GetJitterSize()));
+            break;
         }
     }
 }
@@ -291,6 +311,34 @@ QvisGraviTPlotWindow::GetCurrentValues(int which_widget)
             ResettingError(tr("Maximum number of reflections"),
                 IntToQString(atts->GetMaxReflections()));
             atts->SetMaxReflections(atts->GetMaxReflections());
+        }
+    }
+
+    // Do Samples
+    if(which_widget == GraviTAttributes::ID_Samples || doAll)
+    {
+        int val;
+        if(LineEditGetInt(Samples, val))
+            atts->SetSamples(val);
+        else
+        {
+            ResettingError(tr("Samples"),
+                IntToQString(atts->GetSamples()));
+            atts->SetSamples(atts->GetSamples());
+        }
+    }
+
+    // Do JitterSize
+    if(which_widget == GraviTAttributes::ID_JitterSize || doAll)
+    {
+        double val;
+        if(LineEditGetDouble(JitterSize, val))
+            atts->SetJitterSize(val);
+        else
+        {
+            ResettingError(tr("JitterSize"),
+                DoubleToQString(atts->GetJitterSize()));
+            atts->SetJitterSize(atts->GetJitterSize());
         }
     }
 
@@ -449,6 +497,22 @@ QvisGraviTPlotWindow::ScheduleTypeChanged(int val)
         SetUpdate(false);
         Apply();
     }
+}
+
+
+void
+QvisGraviTPlotWindow::SamplesProcessText()
+{
+    GetCurrentValues(GraviTAttributes::ID_Samples);
+    Apply();
+}
+
+
+void
+QvisGraviTPlotWindow::JitterSizeProcessText()
+{
+    GetCurrentValues(GraviTAttributes::ID_JitterSize);
+    Apply();
 }
 
 

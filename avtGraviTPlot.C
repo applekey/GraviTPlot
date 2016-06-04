@@ -327,12 +327,15 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
     unsigned char * diffcolor = atts.GetDiffColor().GetColor();
     unsigned char * speccolor = atts.GetSpecColor().GetColor();
 
+    int samples = atts.GetSamples();
+    double jitterSize = atts.GetJitterSize();
+
     int maxReflections = atts.GetMaxReflections();
 
     VisitAdapter::RayTraceProperties rayTraceProps;
     rayTraceProps.maxDepth = maxReflections;
-    rayTraceProps.raySamples = 3;
-    rayTraceProps.windowJitterSize = 0.0;
+    rayTraceProps.raySamples = samples;
+    rayTraceProps.windowJitterSize = jitterSize;
 
     adapter->SetRayTraceProperties(rayTraceProps);
 
@@ -356,7 +359,6 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
 
     if(!progConfig.dataLoaded && progConfig.scheduler == GraviTAttributes::Domain)
     {
-        std::cerr<<"PrepAddData"<<std::endl;
         // clean the previous mesh if any
         adapter->ResetMeshAndInstance();
 
@@ -465,7 +467,6 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
 
     if(!progConfig.dataLoaded && progConfig.scheduler == GraviTAttributes::Image)
     {
-        std::cerr<<"PrepAddData"<<std::endl;
         // clean the previous mesh if any
         adapter->ResetMeshAndInstance();
 
