@@ -245,8 +245,6 @@ avtGraviTPlot::ApplyRenderingTransformation(avtDataObject_p input)
     }
 
     bool filterOperateOnDemand = (progConfig.scheduler == GraviTAttributes::Image)? true:false;
-
-    std::cerr<<"Scheduler"<<progConfig.scheduler<<"operating on demand"<<filterOperateOnDemand<<std::endl;
     
     graviTFilter->SetFilterOperatingOnDemand(filterOperateOnDemand);
 
@@ -427,16 +425,16 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
                     edges[i*3 + 1] = v2;
                     edges[i*3 + 2] = v3;   
                 } 
-        	
-            	// Get material properties
+            
+                // Get material properties
                 double materialColor[8] = {-1, -1, -1, -1, -1, -1, -1, -1}; 
-            	atts.GetDiffColor().GetRgba(materialColor);
-            	atts.GetSpecColor().GetRgba(materialColor+4);
-            	int material = atts.GetMaterial();
+                atts.GetDiffColor().GetRgba(materialColor);
+                atts.GetSpecColor().GetRgba(materialColor+4);
+                int material = atts.GetMaterial();
 
-            	adapter->SetData(points, contourSize, edges, totalEdges, material, materialColor);
+                adapter->SetData(points, contourSize, edges, totalEdges, material, materialColor);
                 adapter->RegisterDomain(lD, rank);
-        	
+            
                 delete [] edges;
                 delete [] points;
 
@@ -450,7 +448,7 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
                 double points[3*2];
                 int totalPoints = 2;
                 
-                int *edges;
+                int edges[3] ={-1,-1,-1};// dummy
                 int totalEdges = 0; // no need to set edges, just need points for the bb
 
                 points[0 * 3 + 0]  = bBox[0];
@@ -475,7 +473,6 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
 
     if(!progConfig.dataLoaded && progConfig.scheduler == GraviTAttributes::Image)
     {
-        std::cerr<<"called"<<graviTFilter->OperatingOnDemand()<<std::endl;
         // clean the previous mesh if any
         adapter->ResetMeshAndInstance();
 
@@ -496,7 +493,7 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
             double points[3*2];
             int totalPoints = 2;
             
-            int *edges;
+            int edges[3] ={-1,-1,-1};// dummy
             int totalEdges = 0; // Don't need to set any edges, just setting a dummy bounding box
             //TODO: write a custom empty bounding box function?
 
@@ -573,7 +570,9 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
 
     // check if enable shadows
 
-    adapter->SetLight(totalValidLights, lightTypes.data(), lightDirection.data(), lightColor.data(), lightIntensity.data());
+    bool enableShadows = atts.GetEnableShadows();
+
+    adapter->SetLight(totalValidLights, lightTypes.data(), lightDirection.data(), lightColor.data(), lightIntensity.data(),enableShadows);
 
     /* -------------------------MODIFY MATERIAL -------------*/
     double materialColor[8] = {-1, -1, -1, -1, -1, -1, -1, -1};

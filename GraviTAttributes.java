@@ -60,7 +60,7 @@ import llnl.visit.ColorAttribute;
 
 public class GraviTAttributes extends AttributeSubject implements Plugin
 {
-    private static int GraviTAttributes_numAdditionalAtts = 7;
+    private static int GraviTAttributes_numAdditionalAtts = 8;
 
     // Enum values
     public final static int MATERIALTYPE_LAMBERT = 0;
@@ -82,6 +82,7 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
         ScheduleType = SCHEDULER_IMAGE;
         Samples = 1;
         JitterSize = 0;
+        EnableShadows = true;
     }
 
     public GraviTAttributes(int nMoreFields)
@@ -95,6 +96,7 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
         ScheduleType = SCHEDULER_IMAGE;
         Samples = 1;
         JitterSize = 0;
+        EnableShadows = true;
     }
 
     public GraviTAttributes(GraviTAttributes obj)
@@ -108,6 +110,7 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
         ScheduleType = obj.ScheduleType;
         Samples = obj.Samples;
         JitterSize = obj.JitterSize;
+        EnableShadows = obj.EnableShadows;
 
         SelectAll();
     }
@@ -131,7 +134,8 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
                 (Material == obj.Material) &&
                 (ScheduleType == obj.ScheduleType) &&
                 (Samples == obj.Samples) &&
-                (JitterSize == obj.JitterSize));
+                (JitterSize == obj.JitterSize) &&
+                (EnableShadows == obj.EnableShadows));
     }
 
     public String GetName() { return "GraviT"; }
@@ -180,6 +184,12 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
         Select(6);
     }
 
+    public void SetEnableShadows(boolean EnableShadows_)
+    {
+        EnableShadows = EnableShadows_;
+        Select(7);
+    }
+
     // Property getting methods
     public ColorAttribute GetDiffColor() { return DiffColor; }
     public ColorAttribute GetSpecColor() { return SpecColor; }
@@ -188,6 +198,7 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
     public int            GetScheduleType() { return ScheduleType; }
     public int            GetSamples() { return Samples; }
     public double         GetJitterSize() { return JitterSize; }
+    public boolean        GetEnableShadows() { return EnableShadows; }
 
     // Write and read methods.
     public void WriteAtts(CommunicationBuffer buf)
@@ -206,6 +217,8 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
             buf.WriteInt(Samples);
         if(WriteSelect(6, buf))
             buf.WriteDouble(JitterSize);
+        if(WriteSelect(7, buf))
+            buf.WriteBool(EnableShadows);
     }
 
     public void ReadAtts(int index, CommunicationBuffer buf)
@@ -235,6 +248,9 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
         case 6:
             SetJitterSize(buf.ReadDouble());
             break;
+        case 7:
+            SetEnableShadows(buf.ReadBool());
+            break;
         }
     }
 
@@ -260,6 +276,7 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
         str = str + "\n";
         str = str + intToString("Samples", Samples, indent) + "\n";
         str = str + doubleToString("JitterSize", JitterSize, indent) + "\n";
+        str = str + boolToString("EnableShadows", EnableShadows, indent) + "\n";
         return str;
     }
 
@@ -272,5 +289,6 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
     private int            ScheduleType;
     private int            Samples;
     private double         JitterSize;
+    private boolean        EnableShadows;
 }
 

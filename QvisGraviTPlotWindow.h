@@ -98,6 +98,7 @@ class QvisGraviTPlotWindow : public QvisPostableWindowObserver
     void ScheduleTypeChanged(int val);
     void SamplesProcessText();
     void JitterSizeProcessText();
+    void EnableShadowsChanged(bool val);
   private:
     int plotType;
     QvisColorButton *DiffColor;
@@ -109,6 +110,7 @@ class QvisGraviTPlotWindow : public QvisPostableWindowObserver
     QButtonGroup *ScheduleTypeButtonGroup;
     QLineEdit *Samples;
     QLineEdit *JitterSize;
+    QCheckBox *EnableShadows;
     QLabel *DiffColorLabel;
     QLabel *SpecColorLabel;
     QLabel *MaxReflectionsLabel;

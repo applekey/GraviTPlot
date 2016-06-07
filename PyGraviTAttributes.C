@@ -124,6 +124,11 @@ PyGraviTAttributes_ToString(const GraviTAttributes *atts, const char *prefix)
     str += tmpStr;
     SNPRINTF(tmpStr, 1000, "%sJitterSize = %g\n", prefix, atts->GetJitterSize());
     str += tmpStr;
+    if(atts->GetEnableShadows())
+        SNPRINTF(tmpStr, 1000, "%sEnableShadows = 1\n", prefix);
+    else
+        SNPRINTF(tmpStr, 1000, "%sEnableShadows = 0\n", prefix);
+    str += tmpStr;
     return str;
 }
 
@@ -428,6 +433,30 @@ GraviTAttributes_GetJitterSize(PyObject *self, PyObject *args)
     return retval;
 }
 
+/*static*/ PyObject *
+GraviTAttributes_SetEnableShadows(PyObject *self, PyObject *args)
+{
+    GraviTAttributesObject *obj = (GraviTAttributesObject *)self;
+
+    int ival;
+    if(!PyArg_ParseTuple(args, "i", &ival))
+        return NULL;
+
+    // Set the EnableShadows in the object.
+    obj->data->SetEnableShadows(ival != 0);
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+/*static*/ PyObject *
+GraviTAttributes_GetEnableShadows(PyObject *self, PyObject *args)
+{
+    GraviTAttributesObject *obj = (GraviTAttributesObject *)self;
+    PyObject *retval = PyInt_FromLong(obj->data->GetEnableShadows()?1L:0L);
+    return retval;
+}
+
 
 
 PyMethodDef PyGraviTAttributes_methods[GRAVITATTRIBUTES_NMETH] = {
@@ -446,6 +475,8 @@ PyMethodDef PyGraviTAttributes_methods[GRAVITATTRIBUTES_NMETH] = {
     {"GetSamples", GraviTAttributes_GetSamples, METH_VARARGS},
     {"SetJitterSize", GraviTAttributes_SetJitterSize, METH_VARARGS},
     {"GetJitterSize", GraviTAttributes_GetJitterSize, METH_VARARGS},
+    {"SetEnableShadows", GraviTAttributes_SetEnableShadows, METH_VARARGS},
+    {"GetEnableShadows", GraviTAttributes_GetEnableShadows, METH_VARARGS},
     {NULL, NULL}
 };
 
@@ -500,6 +531,8 @@ PyGraviTAttributes_getattr(PyObject *self, char *name)
         return GraviTAttributes_GetSamples(self, NULL);
     if(strcmp(name, "JitterSize") == 0)
         return GraviTAttributes_GetJitterSize(self, NULL);
+    if(strcmp(name, "EnableShadows") == 0)
+        return GraviTAttributes_GetEnableShadows(self, NULL);
 
     return Py_FindMethod(PyGraviTAttributes_methods, self, name);
 }
@@ -528,6 +561,8 @@ PyGraviTAttributes_setattr(PyObject *self, char *name, PyObject *args)
         obj = GraviTAttributes_SetSamples(self, tuple);
     else if(strcmp(name, "JitterSize") == 0)
         obj = GraviTAttributes_SetJitterSize(self, tuple);
+    else if(strcmp(name, "EnableShadows") == 0)
+        obj = GraviTAttributes_SetEnableShadows(self, tuple);
 
     if(obj != NULL)
         Py_DECREF(obj);

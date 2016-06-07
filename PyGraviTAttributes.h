@@ -44,7 +44,7 @@
 //
 // Functions exposed to the VisIt module.
 //
-#define GRAVITATTRIBUTES_NMETH 16
+#define GRAVITATTRIBUTES_NMETH 18
 void           PyGraviTAttributes_StartUp(GraviTAttributes *subj, void *data);
 void           PyGraviTAttributes_CloseDown();
 PyMethodDef *  PyGraviTAttributes_GetMethodTable(int *nMethods);

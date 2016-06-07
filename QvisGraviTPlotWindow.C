@@ -200,6 +200,11 @@ QvisGraviTPlotWindow::CreateWindowContents()
             this, SLOT(JitterSizeProcessText()));
     mainLayout->addWidget(JitterSize, 6,1);
 
+    EnableShadows = new QCheckBox(tr("EnableShadows"), central);
+    connect(EnableShadows, SIGNAL(toggled(bool)),
+            this, SLOT(EnableShadowsChanged(bool)));
+    mainLayout->addWidget(EnableShadows, 7,0);
+
 }
 
 
@@ -274,6 +279,11 @@ QvisGraviTPlotWindow::UpdateWindow(bool doAll)
             break;
           case GraviTAttributes::ID_JitterSize:
             JitterSize->setText(DoubleToQString(atts->GetJitterSize()));
+            break;
+          case GraviTAttributes::ID_EnableShadows:
+            EnableShadows->blockSignals(true);
+            EnableShadows->setChecked(atts->GetEnableShadows());
+            EnableShadows->blockSignals(false);
             break;
         }
     }
@@ -512,6 +522,15 @@ void
 QvisGraviTPlotWindow::JitterSizeProcessText()
 {
     GetCurrentValues(GraviTAttributes::ID_JitterSize);
+    Apply();
+}
+
+
+void
+QvisGraviTPlotWindow::EnableShadowsChanged(bool val)
+{
+    atts->SetEnableShadows(val);
+    SetUpdate(false);
     Apply();
 }
 

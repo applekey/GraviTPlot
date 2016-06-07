@@ -109,6 +109,7 @@ public:
     void SetScheduleType(Scheduler ScheduleType_);
     void SetSamples(int Samples_);
     void SetJitterSize(double JitterSize_);
+    void SetEnableShadows(bool EnableShadows_);
 
     // Property getting methods
     const ColorAttribute &GetDiffColor() const;
@@ -120,6 +121,7 @@ public:
     Scheduler            GetScheduleType() const;
     int                  GetSamples() const;
     double               GetJitterSize() const;
+    bool                 GetEnableShadows() const;
 
     // Persistence methods
     virtual bool CreateNode(DataNode *node, bool completeSave, bool forceAdd);
@@ -153,6 +155,7 @@ public:
         ID_ScheduleType,
         ID_Samples,
         ID_JitterSize,
+        ID_EnableShadows,
         ID__LAST
     };
 
@@ -164,11 +167,12 @@ private:
     int            ScheduleType;
     int            Samples;
     double         JitterSize;
+    bool           EnableShadows;
 
     // Static class format string for type map.
     static const char *TypeMapFormatString;
     static const private_tmfs_t TmfsStruct;
 };
-#define GRAVITATTRIBUTES_TMFS "aaiiiid"
+#define GRAVITATTRIBUTES_TMFS "aaiiiidb"
 
 #endif

@@ -133,9 +133,10 @@ void GraviTAttributes::Init()
 {
     MaxReflections = 2;
     Material = BlinnPhong;
-    ScheduleType = Domain;
+    ScheduleType = Image;
     Samples = 1;
     JitterSize = 0;
+    EnableShadows = true;
 
     GraviTAttributes::SelectAll();
 }
@@ -164,6 +165,7 @@ void GraviTAttributes::Copy(const GraviTAttributes &obj)
     ScheduleType = obj.ScheduleType;
     Samples = obj.Samples;
     JitterSize = obj.JitterSize;
+    EnableShadows = obj.EnableShadows;
 
     GraviTAttributes::SelectAll();
 }
@@ -329,7 +331,8 @@ GraviTAttributes::operator == (const GraviTAttributes &obj) const
             (Material == obj.Material) &&
             (ScheduleType == obj.ScheduleType) &&
             (Samples == obj.Samples) &&
-            (JitterSize == obj.JitterSize));
+            (JitterSize == obj.JitterSize) &&
+            (EnableShadows == obj.EnableShadows));
 }
 
 // ****************************************************************************
@@ -480,6 +483,7 @@ GraviTAttributes::SelectAll()
     Select(ID_ScheduleType,   (void *)&ScheduleType);
     Select(ID_Samples,        (void *)&Samples);
     Select(ID_JitterSize,     (void *)&JitterSize);
+    Select(ID_EnableShadows,  (void *)&EnableShadows);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -556,6 +560,12 @@ GraviTAttributes::CreateNode(DataNode *parentNode, bool completeSave, bool force
     {
         addToParent = true;
         node->AddNode(new DataNode("JitterSize", JitterSize));
+    }
+
+    if(completeSave || !FieldsEqual(ID_EnableShadows, &defaultObject))
+    {
+        addToParent = true;
+        node->AddNode(new DataNode("EnableShadows", EnableShadows));
     }
 
 
@@ -636,6 +646,8 @@ GraviTAttributes::SetFromNode(DataNode *parentNode)
         SetSamples(node->AsInt());
     if((node = searchNode->GetNode("JitterSize")) != 0)
         SetJitterSize(node->AsDouble());
+    if((node = searchNode->GetNode("EnableShadows")) != 0)
+        SetEnableShadows(node->AsBool());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -689,6 +701,13 @@ GraviTAttributes::SetJitterSize(double JitterSize_)
 {
     JitterSize = JitterSize_;
     Select(ID_JitterSize, (void *)&JitterSize);
+}
+
+void
+GraviTAttributes::SetEnableShadows(bool EnableShadows_)
+{
+    EnableShadows = EnableShadows_;
+    Select(ID_EnableShadows, (void *)&EnableShadows);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -749,6 +768,12 @@ GraviTAttributes::GetJitterSize() const
     return JitterSize;
 }
 
+bool
+GraviTAttributes::GetEnableShadows() const
+{
+    return EnableShadows;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Select property methods
 ///////////////////////////////////////////////////////////////////////////////
@@ -796,6 +821,7 @@ GraviTAttributes::GetFieldName(int index) const
     case ID_ScheduleType:   return "ScheduleType";
     case ID_Samples:        return "Samples";
     case ID_JitterSize:     return "JitterSize";
+    case ID_EnableShadows:  return "EnableShadows";
     default:  return "invalid index";
     }
 }
@@ -827,6 +853,7 @@ GraviTAttributes::GetFieldType(int index) const
     case ID_ScheduleType:   return FieldType_enum;
     case ID_Samples:        return FieldType_int;
     case ID_JitterSize:     return FieldType_double;
+    case ID_EnableShadows:  return FieldType_bool;
     default:  return FieldType_unknown;
     }
 }
@@ -858,6 +885,7 @@ GraviTAttributes::GetFieldTypeName(int index) const
     case ID_ScheduleType:   return "enum";
     case ID_Samples:        return "int";
     case ID_JitterSize:     return "double";
+    case ID_EnableShadows:  return "bool";
     default:  return "invalid index";
     }
 }
@@ -917,6 +945,11 @@ GraviTAttributes::FieldsEqual(int index_, const AttributeGroup *rhs) const
     case ID_JitterSize:
         {  // new scope
         retval = (JitterSize == obj.JitterSize);
+        }
+        break;
+    case ID_EnableShadows:
+        {  // new scope
+        retval = (EnableShadows == obj.EnableShadows);
         }
         break;
     default: retval = false;
