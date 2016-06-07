@@ -133,8 +133,8 @@ void GraviTAttributes::Init()
 {
     MaxReflections = 2;
     Material = BlinnPhong;
-    ScheduleType = Image;
-    Samples = 2;
+    ScheduleType = Domain;
+    Samples = 1;
     JitterSize = 0;
 
     GraviTAttributes::SelectAll();

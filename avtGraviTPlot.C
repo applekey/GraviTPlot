@@ -245,6 +245,9 @@ avtGraviTPlot::ApplyRenderingTransformation(avtDataObject_p input)
     }
 
     bool filterOperateOnDemand = (progConfig.scheduler == GraviTAttributes::Image)? true:false;
+
+    std::cerr<<"Scheduler"<<progConfig.scheduler<<"operating on demand"<<filterOperateOnDemand<<std::endl;
+    
     graviTFilter->SetFilterOperatingOnDemand(filterOperateOnDemand);
 
     hackyInput = input;
@@ -357,6 +360,11 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
 
     adapter->SetCamera(size, focalPoint, upVector, viewNormal, parScale/zoom, fov);
 
+    if (!graviTFilter->OperatingOnDemand() && progConfig.scheduler == GraviTAttributes::Image)
+    {
+        progConfig.scheduler = GraviTAttributes::Domain;
+    }
+
     if(!progConfig.dataLoaded && progConfig.scheduler == GraviTAttributes::Domain)
     {
         // clean the previous mesh if any
@@ -467,6 +475,7 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
 
     if(!progConfig.dataLoaded && progConfig.scheduler == GraviTAttributes::Image)
     {
+        std::cerr<<"called"<<graviTFilter->OperatingOnDemand()<<std::endl;
         // clean the previous mesh if any
         adapter->ResetMeshAndInstance();
 
@@ -561,6 +570,8 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
             lightIntensity.push_back(brightness);
         }
     }
+
+    // check if enable shadows
 
     adapter->SetLight(totalValidLights, lightTypes.data(), lightDirection.data(), lightColor.data(), lightIntensity.data());
 
