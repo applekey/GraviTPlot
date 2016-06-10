@@ -77,13 +77,16 @@ public:
     int              LoadDomain(int domainId, double ** points, int& numPoints, int ** edges, int& numEdges);
     void             LoadBoundingBoxes(int & numBoundingBox, double ** lower, double ** upper);
     bool             HasExtents();
-    void             SetFilterOperatingOnDemand(bool onDemand){SetOperatingOnDemand(onDemand);}
+    void             SetFilterOperatingOnDemand(bool onDemand){setOperatingOnDemand = onDemand;}
 
 protected:
     virtual void               Execute(){};
     virtual void                 PurgeDomain( const int domain, const int timeStep ) {};
     virtual avtDataRepresentation *ExecuteData(avtDataRepresentation *);
     virtual void              UpdateDataObjectInfo(void);
+
+    bool setOperatingOnDemand;
+    virtual bool                 CheckOnDemandViability(void) { return setOperatingOnDemand; }
     
 }; 
 

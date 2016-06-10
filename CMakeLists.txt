@@ -11,7 +11,6 @@ find_package(Boost REQUIRED COMPONENTS system)
 find_package(TBB REQUIRED)
 find_package(MPI REQUIRED)
 find_package(Embree REQUIRED)
-Message("defined gravit adapter")
 
 INCLUDE_DIRECTORIES(
 ${GRAVIT_SOURCE_DIR}
