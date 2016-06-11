@@ -61,6 +61,7 @@
 
 avtGraviTFilter::avtGraviTFilter()
 {
+    setOperatingOnDemand = false;
 }
 
 
