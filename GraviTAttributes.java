@@ -1,6 +1,6 @@
 // ***************************************************************************
 //
-// Copyright (c) 2000 - 2015, Lawrence Livermore National Security, LLC
+// Copyright (c) 2000 - 2016, Lawrence Livermore National Security, LLC
 // Produced at the Lawrence Livermore National Laboratory
 // LLNL-CODE-442911
 // All rights reserved.
@@ -60,7 +60,7 @@ import llnl.visit.ColorAttribute;
 
 public class GraviTAttributes extends AttributeSubject implements Plugin
 {
-    private static int GraviTAttributes_numAdditionalAtts = 8;
+    private static int GraviTAttributes_numAdditionalAtts = 9;
 
     // Enum values
     public final static int MATERIALTYPE_LAMBERT = 0;
@@ -83,6 +83,7 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
         Samples = 1;
         JitterSize = 0;
         EnableShadows = true;
+        LightBoost = 1f;
     }
 
     public GraviTAttributes(int nMoreFields)
@@ -97,6 +98,7 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
         Samples = 1;
         JitterSize = 0;
         EnableShadows = true;
+        LightBoost = 1f;
     }
 
     public GraviTAttributes(GraviTAttributes obj)
@@ -111,6 +113,7 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
         Samples = obj.Samples;
         JitterSize = obj.JitterSize;
         EnableShadows = obj.EnableShadows;
+        LightBoost = obj.LightBoost;
 
         SelectAll();
     }
@@ -135,7 +138,8 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
                 (ScheduleType == obj.ScheduleType) &&
                 (Samples == obj.Samples) &&
                 (JitterSize == obj.JitterSize) &&
-                (EnableShadows == obj.EnableShadows));
+                (EnableShadows == obj.EnableShadows) &&
+                (LightBoost == obj.LightBoost));
     }
 
     public String GetName() { return "GraviT"; }
@@ -190,6 +194,12 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
         Select(7);
     }
 
+    public void SetLightBoost(float LightBoost_)
+    {
+        LightBoost = LightBoost_;
+        Select(8);
+    }
+
     // Property getting methods
     public ColorAttribute GetDiffColor() { return DiffColor; }
     public ColorAttribute GetSpecColor() { return SpecColor; }
@@ -199,6 +209,7 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
     public int            GetSamples() { return Samples; }
     public double         GetJitterSize() { return JitterSize; }
     public boolean        GetEnableShadows() { return EnableShadows; }
+    public float          GetLightBoost() { return LightBoost; }
 
     // Write and read methods.
     public void WriteAtts(CommunicationBuffer buf)
@@ -219,6 +230,8 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
             buf.WriteDouble(JitterSize);
         if(WriteSelect(7, buf))
             buf.WriteBool(EnableShadows);
+        if(WriteSelect(8, buf))
+            buf.WriteFloat(LightBoost);
     }
 
     public void ReadAtts(int index, CommunicationBuffer buf)
@@ -251,6 +264,9 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
         case 7:
             SetEnableShadows(buf.ReadBool());
             break;
+        case 8:
+            SetLightBoost(buf.ReadFloat());
+            break;
         }
     }
 
@@ -277,6 +293,7 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
         str = str + intToString("Samples", Samples, indent) + "\n";
         str = str + doubleToString("JitterSize", JitterSize, indent) + "\n";
         str = str + boolToString("EnableShadows", EnableShadows, indent) + "\n";
+        str = str + floatToString("LightBoost", LightBoost, indent) + "\n";
         return str;
     }
 
@@ -290,5 +307,6 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
     private int            Samples;
     private double         JitterSize;
     private boolean        EnableShadows;
+    private float          LightBoost;
 }
 

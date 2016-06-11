@@ -1,6 +1,6 @@
 /*****************************************************************************
 *
-* Copyright (c) 2000 - 2015, Lawrence Livermore National Security, LLC
+* Copyright (c) 2000 - 2016, Lawrence Livermore National Security, LLC
 * Produced at the Lawrence Livermore National Laboratory
 * LLNL-CODE-442911
 * All rights reserved.
@@ -128,6 +128,8 @@ PyGraviTAttributes_ToString(const GraviTAttributes *atts, const char *prefix)
         SNPRINTF(tmpStr, 1000, "%sEnableShadows = 1\n", prefix);
     else
         SNPRINTF(tmpStr, 1000, "%sEnableShadows = 0\n", prefix);
+    str += tmpStr;
+    SNPRINTF(tmpStr, 1000, "%sLightBoost = %g\n", prefix, atts->GetLightBoost());
     str += tmpStr;
     return str;
 }
@@ -457,6 +459,30 @@ GraviTAttributes_GetEnableShadows(PyObject *self, PyObject *args)
     return retval;
 }
 
+/*static*/ PyObject *
+GraviTAttributes_SetLightBoost(PyObject *self, PyObject *args)
+{
+    GraviTAttributesObject *obj = (GraviTAttributesObject *)self;
+
+    float fval;
+    if(!PyArg_ParseTuple(args, "f", &fval))
+        return NULL;
+
+    // Set the LightBoost in the object.
+    obj->data->SetLightBoost(fval);
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+/*static*/ PyObject *
+GraviTAttributes_GetLightBoost(PyObject *self, PyObject *args)
+{
+    GraviTAttributesObject *obj = (GraviTAttributesObject *)self;
+    PyObject *retval = PyFloat_FromDouble(double(obj->data->GetLightBoost()));
+    return retval;
+}
+
 
 
 PyMethodDef PyGraviTAttributes_methods[GRAVITATTRIBUTES_NMETH] = {
@@ -477,6 +503,8 @@ PyMethodDef PyGraviTAttributes_methods[GRAVITATTRIBUTES_NMETH] = {
     {"GetJitterSize", GraviTAttributes_GetJitterSize, METH_VARARGS},
     {"SetEnableShadows", GraviTAttributes_SetEnableShadows, METH_VARARGS},
     {"GetEnableShadows", GraviTAttributes_GetEnableShadows, METH_VARARGS},
+    {"SetLightBoost", GraviTAttributes_SetLightBoost, METH_VARARGS},
+    {"GetLightBoost", GraviTAttributes_GetLightBoost, METH_VARARGS},
     {NULL, NULL}
 };
 
@@ -533,6 +561,8 @@ PyGraviTAttributes_getattr(PyObject *self, char *name)
         return GraviTAttributes_GetJitterSize(self, NULL);
     if(strcmp(name, "EnableShadows") == 0)
         return GraviTAttributes_GetEnableShadows(self, NULL);
+    if(strcmp(name, "LightBoost") == 0)
+        return GraviTAttributes_GetLightBoost(self, NULL);
 
     return Py_FindMethod(PyGraviTAttributes_methods, self, name);
 }
@@ -563,6 +593,8 @@ PyGraviTAttributes_setattr(PyObject *self, char *name, PyObject *args)
         obj = GraviTAttributes_SetJitterSize(self, tuple);
     else if(strcmp(name, "EnableShadows") == 0)
         obj = GraviTAttributes_SetEnableShadows(self, tuple);
+    else if(strcmp(name, "LightBoost") == 0)
+        obj = GraviTAttributes_SetLightBoost(self, tuple);
 
     if(obj != NULL)
         Py_DECREF(obj);

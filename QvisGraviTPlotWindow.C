@@ -1,6 +1,6 @@
 /*****************************************************************************
 *
-* Copyright (c) 2000 - 2015, Lawrence Livermore National Security, LLC
+* Copyright (c) 2000 - 2016, Lawrence Livermore National Security, LLC
 * Produced at the Lawrence Livermore National Laboratory
 * LLNL-CODE-442911
 * All rights reserved.
@@ -205,6 +205,13 @@ QvisGraviTPlotWindow::CreateWindowContents()
             this, SLOT(EnableShadowsChanged(bool)));
     mainLayout->addWidget(EnableShadows, 7,0);
 
+    LightBoostLabel = new QLabel(tr("LightBoost"), central);
+    mainLayout->addWidget(LightBoostLabel,8,0);
+    LightBoost = new QLineEdit(central);
+    connect(LightBoost, SIGNAL(returnPressed()),
+            this, SLOT(LightBoostProcessText()));
+    mainLayout->addWidget(LightBoost, 8,1);
+
 }
 
 
@@ -285,6 +292,9 @@ QvisGraviTPlotWindow::UpdateWindow(bool doAll)
             EnableShadows->setChecked(atts->GetEnableShadows());
             EnableShadows->blockSignals(false);
             break;
+          case GraviTAttributes::ID_LightBoost:
+            LightBoost->setText(FloatToQString(atts->GetLightBoost()));
+            break;
         }
     }
 }
@@ -349,6 +359,20 @@ QvisGraviTPlotWindow::GetCurrentValues(int which_widget)
             ResettingError(tr("JitterSize"),
                 DoubleToQString(atts->GetJitterSize()));
             atts->SetJitterSize(atts->GetJitterSize());
+        }
+    }
+
+    // Do LightBoost
+    if(which_widget == GraviTAttributes::ID_LightBoost || doAll)
+    {
+        float val;
+        if(LineEditGetFloat(LightBoost, val))
+            atts->SetLightBoost(val);
+        else
+        {
+            ResettingError(tr("LightBoost"),
+                FloatToQString(atts->GetLightBoost()));
+            atts->SetLightBoost(atts->GetLightBoost());
         }
     }
 
@@ -531,6 +555,14 @@ QvisGraviTPlotWindow::EnableShadowsChanged(bool val)
 {
     atts->SetEnableShadows(val);
     SetUpdate(false);
+    Apply();
+}
+
+
+void
+QvisGraviTPlotWindow::LightBoostProcessText()
+{
+    GetCurrentValues(GraviTAttributes::ID_LightBoost);
     Apply();
 }
 

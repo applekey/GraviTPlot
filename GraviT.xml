@@ -40,5 +40,8 @@
       <Field name="EnableShadows" label="EnableShadows" type="bool">
         true
       </Field>
+      <Field name="LightBoost" label="LightBoost" type="float">
+        1.000000
+      </Field>
     </Attribute>
   </Plugin>

@@ -1,6 +1,6 @@
 /*****************************************************************************
 *
-* Copyright (c) 2000 - 2015, Lawrence Livermore National Security, LLC
+* Copyright (c) 2000 - 2016, Lawrence Livermore National Security, LLC
 * Produced at the Lawrence Livermore National Laboratory
 * LLNL-CODE-442911
 * All rights reserved.
@@ -110,6 +110,7 @@ public:
     void SetSamples(int Samples_);
     void SetJitterSize(double JitterSize_);
     void SetEnableShadows(bool EnableShadows_);
+    void SetLightBoost(float LightBoost_);
 
     // Property getting methods
     const ColorAttribute &GetDiffColor() const;
@@ -122,6 +123,7 @@ public:
     int                  GetSamples() const;
     double               GetJitterSize() const;
     bool                 GetEnableShadows() const;
+    float                GetLightBoost() const;
 
     // Persistence methods
     virtual bool CreateNode(DataNode *node, bool completeSave, bool forceAdd);
@@ -156,6 +158,7 @@ public:
         ID_Samples,
         ID_JitterSize,
         ID_EnableShadows,
+        ID_LightBoost,
         ID__LAST
     };
 
@@ -168,11 +171,12 @@ private:
     int            Samples;
     double         JitterSize;
     bool           EnableShadows;
+    float          LightBoost;
 
     // Static class format string for type map.
     static const char *TypeMapFormatString;
     static const private_tmfs_t TmfsStruct;
 };
-#define GRAVITATTRIBUTES_TMFS "aaiiiidb"
+#define GRAVITATTRIBUTES_TMFS "aaiiiidbf"
 
 #endif
