@@ -131,7 +131,7 @@ GraviTAttributes::Scheduler_FromString(const std::string &s, GraviTAttributes::S
 
 void GraviTAttributes::Init()
 {
-    MaxReflections = 2;
+    MaxReflections = 1;
     Material = BlinnPhong;
     ScheduleType = Image;
     Samples = 1;
