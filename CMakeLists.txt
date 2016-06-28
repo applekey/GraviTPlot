@@ -4,7 +4,8 @@ PROJECT(GraviT_plot)
 INCLUDE(${VISIT_SOURCE_DIR}/CMake/PluginMacros.cmake)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/CMake)
-
+set(GRAVIT_SOURCE_DIR /home/applekey/Documents/gravit/src)
+set(GRAVIT_INSTALL_DIR /home/applekey/Documents/gravit/install/lib)
 if (DEFINED GRAVIT_SOURCE_DIR AND DEFINED GRAVIT_INSTALL_DIR)
 ## GRAvit Includes
 find_package(Boost REQUIRED COMPONENTS system)

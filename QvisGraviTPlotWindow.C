@@ -1,6 +1,6 @@
 /*****************************************************************************
 *
-* Copyright (c) 2000 - 2016, Lawrence Livermore National Security, LLC
+* Copyright (c) 2000 - 2015, Lawrence Livermore National Security, LLC
 * Produced at the Lawrence Livermore National Laboratory
 * LLNL-CODE-442911
 * All rights reserved.
@@ -212,6 +212,13 @@ QvisGraviTPlotWindow::CreateWindowContents()
             this, SLOT(LightBoostProcessText()));
     mainLayout->addWidget(LightBoost, 8,1);
 
+    LightDistanceLabel = new QLabel(tr("LightDistance"), central);
+    mainLayout->addWidget(LightDistanceLabel,9,0);
+    LightDistance = new QLineEdit(central);
+    connect(LightDistance, SIGNAL(returnPressed()),
+            this, SLOT(LightDistanceProcessText()));
+    mainLayout->addWidget(LightDistance, 9,1);
+
 }
 
 
@@ -295,6 +302,9 @@ QvisGraviTPlotWindow::UpdateWindow(bool doAll)
           case GraviTAttributes::ID_LightBoost:
             LightBoost->setText(FloatToQString(atts->GetLightBoost()));
             break;
+          case GraviTAttributes::ID_LightDistance:
+            LightDistance->setText(FloatToQString(atts->GetLightDistance()));
+            break;
         }
     }
 }
@@ -373,6 +383,20 @@ QvisGraviTPlotWindow::GetCurrentValues(int which_widget)
             ResettingError(tr("LightBoost"),
                 FloatToQString(atts->GetLightBoost()));
             atts->SetLightBoost(atts->GetLightBoost());
+        }
+    }
+
+    // Do LightDistance
+    if(which_widget == GraviTAttributes::ID_LightDistance || doAll)
+    {
+        float val;
+        if(LineEditGetFloat(LightDistance, val))
+            atts->SetLightDistance(val);
+        else
+        {
+            ResettingError(tr("LightDistance"),
+                FloatToQString(atts->GetLightDistance()));
+            atts->SetLightDistance(atts->GetLightDistance());
         }
     }
 
@@ -563,6 +587,14 @@ void
 QvisGraviTPlotWindow::LightBoostProcessText()
 {
     GetCurrentValues(GraviTAttributes::ID_LightBoost);
+    Apply();
+}
+
+
+void
+QvisGraviTPlotWindow::LightDistanceProcessText()
+{
+    GetCurrentValues(GraviTAttributes::ID_LightDistance);
     Apply();
 }
 

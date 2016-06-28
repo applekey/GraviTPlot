@@ -1,6 +1,6 @@
 /*****************************************************************************
 *
-* Copyright (c) 2000 - 2016, Lawrence Livermore National Security, LLC
+* Copyright (c) 2000 - 2015, Lawrence Livermore National Security, LLC
 * Produced at the Lawrence Livermore National Laboratory
 * LLNL-CODE-442911
 * All rights reserved.
@@ -130,6 +130,8 @@ PyGraviTAttributes_ToString(const GraviTAttributes *atts, const char *prefix)
         SNPRINTF(tmpStr, 1000, "%sEnableShadows = 0\n", prefix);
     str += tmpStr;
     SNPRINTF(tmpStr, 1000, "%sLightBoost = %g\n", prefix, atts->GetLightBoost());
+    str += tmpStr;
+    SNPRINTF(tmpStr, 1000, "%sLightDistance = %g\n", prefix, atts->GetLightDistance());
     str += tmpStr;
     return str;
 }
@@ -483,6 +485,30 @@ GraviTAttributes_GetLightBoost(PyObject *self, PyObject *args)
     return retval;
 }
 
+/*static*/ PyObject *
+GraviTAttributes_SetLightDistance(PyObject *self, PyObject *args)
+{
+    GraviTAttributesObject *obj = (GraviTAttributesObject *)self;
+
+    float fval;
+    if(!PyArg_ParseTuple(args, "f", &fval))
+        return NULL;
+
+    // Set the LightDistance in the object.
+    obj->data->SetLightDistance(fval);
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+/*static*/ PyObject *
+GraviTAttributes_GetLightDistance(PyObject *self, PyObject *args)
+{
+    GraviTAttributesObject *obj = (GraviTAttributesObject *)self;
+    PyObject *retval = PyFloat_FromDouble(double(obj->data->GetLightDistance()));
+    return retval;
+}
+
 
 
 PyMethodDef PyGraviTAttributes_methods[GRAVITATTRIBUTES_NMETH] = {
@@ -505,6 +531,8 @@ PyMethodDef PyGraviTAttributes_methods[GRAVITATTRIBUTES_NMETH] = {
     {"GetEnableShadows", GraviTAttributes_GetEnableShadows, METH_VARARGS},
     {"SetLightBoost", GraviTAttributes_SetLightBoost, METH_VARARGS},
     {"GetLightBoost", GraviTAttributes_GetLightBoost, METH_VARARGS},
+    {"SetLightDistance", GraviTAttributes_SetLightDistance, METH_VARARGS},
+    {"GetLightDistance", GraviTAttributes_GetLightDistance, METH_VARARGS},
     {NULL, NULL}
 };
 
@@ -563,6 +591,8 @@ PyGraviTAttributes_getattr(PyObject *self, char *name)
         return GraviTAttributes_GetEnableShadows(self, NULL);
     if(strcmp(name, "LightBoost") == 0)
         return GraviTAttributes_GetLightBoost(self, NULL);
+    if(strcmp(name, "LightDistance") == 0)
+        return GraviTAttributes_GetLightDistance(self, NULL);
 
     return Py_FindMethod(PyGraviTAttributes_methods, self, name);
 }
@@ -595,6 +625,8 @@ PyGraviTAttributes_setattr(PyObject *self, char *name, PyObject *args)
         obj = GraviTAttributes_SetEnableShadows(self, tuple);
     else if(strcmp(name, "LightBoost") == 0)
         obj = GraviTAttributes_SetLightBoost(self, tuple);
+    else if(strcmp(name, "LightDistance") == 0)
+        obj = GraviTAttributes_SetLightDistance(self, tuple);
 
     if(obj != NULL)
         Py_DECREF(obj);

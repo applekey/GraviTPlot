@@ -1,6 +1,6 @@
 /*****************************************************************************
 *
-* Copyright (c) 2000 - 2016, Lawrence Livermore National Security, LLC
+* Copyright (c) 2000 - 2015, Lawrence Livermore National Security, LLC
 * Produced at the Lawrence Livermore National Laboratory
 * LLNL-CODE-442911
 * All rights reserved.
@@ -100,6 +100,7 @@ class QvisGraviTPlotWindow : public QvisPostableWindowObserver
     void JitterSizeProcessText();
     void EnableShadowsChanged(bool val);
     void LightBoostProcessText();
+    void LightDistanceProcessText();
   private:
     int plotType;
     QvisColorButton *DiffColor;
@@ -113,6 +114,7 @@ class QvisGraviTPlotWindow : public QvisPostableWindowObserver
     QLineEdit *JitterSize;
     QCheckBox *EnableShadows;
     QLineEdit *LightBoost;
+    QLineEdit *LightDistance;
     QLabel *DiffColorLabel;
     QLabel *SpecColorLabel;
     QLabel *MaxReflectionsLabel;
@@ -121,6 +123,7 @@ class QvisGraviTPlotWindow : public QvisPostableWindowObserver
     QLabel *SamplesLabel;
     QLabel *JitterSizeLabel;
     QLabel *LightBoostLabel;
+    QLabel *LightDistanceLabel;
 
     GraviTAttributes *atts;
 };

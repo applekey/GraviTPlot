@@ -1,6 +1,6 @@
 // ***************************************************************************
 //
-// Copyright (c) 2000 - 2016, Lawrence Livermore National Security, LLC
+// Copyright (c) 2000 - 2015, Lawrence Livermore National Security, LLC
 // Produced at the Lawrence Livermore National Laboratory
 // LLNL-CODE-442911
 // All rights reserved.
@@ -60,7 +60,7 @@ import llnl.visit.ColorAttribute;
 
 public class GraviTAttributes extends AttributeSubject implements Plugin
 {
-    private static int GraviTAttributes_numAdditionalAtts = 9;
+    private static int GraviTAttributes_numAdditionalAtts = 10;
 
     // Enum values
     public final static int MATERIALTYPE_LAMBERT = 0;
@@ -84,6 +84,7 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
         JitterSize = 0;
         EnableShadows = true;
         LightBoost = 1f;
+        LightDistance = 1f;
     }
 
     public GraviTAttributes(int nMoreFields)
@@ -99,6 +100,7 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
         JitterSize = 0;
         EnableShadows = true;
         LightBoost = 1f;
+        LightDistance = 1f;
     }
 
     public GraviTAttributes(GraviTAttributes obj)
@@ -114,6 +116,7 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
         JitterSize = obj.JitterSize;
         EnableShadows = obj.EnableShadows;
         LightBoost = obj.LightBoost;
+        LightDistance = obj.LightDistance;
 
         SelectAll();
     }
@@ -139,7 +142,8 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
                 (Samples == obj.Samples) &&
                 (JitterSize == obj.JitterSize) &&
                 (EnableShadows == obj.EnableShadows) &&
-                (LightBoost == obj.LightBoost));
+                (LightBoost == obj.LightBoost) &&
+                (LightDistance == obj.LightDistance));
     }
 
     public String GetName() { return "GraviT"; }
@@ -200,6 +204,12 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
         Select(8);
     }
 
+    public void SetLightDistance(float LightDistance_)
+    {
+        LightDistance = LightDistance_;
+        Select(9);
+    }
+
     // Property getting methods
     public ColorAttribute GetDiffColor() { return DiffColor; }
     public ColorAttribute GetSpecColor() { return SpecColor; }
@@ -210,6 +220,7 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
     public double         GetJitterSize() { return JitterSize; }
     public boolean        GetEnableShadows() { return EnableShadows; }
     public float          GetLightBoost() { return LightBoost; }
+    public float          GetLightDistance() { return LightDistance; }
 
     // Write and read methods.
     public void WriteAtts(CommunicationBuffer buf)
@@ -232,6 +243,8 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
             buf.WriteBool(EnableShadows);
         if(WriteSelect(8, buf))
             buf.WriteFloat(LightBoost);
+        if(WriteSelect(9, buf))
+            buf.WriteFloat(LightDistance);
     }
 
     public void ReadAtts(int index, CommunicationBuffer buf)
@@ -267,6 +280,9 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
         case 8:
             SetLightBoost(buf.ReadFloat());
             break;
+        case 9:
+            SetLightDistance(buf.ReadFloat());
+            break;
         }
     }
 
@@ -294,6 +310,7 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
         str = str + doubleToString("JitterSize", JitterSize, indent) + "\n";
         str = str + boolToString("EnableShadows", EnableShadows, indent) + "\n";
         str = str + floatToString("LightBoost", LightBoost, indent) + "\n";
+        str = str + floatToString("LightDistance", LightDistance, indent) + "\n";
         return str;
     }
 
@@ -308,5 +325,6 @@ public class GraviTAttributes extends AttributeSubject implements Plugin
     private double         JitterSize;
     private boolean        EnableShadows;
     private float          LightBoost;
+    private float          LightDistance;
 }
 

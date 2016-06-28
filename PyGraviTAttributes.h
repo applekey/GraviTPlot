@@ -1,6 +1,6 @@
 /*****************************************************************************
 *
-* Copyright (c) 2000 - 2016, Lawrence Livermore National Security, LLC
+* Copyright (c) 2000 - 2015, Lawrence Livermore National Security, LLC
 * Produced at the Lawrence Livermore National Laboratory
 * LLNL-CODE-442911
 * All rights reserved.
@@ -44,7 +44,7 @@
 //
 // Functions exposed to the VisIt module.
 //
-#define GRAVITATTRIBUTES_NMETH 20
+#define GRAVITATTRIBUTES_NMETH 22
 void           PyGraviTAttributes_StartUp(GraviTAttributes *subj, void *data);
 void           PyGraviTAttributes_CloseDown();
 PyMethodDef *  PyGraviTAttributes_GetMethodTable(int *nMethods);

@@ -1,6 +1,6 @@
 /*****************************************************************************
 *
-* Copyright (c) 2000 - 2016, Lawrence Livermore National Security, LLC
+* Copyright (c) 2000 - 2015, Lawrence Livermore National Security, LLC
 * Produced at the Lawrence Livermore National Laboratory
 * LLNL-CODE-442911
 * All rights reserved.
@@ -131,13 +131,14 @@ GraviTAttributes::Scheduler_FromString(const std::string &s, GraviTAttributes::S
 
 void GraviTAttributes::Init()
 {
-    MaxReflections = 1;
+    MaxReflections = 2;
     Material = BlinnPhong;
     ScheduleType = Image;
     Samples = 1;
     JitterSize = 0;
     EnableShadows = true;
     LightBoost = 1;
+    LightDistance = 1;
 
     GraviTAttributes::SelectAll();
 }
@@ -168,6 +169,7 @@ void GraviTAttributes::Copy(const GraviTAttributes &obj)
     JitterSize = obj.JitterSize;
     EnableShadows = obj.EnableShadows;
     LightBoost = obj.LightBoost;
+    LightDistance = obj.LightDistance;
 
     GraviTAttributes::SelectAll();
 }
@@ -335,7 +337,8 @@ GraviTAttributes::operator == (const GraviTAttributes &obj) const
             (Samples == obj.Samples) &&
             (JitterSize == obj.JitterSize) &&
             (EnableShadows == obj.EnableShadows) &&
-            (LightBoost == obj.LightBoost));
+            (LightBoost == obj.LightBoost) &&
+            (LightDistance == obj.LightDistance));
 }
 
 // ****************************************************************************
@@ -488,6 +491,7 @@ GraviTAttributes::SelectAll()
     Select(ID_JitterSize,     (void *)&JitterSize);
     Select(ID_EnableShadows,  (void *)&EnableShadows);
     Select(ID_LightBoost,     (void *)&LightBoost);
+    Select(ID_LightDistance,  (void *)&LightDistance);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -578,6 +582,12 @@ GraviTAttributes::CreateNode(DataNode *parentNode, bool completeSave, bool force
         node->AddNode(new DataNode("LightBoost", LightBoost));
     }
 
+    if(completeSave || !FieldsEqual(ID_LightDistance, &defaultObject))
+    {
+        addToParent = true;
+        node->AddNode(new DataNode("LightDistance", LightDistance));
+    }
+
 
     // Add the node to the parent node.
     if(addToParent || forceAdd)
@@ -660,6 +670,8 @@ GraviTAttributes::SetFromNode(DataNode *parentNode)
         SetEnableShadows(node->AsBool());
     if((node = searchNode->GetNode("LightBoost")) != 0)
         SetLightBoost(node->AsFloat());
+    if((node = searchNode->GetNode("LightDistance")) != 0)
+        SetLightDistance(node->AsFloat());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -727,6 +739,13 @@ GraviTAttributes::SetLightBoost(float LightBoost_)
 {
     LightBoost = LightBoost_;
     Select(ID_LightBoost, (void *)&LightBoost);
+}
+
+void
+GraviTAttributes::SetLightDistance(float LightDistance_)
+{
+    LightDistance = LightDistance_;
+    Select(ID_LightDistance, (void *)&LightDistance);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -799,6 +818,12 @@ GraviTAttributes::GetLightBoost() const
     return LightBoost;
 }
 
+float
+GraviTAttributes::GetLightDistance() const
+{
+    return LightDistance;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Select property methods
 ///////////////////////////////////////////////////////////////////////////////
@@ -848,6 +873,7 @@ GraviTAttributes::GetFieldName(int index) const
     case ID_JitterSize:     return "JitterSize";
     case ID_EnableShadows:  return "EnableShadows";
     case ID_LightBoost:     return "LightBoost";
+    case ID_LightDistance:  return "LightDistance";
     default:  return "invalid index";
     }
 }
@@ -881,6 +907,7 @@ GraviTAttributes::GetFieldType(int index) const
     case ID_JitterSize:     return FieldType_double;
     case ID_EnableShadows:  return FieldType_bool;
     case ID_LightBoost:     return FieldType_float;
+    case ID_LightDistance:  return FieldType_float;
     default:  return FieldType_unknown;
     }
 }
@@ -914,6 +941,7 @@ GraviTAttributes::GetFieldTypeName(int index) const
     case ID_JitterSize:     return "double";
     case ID_EnableShadows:  return "bool";
     case ID_LightBoost:     return "float";
+    case ID_LightDistance:  return "float";
     default:  return "invalid index";
     }
 }
@@ -983,6 +1011,11 @@ GraviTAttributes::FieldsEqual(int index_, const AttributeGroup *rhs) const
     case ID_LightBoost:
         {  // new scope
         retval = (LightBoost == obj.LightBoost);
+        }
+        break;
+    case ID_LightDistance:
+        {  // new scope
+        retval = (LightDistance == obj.LightDistance);
         }
         break;
     default: retval = false;

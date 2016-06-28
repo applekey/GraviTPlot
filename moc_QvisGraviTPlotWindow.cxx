@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'QvisGraviTPlotWindow.h'
 **
-** Created: Thu Jun 9 20:27:03 2016
+** Created: Mon Jun 27 20:32:03 2016
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.3)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_QvisGraviTPlotWindow[] = {
        6,       // revision
        0,       // classname
        0,    0, // classinfo
-      12,   14, // methods
+      13,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -43,6 +43,7 @@ static const uint qt_meta_data_QvisGraviTPlotWindow[] = {
      207,   29,   29,   29, 0x08,
      231,  157,   29,   29, 0x08,
      258,   29,   29,   29, 0x08,
+     282,   29,   29,   29, 0x08,
 
        0        // eod
 };
@@ -57,6 +58,7 @@ static const char qt_meta_stringdata_QvisGraviTPlotWindow[] = {
     "JitterSizeProcessText()\0"
     "EnableShadowsChanged(bool)\0"
     "LightBoostProcessText()\0"
+    "LightDistanceProcessText()\0"
 };
 
 void QvisGraviTPlotWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -77,6 +79,7 @@ void QvisGraviTPlotWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c,
         case 9: _t->JitterSizeProcessText(); break;
         case 10: _t->EnableShadowsChanged((*reinterpret_cast< bool(*)>(_a[1]))); break;
         case 11: _t->LightBoostProcessText(); break;
+        case 12: _t->LightDistanceProcessText(); break;
         default: ;
         }
     }
@@ -114,9 +117,9 @@ int QvisGraviTPlotWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 12)
+        if (_id < 13)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 12;
+        _id -= 13;
     }
     return _id;
 }

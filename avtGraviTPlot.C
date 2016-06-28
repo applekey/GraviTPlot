@@ -575,8 +575,9 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
     // check light boost
     float lightBoost = atts.GetLightBoost();
     std::cerr<<"lboost"<<lightBoost<<std::endl;
+    float lightDistance = atts.GetLightDistance();
 
-    adapter->SetLight(totalValidLights, lightTypes.data(), lightDirection.data(), lightColor.data(), lightIntensity.data(), enableShadows, lightBoost);
+    adapter->SetLight(totalValidLights, lightTypes.data(), lightDirection.data(), lightColor.data(), lightIntensity.data(), enableShadows, lightBoost, lightDistance);
 
     /* -------------------------MODIFY MATERIAL -------------*/
     double materialColor[8] = {-1, -1, -1, -1, -1, -1, -1, -1};
