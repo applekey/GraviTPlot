@@ -80,7 +80,7 @@ avtGraviTFilter::~avtGraviTFilter()
 bool avtGraviTFilter::HasExtents()
 {
     avtIntervalTree * tree = GetMetaData()->GetSpatialExtents();
-    return (tree!= NULL? true:false);
+    return (tree != NULL ? true : false);
 }
 
 void avtGraviTFilter::LoadBoundingBoxes(int & numBoundingBox, double ** lower, double ** upper)
@@ -94,8 +94,8 @@ void avtGraviTFilter::LoadBoundingBoxes(int & numBoundingBox, double ** lower, d
     double * lowerPtr = *lower;
     double * upperPtr = *upper;
 
-    for(int i = 0; i < numBoundingBox; i++)
-    {   
+    for (int i = 0; i < numBoundingBox; i++)
+    {
         double bBox[6];
         tree->GetLeafExtents(i, bBox);
 
@@ -113,52 +113,52 @@ void avtGraviTFilter::LoadBoundingBoxes(int & numBoundingBox, double ** lower, d
 }
 
 
-int avtGraviTFilter::LoadDomain(int domainId, double ** ppoints, int& numPoints, int ** pedges, int& numEdges)
+int avtGraviTFilter::LoadDomain(int domainId, double ** ppoints, int & numPoints, int ** pedges, int & numEdges)
 {
-    vtkDataSet *ds2 = GetDomain(domainId ,0);
-    
+    vtkDataSet * ds2 = GetDomain(domainId , 0);
+
     vtkCellData * cellData = ds2->GetCellData();
     vtkPolyData * contourPD = (vtkPolyData *) ds2;
     numPoints = contourPD->GetNumberOfPoints();
     vtkCellArray * allFaces = contourPD->GetPolys();
 
-    int contourSize = contourPD->GetNumberOfPoints();      
-    *ppoints = new double[contourSize *3];
+    int contourSize = contourPD->GetNumberOfPoints();
+    *ppoints = new double[contourSize * 3];
 
     double * points = *ppoints;
 
-    for(vtkIdType i = 0; i < contourSize; i++)  
-    {  
-        double vtkPts[3] = {0.0, 0.0, 0.0};  
-        contourPD->GetPoints()->GetPoint(i, vtkPts); 
+    for (vtkIdType i = 0; i < contourSize; i++)
+    {
+        double vtkPts[3] = {0.0, 0.0, 0.0};
+        contourPD->GetPoints()->GetPoint(i, vtkPts);
 
-        points[i*3] = vtkPts[0];
-        points[i*3 +1] = vtkPts[1];
-        points[i*3 + 2] = vtkPts[2];
-    }  
+        points[i * 3] = vtkPts[0];
+        points[i * 3 + 1] = vtkPts[1];
+        points[i * 3 + 2] = vtkPts[2];
+    }
 
     // link the edge
 
     vtkSmartPointer<vtkIdList> idList = vtkSmartPointer<vtkIdList>::New();
-    allFaces->InitTraversal();  
+    allFaces->InitTraversal();
 
     int totalEdges = allFaces->GetNumberOfCells();
     numEdges = totalEdges;
     *pedges = new int[totalEdges * 3];
-    int * edges= *pedges;
+    int * edges = *pedges;
 
-    for(int i = 0; i < totalEdges; i++)  
-    {  
-        allFaces->GetNextCell(idList);  
-        int v1 = idList->GetId(0)+1;  
-        int v2 = idList->GetId(1)+1;  
-        int v3 = idList->GetId(2)+1;  
+    for (int i = 0; i < totalEdges; i++)
+    {
+        allFaces->GetNextCell(idList);
+        int v1 = idList->GetId(0) + 1;
+        int v2 = idList->GetId(1) + 1;
+        int v3 = idList->GetId(2) + 1;
 
-        edges[i*3] = v1;
-        edges[i*3 + 1] = v2;
-        edges[i*3 + 2] = v3;
+        edges[i * 3] = v1;
+        edges[i * 3 + 1] = v2;
+        edges[i * 3 + 2] = v3;
     }
-	return 0;
+    return 0;
 }
 
 
@@ -180,9 +180,9 @@ int avtGraviTFilter::LoadDomain(int domainId, double ** ppoints, int& numPoints,
 // ****************************************************************************
 
 avtDataRepresentation *
-avtGraviTFilter::ExecuteData(avtDataRepresentation *in_dr)
+avtGraviTFilter::ExecuteData(avtDataRepresentation * in_dr)
 {
-    return in_dr;   
+    return in_dr;
 }
 
 

@@ -69,12 +69,12 @@
 
 avtDataObject_p hackyInput;
 
-int avtGraviTFilter_LoadDomain(void * p, int domainId, double ** points, int& numPoints, int ** edges, int& numEdges )
+int avtGraviTFilter_LoadDomain(void * p, int domainId, double ** points, int & numPoints, int ** edges, int & numEdges )
 {
-   avtGraviTFilter * in = (avtGraviTFilter*)p; 
+    avtGraviTFilter * in = (avtGraviTFilter *)p;
 
-   return in->LoadDomain( domainId, points, numPoints, edges, numEdges);
-   
+    return in->LoadDomain( domainId, points, numPoints, edges, numEdges);
+
 }
 
 // ****************************************************************************
@@ -86,7 +86,7 @@ int avtGraviTFilter_LoadDomain(void * p, int domainId, double ** points, int& nu
 // ****************************************************************************
 class avtGraviTRenderer : public avtCustomRenderer
 {
- virtual void Render(vtkDataSet * ds){}; 
+    virtual void Render(vtkDataSet * ds) {};
 };
 avtGraviTPlot::avtGraviTPlot()
 {
@@ -98,9 +98,9 @@ avtGraviTPlot::avtGraviTPlot()
     mapper = new avtUserDefinedMapper(cr);
 #ifdef GRAVITADAPTER
     adapter = new VisitAdapter;
-    std::cerr<<"definition defined"<<std::endl;
+    std::cerr << "definition defined" << std::endl;
 #else
-    std::cerr<<"definition not defined"<<std::endl;
+    std::cerr << "definition not defined" << std::endl;
 #endif
 }
 
@@ -147,7 +147,7 @@ avtGraviTPlot::~avtGraviTPlot()
 //
 // ****************************************************************************
 
-avtPlot*
+avtPlot *
 avtGraviTPlot::Create()
 {
     return new avtGraviTPlot;
@@ -177,7 +177,7 @@ avtGraviTPlot::GetMapper(void)
 //  Method: avtGraviTPlot::ApplyOperators
 //
 //  Purpose:
-//      Applies the operators associated with a GraviT plot.  
+//      Applies the operators associated with a GraviT plot.
 //      The output from this method is a query-able object.
 //
 //  Arguments:
@@ -201,7 +201,7 @@ avtGraviTPlot::ApplyOperators(avtDataObject_p input)
 //  Method: avtGraviTPlot::ApplyRenderingTransformation
 //
 //  Purpose:
-//      Applies the rendering transformation associated with a GraviT plot.  
+//      Applies the rendering transformation associated with a GraviT plot.
 //
 //  Arguments:
 //      input   The input data object.
@@ -215,12 +215,12 @@ avtGraviTPlot::ApplyOperators(avtDataObject_p input)
 
 avtDataObject_p
 avtGraviTPlot::ApplyRenderingTransformation(avtDataObject_p input)
-{   
+{
     graviTFilter->SetInput(input);
     /* ------------------------ Check Scheduler    ------------------------*/
 
     // Check to see if the scheduler has changed
-    if(progConfig.scheduler != atts.GetScheduleType())
+    if (progConfig.scheduler != atts.GetScheduleType())
     {
         progConfig.dataLoaded = false;
     }
@@ -231,11 +231,11 @@ avtGraviTPlot::ApplyRenderingTransformation(avtDataObject_p input)
     // Verify Scheduler Type is valid
     bool hasExtents = graviTFilter->HasExtents();
 
-    if(progConfig.scheduler == GraviTAttributes::Image)
+    if (progConfig.scheduler == GraviTAttributes::Image)
     {
-        if(!hasExtents) progConfig.scheduler = GraviTAttributes::Domain;
+        if (!hasExtents) progConfig.scheduler = GraviTAttributes::Domain;
     }
-    else if(progConfig.scheduler == GraviTAttributes::Domain)
+    else if (progConfig.scheduler == GraviTAttributes::Domain)
     {
         // this is OK, Domain mode supports both bounding boxes as well as just loading data.
     }
@@ -244,8 +244,8 @@ avtGraviTPlot::ApplyRenderingTransformation(avtDataObject_p input)
         //TODO: debug message here
     }
 
-    bool filterOperateOnDemand = (progConfig.scheduler == GraviTAttributes::Image)? true:false;
-    
+    bool filterOperateOnDemand = (progConfig.scheduler == GraviTAttributes::Image) ? true : false;
+
     graviTFilter->SetFilterOperatingOnDemand(filterOperateOnDemand);
 
     hackyInput = input;
@@ -278,7 +278,7 @@ avtGraviTPlot::CustomizeBehavior(void)
 //
 //  Purpose:
 //      A hook from the base class that allows the plot to change its mapper
-//      based on the dataset input. 
+//      based on the dataset input.
 //
 //  Arguments:
 //      doi     The data object information.
@@ -288,32 +288,32 @@ avtGraviTPlot::CustomizeBehavior(void)
 //
 // ****************************************************************************
 void
-avtGraviTPlot::CustomizeMapper(avtDataObjectInformation &doi)
+avtGraviTPlot::CustomizeMapper(avtDataObjectInformation & doi)
 {
-/* Example of usage.
-    int dim = doi.GetAttributes().GetCurrentSpatialDimension();
-    if (dim == 2)
-    {
-    }
-    else
-    {
-    }
- */
+    /* Example of usage.
+        int dim = doi.GetAttributes().GetCurrentSpatialDimension();
+        if (dim == 2)
+        {
+        }
+        else
+        {
+        }
+     */
 }
 
 avtImage_p
-avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_atts)
-{   
+avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes & window_atts)
+{
 #ifdef GRAVITADAPTER
-    int rank,world_size;
+    int rank, world_size;
 
     int flag;
     flag = 0;
     MPI_Initialized(&flag);
 
-    if(flag)
+    if (flag)
     {
-        MPI_Comm_rank (MPI_COMM_WORLD, &rank);  /* get current process id */
+        MPI_Comm_rank (MPI_COMM_WORLD, &rank); /* get current process id */
         MPI_Comm_size (MPI_COMM_WORLD, &world_size);    /* get number of processes */
     }
     else
@@ -342,7 +342,7 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
 
     /* ------------------------ SET CAMERA CONFIG ------------------------*/
     int size[2];
-    input->GetSize(size,size+1);
+    input->GetSize(size, size + 1);
 
     progConfig.filmSize[0] = size[0];
     progConfig.filmSize[1] = size[1];
@@ -356,21 +356,21 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
     double * upVector  = viewAttr.GetViewUp();
     double parScale = viewAttr.GetParallelScale();
 
-    adapter->SetCamera(size, focalPoint, upVector, viewNormal, parScale/zoom, fov);
+    adapter->SetCamera(size, focalPoint, upVector, viewNormal, parScale / zoom, fov);
 
     if (!graviTFilter->OperatingOnDemand() && progConfig.scheduler == GraviTAttributes::Image)
     {
         progConfig.scheduler = GraviTAttributes::Domain;
     }
 
-    if(!progConfig.dataLoaded && progConfig.scheduler == GraviTAttributes::Domain)
+    if (!progConfig.dataLoaded && progConfig.scheduler == GraviTAttributes::Domain)
     {
         // clean the previous mesh if any
         adapter->ResetMeshAndInstance();
 
         // use domain mode
         adapter->SetTraceMode(1);
-        avtDataset *ds = (avtDataset *) *hackyInput;
+        avtDataset * ds = (avtDataset *) *hackyInput;
         avtIntervalTree * extents = ds->CalculateSpatialIntervalTree(true);
         int numBoundingBox = extents->GetNLeaves();
 
@@ -381,74 +381,74 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
         ds->dataTree->GetAllDomainIds(domainIds);
 
         adapter->SetTotalInstances(numBoundingBox);
-        
+
         int domainIdIndex = 0;
-        for(int lD = 0; lD < numBoundingBox; lD++)
-        {   
-            if(numLocalData > 0 && lD == domainIds[domainIdIndex])
+        for (int lD = 0; lD < numBoundingBox; lD++)
+        {
+            if (numLocalData > 0 && lD == domainIds[domainIdIndex])
             {
-                vtkDataSet *ds2 = dataSets[domainIdIndex];
+                vtkDataSet * ds2 = dataSets[domainIdIndex];
 
                 vtkCellData * cellData = ds2->GetCellData();
                 vtkPolyData * contourPD = (vtkPolyData *) ds2;
                 int numPoints = contourPD->GetNumberOfPoints();
                 vtkCellArray * allFaces = contourPD->GetPolys();
                 // get the verts
-                int contourSize = contourPD->GetNumberOfPoints();  
-                
-                double * points = new double[contourSize *3];
+                int contourSize = contourPD->GetNumberOfPoints();
 
-                for(vtkIdType i = 0; i < contourSize; i++)  
-                {  
-                    double vtkPts[3] = {0.0, 0.0, 0.0};  
-                    contourPD->GetPoints()->GetPoint(i, vtkPts); 
+                double * points = new double[contourSize * 3];
 
-                    points[i*3] = vtkPts[0];
-                    points[i*3 +1] = vtkPts[1];
-                    points[i*3 + 2] = vtkPts[2];
-                }  
+                for (vtkIdType i = 0; i < contourSize; i++)
+                {
+                    double vtkPts[3] = {0.0, 0.0, 0.0};
+                    contourPD->GetPoints()->GetPoint(i, vtkPts);
+
+                    points[i * 3] = vtkPts[0];
+                    points[i * 3 + 1] = vtkPts[1];
+                    points[i * 3 + 2] = vtkPts[2];
+                }
 
                 vtkSmartPointer<vtkIdList> idList = vtkSmartPointer<vtkIdList>::New();
-                allFaces->InitTraversal();  
+                allFaces->InitTraversal();
 
                 int totalEdges = allFaces->GetNumberOfCells();
                 int * edges = new int[totalEdges * 3];
 
-                for(int i = 0; i < totalEdges; i++)  
-                {  
-                    allFaces->GetNextCell(idList);  
-                    int v1 = idList->GetId(0)+1;  
-                    int v2 = idList->GetId(1)+1;  
-                    int v3 = idList->GetId(2)+1;  
+                for (int i = 0; i < totalEdges; i++)
+                {
+                    allFaces->GetNextCell(idList);
+                    int v1 = idList->GetId(0) + 1;
+                    int v2 = idList->GetId(1) + 1;
+                    int v3 = idList->GetId(2) + 1;
 
-                    edges[i*3] = v1;
-                    edges[i*3 + 1] = v2;
-                    edges[i*3 + 2] = v3;   
-                } 
-            
+                    edges[i * 3] = v1;
+                    edges[i * 3 + 1] = v2;
+                    edges[i * 3 + 2] = v3;
+                }
+
                 // Get material properties
-                double materialColor[8] = {-1, -1, -1, -1, -1, -1, -1, -1}; 
+                double materialColor[8] = { -1, -1, -1, -1, -1, -1, -1, -1};
                 atts.GetDiffColor().GetRgba(materialColor);
-                atts.GetSpecColor().GetRgba(materialColor+4);
+                atts.GetSpecColor().GetRgba(materialColor + 4);
                 int material = atts.GetMaterial();
 
                 adapter->SetData(points, contourSize, edges, totalEdges, material, materialColor);
                 adapter->RegisterDomain(lD, rank);
-            
+
                 delete [] edges;
                 delete [] points;
 
                 domainIdIndex++;
             }
             else // just insert the bounding box
-            {                
+            {
                 double bBox[6];
                 extents->GetLeafExtents(lD, bBox);
-                    
-                double points[3*2];
+
+                double points[3 * 2];
                 int totalPoints = 2;
-                
-                int edges[3] ={-1,-1,-1};// dummy
+
+                int edges[3] = { -1, -1, -1}; // dummy
                 int totalEdges = 0; // no need to set edges, just need points for the bb
 
                 points[0 * 3 + 0]  = bBox[0];
@@ -458,26 +458,26 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
                 points[1 * 3 + 0]  = bBox[1];
                 points[1 * 3 + 1]  = bBox[3];
                 points[1 * 3 + 2]  = bBox[5];
-         
-                double materialColor[8] = {-1, -1, -1, -1, -1, -1, -1, -1}; 
+
+                double materialColor[8] = { -1, -1, -1, -1, -1, -1, -1, -1};
                 atts.GetDiffColor().GetRgba(materialColor);
-                atts.GetSpecColor().GetRgba(materialColor+4);
+                atts.GetSpecColor().GetRgba(materialColor + 4);
                 int material = atts.GetMaterial();
 
                 adapter->SetBoundingBoxHolder(points, totalPoints, edges, totalEdges, material, materialColor);
-            }   
+            }
         }
 
         progConfig.dataLoaded = true;
     }
 
-    if(!progConfig.dataLoaded && progConfig.scheduler == GraviTAttributes::Image)
+    if (!progConfig.dataLoaded && progConfig.scheduler == GraviTAttributes::Image)
     {
         // clean the previous mesh if any
         adapter->ResetMeshAndInstance();
 
         /* ------------------------ SET CALLBACK FUNC ------------------------*/
-        adapter->SetVisitProcessBlockFunc((void*)graviTFilter, avtGraviTFilter_LoadDomain);
+        adapter->SetVisitProcessBlockFunc((void *)graviTFilter, avtGraviTFilter_LoadDomain);
         adapter->SetTraceMode(0);
 
         int numBoundingBoxes;
@@ -485,15 +485,15 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
         double * uppers;
         graviTFilter->LoadBoundingBoxes(numBoundingBoxes, &lowers, &uppers);
 
-        for(int i = 0; i < numBoundingBoxes; i++)
+        for (int i = 0; i < numBoundingBoxes; i++)
         {
-            double * lower = lowers + 3*i;
-            double * upper = uppers + 3*i;
-            
-            double points[3*2];
+            double * lower = lowers + 3 * i;
+            double * upper = uppers + 3 * i;
+
+            double points[3 * 2];
             int totalPoints = 2;
-            
-            int edges[3] ={-1,-1,-1};// dummy
+
+            int edges[3] = { -1, -1, -1}; // dummy
             int totalEdges = 0; // Don't need to set any edges, just setting a dummy bounding box
             //TODO: write a custom empty bounding box function?
 
@@ -504,10 +504,10 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
             points[1 * 3 + 0]  = upper[0];
             points[1 * 3 + 1]  = upper[1];
             points[1 * 3 + 2]  = upper[2];
-                
-            double materialColor[8] = {-1, -1, -1, -1, -1, -1, -1, -1}; 
+
+            double materialColor[8] = { -1, -1, -1, -1, -1, -1, -1, -1};
             atts.GetDiffColor().GetRgba(materialColor);
-            atts.GetSpecColor().GetRgba(materialColor+4);
+            atts.GetSpecColor().GetRgba(materialColor + 4);
             int material = atts.GetMaterial();
 
             adapter->SetBoundingBoxHolder(points, totalPoints, edges, totalEdges, material, materialColor);
@@ -529,7 +529,7 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
 
     int totalValidLights = 0;
 
-    for(int i = 0; i < numLights; i++)
+    for (int i = 0; i < numLights; i++)
     {
         LightAttributes lightAttr = lightList.GetLight(i);
 
@@ -538,13 +538,13 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
         //     continue;
         // }
 
-        if(lightAttr.GetEnabledFlag())
+        if (lightAttr.GetEnabledFlag())
         {
             LightAttributes::LightType type = lightAttr.GetType();
             /*
-            Ambient     
-            Object  
-            Camera  
+            Ambient
+            Object
+            Camera
             */
 
             totalValidLights++;
@@ -574,20 +574,20 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
 
     // check light boost
     float lightBoost = atts.GetLightBoost();
-    std::cerr<<"lboost"<<lightBoost<<std::endl;
+    std::cerr << "lboost" << lightBoost << std::endl;
     float lightDistance = atts.GetLightDistance();
 
     adapter->SetLight(totalValidLights, lightTypes.data(), lightDirection.data(), lightColor.data(), lightIntensity.data(), enableShadows, lightBoost, lightDistance);
 
     /* -------------------------MODIFY MATERIAL -------------*/
-    double materialColor[8] = {-1, -1, -1, -1, -1, -1, -1, -1};
+    double materialColor[8] = { -1, -1, -1, -1, -1, -1, -1, -1};
     atts.GetDiffColor().GetRgba(materialColor);
-    atts.GetSpecColor().GetRgba(materialColor+4);
+    atts.GetSpecColor().GetRgba(materialColor + 4);
     int material = atts.GetMaterial();
     adapter->ChangeMaterial(0, material, materialColor);
 
     /* ------------------------ DRAW ------------------------*/
-    
+
     unsigned char * data = input->GetImage().GetRGBBuffer();
 
     adapter->Draw(data);
@@ -613,8 +613,8 @@ avtGraviTPlot::ImageExecute(avtImage_p input, const WindowAttributes &window_att
 // ****************************************************************************
 
 void
-avtGraviTPlot::SetAtts(const AttributeGroup *a)
+avtGraviTPlot::SetAtts(const AttributeGroup * a)
 {
-    const GraviTAttributes *newAtts = (const GraviTAttributes *)a;
+    const GraviTAttributes * newAtts = (const GraviTAttributes *)a;
     atts = *(GraviTAttributes *)newAtts;
 }

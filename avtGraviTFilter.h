@@ -47,7 +47,7 @@
 #include <avtDataTreeIterator.h>
 #include <avtDatasetOnDemandFilter.h>
 
-int avtGraviTFilter_LoadDomain(void*);
+int avtGraviTFilter_LoadDomain(void *);
 
 // ****************************************************************************
 //  Class: avtGraviTFilter
@@ -61,34 +61,34 @@ int avtGraviTFilter_LoadDomain(void*);
 // ****************************************************************************
 
 
-class avtGraviTFilter :  
+class avtGraviTFilter :
     virtual public avtDatasetOnDemandFilter
-   ,virtual public avtDatasetToDatasetFilter
+    , virtual public avtDatasetToDatasetFilter
 {
-    friend int avtGraviTFilter_LoadDomain(void*);
+    friend int avtGraviTFilter_LoadDomain(void *);
 public:
-                              avtGraviTFilter();
+    avtGraviTFilter();
     virtual                  ~avtGraviTFilter();
 
-    virtual const char       *GetType(void)   { return "avtGraviTFilter"; };
-    virtual const char       *GetDescription(void)
-                                  { return "Performing GraviT Visit Integration"; };
+    virtual const char    *   GetType(void)   { return "avtGraviTFilter"; };
+    virtual const char    *   GetDescription(void)
+    { return "Performing GraviT Visit Integration"; };
 
-    int              LoadDomain(int domainId, double ** points, int& numPoints, int ** edges, int& numEdges);
+    int              LoadDomain(int domainId, double ** points, int & numPoints, int ** edges, int & numEdges);
     void             LoadBoundingBoxes(int & numBoundingBox, double ** lower, double ** upper);
     bool             HasExtents();
-    void             SetFilterOperatingOnDemand(bool onDemand){setOperatingOnDemand = onDemand;}
+    void             SetFilterOperatingOnDemand(bool onDemand) {setOperatingOnDemand = onDemand;}
 
 protected:
-    virtual void               Execute(){};
+    virtual void               Execute() {};
     virtual void                 PurgeDomain( const int domain, const int timeStep ) {};
-    virtual avtDataRepresentation *ExecuteData(avtDataRepresentation *);
+    virtual avtDataRepresentation * ExecuteData(avtDataRepresentation *);
     virtual void              UpdateDataObjectInfo(void);
 
     bool setOperatingOnDemand;
     virtual bool                 CheckOnDemandViability(void) { return setOperatingOnDemand; }
-    
-}; 
+
+};
 
 
 #endif

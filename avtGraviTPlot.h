@@ -71,15 +71,15 @@ class     avtGraviTFilter;
 class avtGraviTPlot : public avtSurfaceDataPlot
 {
 public:
-                                avtGraviTPlot();
+    avtGraviTPlot();
     virtual                    ~avtGraviTPlot();
 
-    virtual const char         *GetName(void) { return "GraviTPlot"; };
+    virtual const char     *    GetName(void) { return "GraviTPlot"; };
 
-    static avtPlot             *Create();
+    static avtPlot       *      Create();
 
-    virtual void                SetAtts(const AttributeGroup*);
-    virtual bool                PlotIsImageBased(void){return true;};
+    virtual void                SetAtts(const AttributeGroup *);
+    virtual bool                PlotIsImageBased(void) {return true;};
     virtual avtImage_p          ImageExecute(avtImage_p, const WindowAttributes &);
 
 protected:
@@ -101,13 +101,13 @@ protected:
         //Scheduler Paramters
         GraviTAttributes::Scheduler scheduler;
     };
-    
+
     GravitProgramConfig           progConfig;
     GraviTAttributes              atts;
-    avtUserDefinedMapper          *mapper;
-    avtGraviTFilter               *graviTFilter;
+    avtUserDefinedMapper     *     mapper;
+    avtGraviTFilter        *       graviTFilter;
 
-    virtual avtMapper          *GetMapper(void);
+    virtual avtMapper     *     GetMapper(void);
     virtual avtDataObject_p     ApplyOperators(avtDataObject_p);
     virtual avtDataObject_p     ApplyRenderingTransformation(avtDataObject_p);
     virtual void                CustomizeBehavior(void);
